@@ -61,7 +61,7 @@ object LayoutConf {
 case class RegionConf(siteConf: SiteConf[LayoutComp]
                       , screenRegionOpt: Option[ScreenRegion] = None)
   extends SiteConfTrait
-    with LayoutTrait {
+    with RegionTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
 }
 

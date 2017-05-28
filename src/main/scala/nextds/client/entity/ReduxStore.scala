@@ -1,6 +1,6 @@
 package nextds.client.entity
 
-import nextds.entity.{LevelType, SiteEntityTrait, SiteType, TEMPL}
+import nextds.entity._
 import nextds.server.boundary.SiteEntityBoundary
 import outwatch.util.Store
 
@@ -16,7 +16,8 @@ object ReduxStore {
     action match {
       case RefreshEntities(levelType, siteType) =>
         // send the request to the server
-        val entities: Seq[SiteEntityTrait] = SiteEntityBoundary.entitiesFor(levelType, siteType)
+        val entities = SiteEntityBoundary.entitiesFor(levelType, siteType)
+          .map(uiEntity)
         previousState.updateEntities(UpdateEntities(levelType, siteType, entities))
       case ue: UpdateEntities =>
         previousState.updateEntities(ue)
@@ -31,7 +32,7 @@ sealed trait Action
 
 case class RefreshEntities(levelType: LevelType, siteType: SiteType) extends Action
 
-case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Seq[SiteEntityTrait]) extends Action
+case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Seq[UISiteEntity]) extends Action
 
 case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 

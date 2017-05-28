@@ -1,8 +1,6 @@
 package nextds.client.components
 
-import nextds.client.components.EntityDetailView.editValue
-import nextds.client.components.GlobalStyles.style
-import nextds.client.entity.{Action, Edit, State}
+import nextds.client.entity.{Action, Edit, State, UISiteEntity}
 import nextds.entity.{LevelType, SiteEntityTrait, SiteType}
 import outwatch.dom._
 import outwatch.util.Store
@@ -123,7 +121,8 @@ object EntityCard {
     , css.siteEntityElem
     , bss.grid.col12)
 
-  def apply(entity: SiteEntityTrait)(implicit store: Store[State, Action]): VNode = {
+  def apply(uiEntity: UISiteEntity)(implicit store: Store[State, Action]): VNode = {
+    val entity = uiEntity.siteEntity
 
     val styles = css.styleClassNames(
       css.siteTypeStyle(entity.siteType)

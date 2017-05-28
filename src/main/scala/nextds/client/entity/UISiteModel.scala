@@ -32,7 +32,7 @@ case class UISiteModel(
 
   def allLevels: Seq[UISiteLevel] = Seq(templ, comp, conf)
 
-  def entities(levelType: LevelType, siteType: SiteType): Seq[SiteEntityTrait] =
+  def entities(levelType: LevelType, siteType: SiteType): Seq[UISiteEntity] =
     level(levelType).entities(siteType)
 }
 

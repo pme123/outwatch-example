@@ -54,7 +54,6 @@ trait PlayerTrait extends SiteEntityTrait {
 }
 trait LayoutTrait extends SiteEntityTrait {
   val siteType = LAYOUT
-
 }
 // only for config
 trait RegionTrait extends SiteEntityTrait {

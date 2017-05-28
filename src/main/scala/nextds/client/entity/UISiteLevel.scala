@@ -8,25 +8,25 @@ import nextds.server.boundary.SiteEntityBoundary
   */
 case class UISiteLevel(
                         levelType: LevelType
-                        , players: Seq[PlayerTrait] = Nil
-                        , layouts: Seq[LayoutTrait] = Nil
-                        , regions: Seq[LayoutTrait] = Nil
-                        , playlists: Seq[PlaylistTrait] = Nil
-                        , mediums: Seq[MediumTrait] = Nil
+                        , players: Seq[UIPlayer] = Nil
+                        , layouts: Seq[UILayout] = Nil
+                        , regions: Seq[UIRegion] = Nil
+                        , playlists: Seq[UIPlaylist] = Nil
+                        , mediums: Seq[UIMedium] = Nil
                       ) {
 
 
   def replaceEntries(updateEntities: UpdateEntities): UISiteLevel =
     updateEntities.siteType match {
-      case PLAYER => copy(players = updateEntities.entities.map(_.asInstanceOf[PlayerTrait]))
-      case LAYOUT => copy(layouts = updateEntities.entities.map(_.asInstanceOf[LayoutTrait]))
-      case REGION => copy(regions = updateEntities.entities.map(_.asInstanceOf[LayoutTrait]))
-      case PLAYLIST => copy(playlists = updateEntities.entities.map(_.asInstanceOf[PlaylistTrait]))
-      case MEDIUM => copy(mediums = updateEntities.entities.map(_.asInstanceOf[MediumTrait]))
+      case PLAYER => copy(players = updateEntities.entities.map(_.asInstanceOf[UIPlayer]))
+      case LAYOUT => copy(layouts = updateEntities.entities.map(_.asInstanceOf[UILayout]))
+      case REGION => copy(regions = updateEntities.entities.map(_.asInstanceOf[UIRegion]))
+      case PLAYLIST => copy(playlists = updateEntities.entities.map(_.asInstanceOf[UIPlaylist]))
+      case MEDIUM => copy(mediums = updateEntities.entities.map(_.asInstanceOf[UIMedium]))
       case _ => this
     }
 
-  def entities(siteType: SiteType): Seq[SiteEntityTrait] =
+  def entities(siteType: SiteType): Seq[UISiteEntity] =
     siteType match {
       case PLAYER => players
       case LAYOUT => layouts
@@ -35,6 +35,7 @@ case class UISiteLevel(
       case MEDIUM => mediums
       case _ => Nil
     }
+
   def allSiteTypes: Seq[SiteType] = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM)
 
 }
@@ -44,8 +45,19 @@ object UISiteLevel {
     new UISiteLevel(
       levelType
       , SiteEntityBoundary.entitiesFor(levelType, PLAYER)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UIPlayer])
       , SiteEntityBoundary.entitiesFor(levelType, LAYOUT)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UILayout])
       , SiteEntityBoundary.entitiesFor(levelType, REGION)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UIRegion])
       , SiteEntityBoundary.entitiesFor(levelType, PLAYLIST)
-      , SiteEntityBoundary.entitiesFor(levelType, MEDIUM))
+        .map(uiEntity)
+        .map(_.asInstanceOf[UIPlaylist])
+      , SiteEntityBoundary.entitiesFor(levelType, MEDIUM)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UIMedium])
+    )
 }
