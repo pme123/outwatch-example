@@ -19,6 +19,7 @@ object NextDSApp extends JSApp {
     // create stylesheet
     GlobalStyles.addToDocument()
     EntityDetailView.Style.addToDocument()
+    UIElements.Style.addToDocument()
   }
 }
 

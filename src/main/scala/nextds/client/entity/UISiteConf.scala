@@ -1,6 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
+import outwatch.dom._
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -8,7 +9,6 @@ import nextds.entity._
 trait UISiteConf
   extends UISiteEntity {
   def siteEntity: SiteConfTrait
-
 
 }
 

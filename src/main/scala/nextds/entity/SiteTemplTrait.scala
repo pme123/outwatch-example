@@ -11,6 +11,9 @@ trait SiteTemplTrait
   lazy val siteIdent: String = templContent.siteId
   lazy val title: String = templContent.title
   lazy val descr: String = templContent.descr
+
+  lazy val maybeTitle: Option[String] = Some(title)
+  lazy val maybeDescr: Option[String] = Some(descr)
 }
 
 object SiteTemplTrait {
@@ -41,6 +44,7 @@ case class LayoutTempl(templContent: SiteTempl
   lazy val width: Int = screenRegion.width
   lazy val height: Int = screenRegion.height
 
+  lazy val maybeScreenRegion: Option[ScreenRegion] = Some(screenRegion)
 }
 
 object LayoutTempl {

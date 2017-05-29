@@ -1,6 +1,6 @@
 package nextds.client.components
 
-import nextds.client.entity.{Action, Edit, State, UISiteEntity}
+import nextds.client.entity._
 import nextds.entity.{LevelType, SiteEntityTrait, SiteType}
 import outwatch.dom._
 import outwatch.util.Store
@@ -18,10 +18,10 @@ object EntityDetailView {
 
   object Style extends StyleSheet.Inline {
 
-    import dsl._
-
     def detailView(levelType: LevelType): String =
-      gStyles.levelTypeStyle(levelType).htmlClass
+      gStyles.levelTypeStyle(levelType).htmlClass +
+        " " +
+       bss.panel.default.htmlClass
 
     def detailHeader(siteType: SiteType): String =
       gStyles.siteTypeStyle(siteType).htmlClass
@@ -29,60 +29,25 @@ object EntityDetailView {
     val headerRow: String = style(
     ).htmlClass
 
-    val labelCol: String = style(
-      width(40.%%)
-    ).htmlClass
-
-    val valueCol: String = style(
-      width(60.%%)
-    ).htmlClass
-
-    val valueInputCol: String = style(
-      width(100.%%)
-    ).htmlClass
-
   }
 
-  private def entityProps(entity: SiteEntityTrait)(implicit store: Store[State, Action]): VNode =
+  private def entityProps(uiEntity: UISiteEntity)(implicit store: Store[State, Action]): VNode = {
+    val entity = uiEntity.siteEntity
+    val handler = createHandler[Seq[VNode]]()
     div(className := Style.detailView(entity.levelType)
       , table(className := "table"
         , thead(className := Style.detailHeader(entity.siteType)
           , tr(className := Style.headerRow
-            , th(className := Style.labelCol
+            , th(className := UIElements.Style.labelCol
               , EntityCard.entityIcon(entity)
             )
-            , th(className := Style.valueCol
+            , th(className := UIElements.Style.valueCol
               , EntityCard.entityIdent(entity))
           ))
         , tbody(
-          inputText("Title", entity.title)
-          , inputTextarea("Description", entity.descr)
-        ))
-    )
-
-  private def inputText(label: String, initVal: String) = {
-    editValue(label, input(className := Style.valueInputCol
-      , tpe := "text"
-      , placeholder := initVal
-      , value := initVal)
-    )
-  }
-
-  private def inputTextarea(label: String, initVal: String) = {
-    editValue(label, textarea(className := Style.valueInputCol
-      , cols := 3
-      , placeholder := initVal
-      , initVal)
-    )
-  }
-
-  private def editValue(label: String, input: VNode) = {
-    tr(
-      td(className := Style.labelCol
-        , label)
-      , td(
-        className := Style.valueCol
-        , input)
+          uiEntity.parameterEdit(): _*
+        )
+      )
     )
   }
 
@@ -91,8 +56,8 @@ object EntityDetailView {
     div(className := bss.grid.col3.htmlClass
       , hidden <-- setStream.map(_.isEmpty)
       , children <-- setStream
-        .map((set: Option[SiteEntityTrait]) => Seq(
-          set
+        .map(uiSet => Seq(
+          uiSet
             .map(entityProps)
             .getOrElse("")))
     )

@@ -1,5 +1,7 @@
 package nextds.entity
 
+import outwatch.dom.VNode
+
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
@@ -13,6 +15,9 @@ trait SiteCompTrait
   lazy val levelType: LevelType = COMP
   lazy val title: String = siteComp.titleOpt.getOrElse(templ.title)
   lazy val descr: String = siteComp.descrOpt.getOrElse(templ.descr)
+  lazy val maybeTitle: Option[String] = siteComp.titleOpt
+  lazy val maybeDescr: Option[String] = siteComp.descrOpt
+
 }
 
 case class SiteComp[T <: SiteTemplTrait](siteId: String
@@ -23,7 +28,7 @@ case class SiteComp[T <: SiteTemplTrait](siteId: String
 
 case class PlayerComp(siteComp: SiteComp[PlayerTempl]
                       , status: PlayerStatus = PlayerStatus.NOT_CONNECTED
-                      , location: Option[PlayerLocation] = None)
+                      , maybeLocation: Option[PlayerLocation] = None)
   extends SiteCompTrait
     with PlayerTrait
 
@@ -62,6 +67,8 @@ case class LayoutComp(siteComp: SiteComp[LayoutTempl]
   extends SiteCompTrait
     with LayoutTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteComp.templ.screenRegion)
+  lazy val maybeScreenRegion: Option[ScreenRegion] = screenRegionOpt
+
 }
 
 object LayoutComp {

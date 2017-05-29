@@ -13,6 +13,9 @@ trait SiteConfTrait
   lazy val levelType: LevelType = CONF
   lazy val title: String = siteConf.titleOpt.getOrElse(comp.title)
   lazy val descr: String = siteConf.descrOpt.getOrElse(comp.descr)
+  lazy val maybeTitle: Option[String] = siteConf.titleOpt
+  lazy val maybeDescr: Option[String] = siteConf.descrOpt
+
 }
 
 case class SiteConf[T <: SiteCompTrait](siteId: String
@@ -39,6 +42,8 @@ case class LayoutConf(siteConf: SiteConf[LayoutComp]
   extends SiteConfTrait
     with LayoutTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
+  lazy val maybeScreenRegion: Option[ScreenRegion] = screenRegionOpt
+
 }
 
 object LayoutConf {

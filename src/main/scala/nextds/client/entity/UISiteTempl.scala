@@ -1,6 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
+import outwatch.dom.{VNode, tbody}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.

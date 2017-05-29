@@ -22,7 +22,7 @@ object ReduxStore {
       case ue: UpdateEntities =>
         previousState.updateEntities(ue)
       case Edit(siteEntityTrait) =>
-        previousState.copy(selectedSET = Some(siteEntityTrait))
+        previousState.copy(selectedSET = Some(uiEntity(siteEntityTrait)))
     }
   }
 
@@ -36,7 +36,7 @@ case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Se
 
 case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
-case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[SiteEntityTrait] = None) {
+case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[UISiteEntity] = None) {
 
   def updateEntities(entities: UpdateEntities): State =
     copy(siteModel = siteModel.replaceLevel(entities))

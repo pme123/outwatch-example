@@ -1,5 +1,7 @@
 package nextds.entity
 
+import outwatch.dom.{VNode, tbody}
+
 import scala.collection.mutable
 import scala.language.postfixOps
 
@@ -17,8 +19,9 @@ trait SiteEntityTrait {
   lazy val ident: SiteEntityIdent = Site.nextIdent(siteIdent)
 
   def title: String
-
+  def maybeTitle: Option[String]
   def descr: String
+  def maybeDescr: Option[String]
 
   lazy val typeDefinition: String = s"$levelType-$siteType"
 }
@@ -52,8 +55,13 @@ object Site {
 trait PlayerTrait extends SiteEntityTrait {
   val siteType = PLAYER
 }
+
 trait LayoutTrait extends SiteEntityTrait {
   val siteType = LAYOUT
+
+  def screenRegion: ScreenRegion
+  def maybeScreenRegion: Option[ScreenRegion]
+
 }
 // only for config
 trait RegionTrait extends SiteEntityTrait {
