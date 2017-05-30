@@ -82,7 +82,6 @@ class BootstrapStyles(implicit r: mutable.Register) extends StyleSheet.Inline()(
 
   object panel {
     val default: StyleA = styleWrap("panel", "panel-default")
-    val body: StyleA = styleWrap("panel-body")
     val row: StyleA = styleWrap("panel-body", "row")
   }
 

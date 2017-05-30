@@ -19,9 +19,10 @@ object EntityDetailView {
   object Style extends StyleSheet.Inline {
 
     def detailView(levelType: LevelType): String =
-      gStyles.levelTypeStyle(levelType).htmlClass +
-        " " +
-       bss.panel.default.htmlClass
+      gStyles.styleClassNames(
+        gStyles.levelTypeStyle(levelType)
+        , bss.panel.default
+      )
 
     def detailHeader(siteType: SiteType): String =
       gStyles.siteTypeStyle(siteType).htmlClass

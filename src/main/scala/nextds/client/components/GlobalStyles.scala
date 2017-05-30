@@ -75,19 +75,19 @@ object GlobalStyles extends StyleSheet.Inline {
 
   val templStyle: StyleA = style(
     backgroundColor(rgba(173, 216, 230, .1))
-    , borderColor(rgba(173, 216, 230, .2))
+    , borderColor(rgba(173, 216, 230, .4))
   )
   val compStyle: StyleA = style(
     backgroundColor(rgba(144, 238, 144, .1))
-    , borderColor(rgba(144, 238, 144, .2))
+    , borderColor(rgba(144, 238, 144, .4))
   )
   val confStyle: StyleA = style(
     backgroundColor(rgba(255, 182, 193, .1))
-    , borderColor(rgba(255, 182, 193, .2))
+    , borderColor(rgba(255, 182, 193, .4))
   )
   val filterStyle: StyleA = style(
     backgroundColor(rgba(216, 216, 216, .1))
-    , borderColor(rgba(216, 216, 216, .2))
+    , borderColor(rgba(216, 216, 216, .4))
   )
 
   val logo: StyleA = style(
@@ -104,6 +104,7 @@ object GlobalStyles extends StyleSheet.Inline {
     width(100.%%)
     , marginLeft(5.px)
     , marginRight(5.px)
+    , boxShadow := "0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.12)"
   )
 
   val mainCell: StyleA = style(
