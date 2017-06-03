@@ -76,23 +76,33 @@ object SiteConfRepo {
 
   val defaultSiteId = "MGAA"
 
+  private val mediumConfs = Seq(
+    MediumConf(SiteConf(defaultSiteId, mediumComp))
+    , MediumConf(SiteConf(defaultSiteId, mediumComp2))
+    , MediumConf(SiteConf(defaultSiteId, mediumComp3))
+  )
+  private val playlistConfs = Seq(
+    PlaylistConf(SiteConf(defaultSiteId, playlistComp), siteConfRefs = mediumConfs)
+  )
+  private val regionConfs = Seq(
+    RegionConf(SiteConf(defaultSiteId, layoutComp), siteConfRefs = playlistConfs)
+  )
+  private val layoutConfs = Seq(
+    LayoutConf(defaultSiteId, layoutComp, regionConfs = regionConfs)
+    , LayoutConf(SiteConf(defaultSiteId, layoutComp2, Some("Extrem special configuration Layout.")), siteConfRefs = regionConfs)
+  )
+  private val playerConfs = Seq(
+    PlayerConf(defaultSiteId, playerComp, layoutConfs)
+    , PlayerConf(defaultSiteId, playerComp2)
+    , PlayerConf(defaultSiteId, playerComp3)
+  )
+
   val allConfs: Map[SiteType, Seq[SiteConfTrait]] = Map(
-    PLAYER -> Seq(
-      PlayerConf(defaultSiteId, playerComp)
-      , PlayerConf(defaultSiteId, playerComp2)
-      , PlayerConf(defaultSiteId, playerComp3)
-    ), LAYOUT -> Seq(
-      LayoutConf(defaultSiteId, layoutComp)
-      , LayoutConf(SiteConf(defaultSiteId, layoutComp2, Some("Extrem special configuration Layout.")))
-    ), PLAYLIST -> Seq(
-      PlaylistConf(SiteConf(defaultSiteId, playlistComp))
-    ), REGION -> Seq(
-      RegionConf(SiteConf(defaultSiteId, layoutComp))
-    ), MEDIUM -> Seq(
-      MediumConf(SiteConf(defaultSiteId, mediumComp))
-      , MediumConf(SiteConf(defaultSiteId, mediumComp2))
-      , MediumConf(SiteConf(defaultSiteId, mediumComp3))
-    )
+    PLAYER -> playerConfs
+    , LAYOUT -> layoutConfs
+    , PLAYLIST -> playlistConfs
+    , REGION -> regionConfs
+    , MEDIUM -> mediumConfs
 
   )
 }

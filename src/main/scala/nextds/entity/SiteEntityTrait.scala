@@ -16,6 +16,8 @@ trait SiteEntityTrait {
 
   def levelType: LevelType
 
+  def label: String = s"${siteType.label} ${levelType.label}"
+
   lazy val ident: SiteEntityIdent = Site.nextIdent(siteIdent)
 
   def title: String

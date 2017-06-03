@@ -30,7 +30,8 @@ case class PlayerComp(siteComp: SiteComp[PlayerTempl]
                       , status: PlayerStatus = PlayerStatus.NOT_CONNECTED
                       , maybeLocation: Option[PlayerLocation] = None)
   extends SiteCompTrait
-    with PlayerTrait
+    with PlayerTrait {
+}
 
 object PlayerComp {
 

@@ -1,5 +1,6 @@
 package nextds.client.entity
 
+import nextds.entity.SiteEntityTrait
 import outwatch.dom._
 
 import scalacss.Defaults._
@@ -34,15 +35,32 @@ object UIElements {
   }
 
 }
+
 trait UIElements {
+
   import UIElements.Style
 
-  protected def inputText(label: String, sisterVal: String, initVal: Option[String]): VNode = {
+  protected def siteEntityRef(siteEntity: SiteEntityTrait): VNode = {
+    inputText(siteEntity.label
+      , ""
+      , Some(siteEntity.ident)
+      , Some(siteEntity.title)
+      , disabledFlag = true)
+  }
+
+  protected def inputText(label: String
+                          , placeholderTxt: String
+                          , initVal: Option[String]
+                          , tooltipTxt: Option[String] = None
+                          , disabledFlag: Boolean = false): VNode = {
     editValue(label, input(className := Style.valueInputCol
       , tpe := "text"
-      , placeholder := sisterVal
-      , value := initVal.getOrElse(""))
-    )
+      , placeholder := placeholderTxt
+      , value := initVal.getOrElse("")
+      , Attribute("data-toggle", "tooltip")
+      , Attribute("title", tooltipTxt.getOrElse(""))
+      , disabled := disabledFlag
+    ))
   }
 
   protected def inputNumber(label: String, sisterVal: String, initVal: Option[AnyVal]): VNode = {

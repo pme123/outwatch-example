@@ -8,8 +8,12 @@ trait SiteConfTrait
 
   def siteConf: SiteConf[_ <: SiteCompTrait]
 
+  def siteConfRefs: Seq[_ <: SiteConfTrait]
+
   lazy val siteIdent: String = siteConf.siteId
+
   def comp: SiteCompTrait = siteConf.comp
+
   lazy val levelType: LevelType = CONF
   lazy val title: String = siteConf.titleOpt.getOrElse(comp.title)
   lazy val descr: String = siteConf.descrOpt.getOrElse(comp.descr)
@@ -19,26 +23,29 @@ trait SiteConfTrait
 }
 
 case class SiteConf[T <: SiteCompTrait](siteId: String
-                                         , comp: T
-                                         , titleOpt: Option[String] = None
-                                         , descrOpt: Option[String] = None)
+                                        , comp: T
+                                        , titleOpt: Option[String] = None
+                                        , descrOpt: Option[String] = None)
 
 
-case class PlayerConf(siteConf: SiteConf[PlayerComp])
+case class PlayerConf(siteConf: SiteConf[PlayerComp], siteConfRefs: Seq[LayoutConf])
   extends SiteConfTrait
-    with PlayerTrait
+    with PlayerTrait {
+
+}
 
 object PlayerConf {
 
   def apply(siteId: String
             , comp: PlayerComp
-           , layouts: Seq[LayoutConf] = Seq()): PlayerConf =
-    PlayerConf(SiteConf(siteId, comp))
+            , layoutConfs: Seq[LayoutConf] = Nil): PlayerConf =
+    PlayerConf(SiteConf(siteId, comp), layoutConfs)
 
 }
 
 case class LayoutConf(siteConf: SiteConf[LayoutComp]
-                      , screenRegionOpt: Option[ScreenRegion] = None)
+                      , screenRegionOpt: Option[ScreenRegion] = None
+                      , siteConfRefs: Seq[RegionConf])
   extends SiteConfTrait
     with LayoutTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
@@ -49,22 +56,26 @@ case class LayoutConf(siteConf: SiteConf[LayoutComp]
 object LayoutConf {
 
   def apply(siteId: String
-            , comp: LayoutComp): LayoutConf =
-    LayoutConf(SiteConf(siteId, comp))
+            , comp: LayoutComp
+            , regionConfs: Seq[RegionConf]): LayoutConf =
+    LayoutConf(SiteConf(siteId, comp), siteConfRefs = regionConfs)
 
   def apply(siteId: String
             , comp: LayoutComp
             , title: String
-            , screenRegion: ScreenRegion): LayoutConf =
+            , screenRegion: ScreenRegion
+            , regionConfs: Seq[RegionConf]): LayoutConf =
     LayoutConf(SiteConf(siteId
       , comp
       , Some(title))
-      , Some(screenRegion))
+      , Some(screenRegion)
+      , regionConfs)
 
 }
 
 case class RegionConf(siteConf: SiteConf[LayoutComp]
-                      , screenRegionOpt: Option[ScreenRegion] = None)
+                      , screenRegionOpt: Option[ScreenRegion] = None
+                      , siteConfRefs: Seq[PlaylistConf])
   extends SiteConfTrait
     with RegionTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
@@ -73,21 +84,25 @@ case class RegionConf(siteConf: SiteConf[LayoutComp]
 object RegionConf {
 
   def apply(siteId: String
-            , comp: LayoutComp): RegionConf =
-    RegionConf(SiteConf(siteId, comp))
+            , comp: LayoutComp
+            , playlistConfs: Seq[PlaylistConf]): RegionConf =
+    RegionConf(SiteConf(siteId, comp), siteConfRefs = playlistConfs)
 
   def apply(siteId: String
             , comp: LayoutComp
             , title: String
-            , screenRegion: ScreenRegion): RegionConf =
+            , screenRegion: ScreenRegion
+            , playlistConfs: Seq[PlaylistConf]): RegionConf =
     RegionConf(SiteConf(siteId
       , comp
       , Some(title))
-      , Some(screenRegion))
+      , Some(screenRegion)
+      , playlistConfs)
 
 }
 
-case class PlaylistConf(siteConf: SiteConf[PlaylistComp])
+case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
+                       , siteConfRefs: Seq[MediumConf] = Nil)
   extends SiteConfTrait
     with PlaylistTrait
 
@@ -96,7 +111,10 @@ object PlaylistConf {
 
 case class MediumConf(siteConf: SiteConf[MediumComp])
   extends SiteConfTrait
-    with MediumTrait
+    with MediumTrait{
+  // a MediumConf has no refs to other Confs
+  val siteConfRefs = Nil
+}
 
 object MediumConf {
 }
