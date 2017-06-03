@@ -6,7 +6,7 @@ import outwatch.dom._
  */
 object Icon {
   type Icon = VNode
-  def apply(name: String): Icon = i(className := s"fa fa-$name")
+  def apply(name: String): Icon = i(className := s"fa fa-$name glyphicon-move")
 
   def adjust = apply("adjust")
   def adn = apply("adn")

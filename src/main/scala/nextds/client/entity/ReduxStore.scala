@@ -2,14 +2,24 @@ package nextds.client.entity
 
 import nextds.entity._
 import nextds.server.boundary.SiteEntityBoundary
+import outwatch.Sink
 import outwatch.util.Store
+import rxscalajs.Observable
+
+import scala.language.implicitConversions
 
 /**
   * Created by pascal.mengelt on 17.05.2017.
   */
+
+case class ReduxStore[State, Action](wrapped: Store[State, Action])
+
 object ReduxStore {
 
-  def store() = Store(State(), reducer)
+  implicit def toSink[Action](store: ReduxStore[_, Action]): Sink[Action] = store.wrapped.sink
+  implicit def toSource[State](store: ReduxStore[State, _]): Observable[State] = store.wrapped.source.share
+
+  def apply(): ReduxStore[State, Action] = ReduxStore(Store(State(), reducer))
 
   def reducer(previousState: State, action: Action): State = {
     println(s"reducer: $action")

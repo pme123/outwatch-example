@@ -3,7 +3,6 @@ package nextds.client.components
 import nextds.client.entity._
 import nextds.entity.{LevelType, SiteEntityTrait, SiteType}
 import outwatch.dom._
-import outwatch.util.Store
 
 import scalacss.Defaults._
 import scalacss.internal.mutable.StyleSheet
@@ -32,7 +31,7 @@ object EntityDetailView {
 
   }
 
-  private def entityProps(uiEntity: UISiteEntity)(implicit store: Store[State, Action]): VNode = {
+  private def entityProps(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
     val handler = createHandler[Seq[VNode]]()
     div(className := Style.detailView(entity.levelType)
@@ -52,7 +51,7 @@ object EntityDetailView {
     )
   }
 
-  def apply(implicit store: Store[State, Action]): VNode = {
+  def apply()(implicit store: ReduxStore[State, Action]): VNode = {
     val setStream = store.map(_.selectedSET)
     div(className := bss.grid.col3.htmlClass
       , hidden <-- setStream.map(_.isEmpty)
@@ -87,7 +86,7 @@ object EntityCard {
     , css.siteEntityElem
     , bss.grid.col12)
 
-  def apply(uiEntity: UISiteEntity)(implicit store: Store[State, Action]): VNode = {
+  def apply(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
 
     val styles = css.styleClassNames(
@@ -96,8 +95,7 @@ object EntityCard {
       , bss.listGroup.item
       , bss.grid.row)
 
-
-    div(className := styles
+    li(className := styles
       , click(Edit(entity)) --> store
       , entityIcon(entity)
       , entityIdent(entity)
@@ -112,7 +110,7 @@ object EntityCard {
   def entityIdent(entity: SiteEntityTrait): VNode =
     div(className := stylesIdent, entity.ident)
 
-  def entityMenu(entity: SiteEntityTrait)(implicit store: Store[State, Action]): VNode = {
+  def entityMenu(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode = {
     def entityDropdown(entityTrait: SiteEntityTrait): VNode = {
       val dd = bss.dropdown
       val stylesButton = css.styleClassNames(
