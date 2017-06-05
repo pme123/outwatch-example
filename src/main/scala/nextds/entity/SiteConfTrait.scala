@@ -27,14 +27,23 @@ case class SiteConf[T <: SiteCompTrait](siteId: String
                                         , titleOpt: Option[String] = None
                                         , descrOpt: Option[String] = None)
 
+object SiteConf {
+  def apply[T <: SiteCompTrait](comp: T): SiteConf[T] = SiteConf(comp.siteIdent, comp)
 
-case class PlayerConf(siteConf: SiteConf[PlayerComp], siteConfRefs: Seq[LayoutConf])
+}
+
+
+case class PlayerConf(siteConf: SiteConf[PlayerComp]
+                      , siteConfRefs: Seq[LayoutConf])
   extends SiteConfTrait
     with PlayerTrait {
 
 }
 
 object PlayerConf {
+
+  def apply(comp: PlayerComp):PlayerConf =
+    PlayerConf(SiteConf(comp), Nil)
 
   def apply(siteId: String
             , comp: PlayerComp
@@ -45,7 +54,7 @@ object PlayerConf {
 
 case class LayoutConf(siteConf: SiteConf[LayoutComp]
                       , screenRegionOpt: Option[ScreenRegion] = None
-                      , siteConfRefs: Seq[RegionConf])
+                      , siteConfRefs: Seq[RegionConf] = Nil)
   extends SiteConfTrait
     with LayoutTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
@@ -55,17 +64,21 @@ case class LayoutConf(siteConf: SiteConf[LayoutComp]
 
 object LayoutConf {
 
-  def apply(siteId: String
+  def apply(siteIdent: String
+            , comp: LayoutComp):LayoutConf =
+    LayoutConf(SiteConf(siteIdent, comp))
+
+  def apply(siteIdent: String
             , comp: LayoutComp
             , regionConfs: Seq[RegionConf]): LayoutConf =
-    LayoutConf(SiteConf(siteId, comp), siteConfRefs = regionConfs)
+    LayoutConf(SiteConf(siteIdent, comp), siteConfRefs = regionConfs)
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , comp: LayoutComp
             , title: String
             , screenRegion: ScreenRegion
             , regionConfs: Seq[RegionConf]): LayoutConf =
-    LayoutConf(SiteConf(siteId
+    LayoutConf(SiteConf(siteIdent
       , comp
       , Some(title))
       , Some(screenRegion)
@@ -75,7 +88,7 @@ object LayoutConf {
 
 case class RegionConf(siteConf: SiteConf[LayoutComp]
                       , screenRegionOpt: Option[ScreenRegion] = None
-                      , siteConfRefs: Seq[PlaylistConf])
+                      , siteConfRefs: Seq[PlaylistConf] = Nil)
   extends SiteConfTrait
     with RegionTrait {
   lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteConf.comp.screenRegion)
@@ -83,17 +96,21 @@ case class RegionConf(siteConf: SiteConf[LayoutComp]
 
 object RegionConf {
 
-  def apply(siteId: String
+  def apply(siteIdent: String
+            , comp: LayoutComp):RegionConf =
+    RegionConf(SiteConf(siteIdent, comp))
+
+  def apply(siteIdent: String
             , comp: LayoutComp
             , playlistConfs: Seq[PlaylistConf]): RegionConf =
-    RegionConf(SiteConf(siteId, comp), siteConfRefs = playlistConfs)
+    RegionConf(SiteConf(siteIdent, comp), siteConfRefs = playlistConfs)
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , comp: LayoutComp
             , title: String
             , screenRegion: ScreenRegion
             , playlistConfs: Seq[PlaylistConf]): RegionConf =
-    RegionConf(SiteConf(siteId
+    RegionConf(SiteConf(siteIdent
       , comp
       , Some(title))
       , Some(screenRegion)
@@ -107,6 +124,10 @@ case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
     with PlaylistTrait
 
 object PlaylistConf {
+  def apply(siteIdent: String
+            , comp: PlaylistComp):PlaylistConf =
+    PlaylistConf(SiteConf(siteIdent, comp))
+
 }
 
 case class MediumConf(siteConf: SiteConf[MediumComp])
@@ -117,4 +138,7 @@ case class MediumConf(siteConf: SiteConf[MediumComp])
 }
 
 object MediumConf {
+  def apply(siteIdent: String
+            , comp: MediumComp): MediumConf =
+    MediumConf(SiteConf(siteIdent, comp))
 }

@@ -11,7 +11,9 @@ trait SiteCompTrait
   def siteComp: SiteComp[_ <: SiteTemplTrait]
 
   lazy val siteIdent: String = siteComp.siteId
+
   def templ: SiteTemplTrait = siteComp.templ
+
   lazy val levelType: LevelType = COMP
   lazy val title: String = siteComp.titleOpt.getOrElse(templ.title)
   lazy val descr: String = siteComp.descrOpt.getOrElse(templ.descr)
@@ -25,6 +27,10 @@ case class SiteComp[T <: SiteTemplTrait](siteId: String
                                          , titleOpt: Option[String] = None
                                          , descrOpt: Option[String] = None)
 
+object SiteComp {
+  def apply[T <: SiteTemplTrait](templ: T): SiteComp[T] = SiteComp(templ.siteIdent, templ)
+
+}
 
 case class PlayerComp(siteComp: SiteComp[PlayerTempl]
                       , status: PlayerStatus = PlayerStatus.NOT_CONNECTED
@@ -34,6 +40,11 @@ case class PlayerComp(siteComp: SiteComp[PlayerTempl]
 }
 
 object PlayerComp {
+
+
+  def apply(siteId: String
+            , templ: PlayerTempl): PlayerComp =
+      PlayerComp(SiteComp(siteId, templ))
 
   def apply(siteId: String
             , templ: PlayerTempl
@@ -74,6 +85,9 @@ case class LayoutComp(siteComp: SiteComp[LayoutTempl]
 
 object LayoutComp {
 
+  def apply(templ: LayoutTempl): LayoutComp =
+    LayoutComp(SiteComp(templ))
+
   def apply(siteId: String
             , templ: LayoutTempl): LayoutComp =
     LayoutComp(SiteComp(siteId, templ))
@@ -94,6 +108,10 @@ case class PlaylistComp(siteComp: SiteComp[PlaylistTempl])
     with PlaylistTrait
 
 object PlaylistComp {
+
+  def apply(siteIdent: String, templ: PlaylistTempl): PlaylistComp =
+    PlaylistComp(SiteComp(siteIdent, templ))
+
 }
 
 case class MediumComp(siteComp: SiteComp[MediumTempl])
@@ -101,4 +119,6 @@ case class MediumComp(siteComp: SiteComp[MediumTempl])
     with MediumTrait
 
 object MediumComp {
+  def apply(siteIdent: String, templ: MediumTempl): MediumComp =
+    MediumComp(SiteComp(siteIdent, templ))
 }

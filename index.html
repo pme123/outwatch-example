@@ -11,10 +11,37 @@
   <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
 </head>
 <body>
+  <h2>Example 3</h2>
+
+  <ul>
+    <li>Items of the foo1 group can be moved to the qux1 group</li>
+    <li>Items of the bar1 group can be mooved to the qux1 group. When the number of items becomes 2 the items will be cloned instead of be moved</li>
+    <li>Items of the qux1 group can be mooved to the bar1 group. The maximum number of items in this group is 4.</li>
+    <li>To create an options object for the bar1 group the SortableProps trait was used instead of js.Dictionary</li>
+  </ul>
+  <h3>Source group</h3>
+  <ul id="foo1" class="list-group">
+    <li class="list-group-item">foo 1</li>
+    <li class="list-group-item">foo 2</li>
+    <li class="list-group-item">foo 3</li>
+  </ul>
+  <h3>Source/ Target group</h3>
+  <ul id="bar1" class="list-group">
+    <li class="list-group-item">bar 1</li>
+    <li class="list-group-item">bar 2</li>
+    <li class="list-group-item">bar 3</li>
+  </ul>
+  <h3>Source/ Target group</h3>
+  <ul id="qux1" class="list-group">
+    <li class="list-group-item">qux 1</li>
+    <li class="list-group-item">bar 3</li>
+  </ul>
+
 <div id="app" class="container-fluid"></div>
 <script type="text/javascript" src="./target/scala-2.12/outwatchexample-fastopt.js"></script>
 <script type="text/javascript" src="./target/scala-2.12/outwatchexample-jsdeps.js"></script>
 <script type="text/javascript">
+
   nextds.client.NextDSApp().main();
 </script>
 </body>

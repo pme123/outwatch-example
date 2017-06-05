@@ -52,14 +52,12 @@ object EntityDetailView {
   }
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
-    val setStream = store.map(_.selectedSET)
+   val setStream = store.map(_.selectedSET)
     div(className := bss.grid.col3.htmlClass
-      , hidden <-- setStream.map(_.isEmpty)
-      , children <-- setStream
-        .map(uiSet => Seq(
-          uiSet
-            .map(entityProps)
-            .getOrElse("")))
+     , hidden <-- setStream.map(_.isEmpty)
+     , child <-- setStream
+        .map(_.map(entityProps)
+          .getOrElse(""))
     )
   }
 }
@@ -135,6 +133,7 @@ object EntityCard {
             , click(Edit(entityTrait)) --> store
             , "edit")
           , li(className := stylesMenuItem
+            , click(CreateFrom(entityTrait)) --> store
             , "create")
           , li(role := "separator"
             , className := "divider")

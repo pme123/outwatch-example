@@ -10,6 +10,7 @@ trait UISiteEntity
   extends UIElements {
   def siteEntity: SiteEntityTrait
 
+  def levelType: LevelType = siteEntity.levelType
   def siteType: SiteType = siteEntity.siteType
 
   def parameterEdit(): Seq[VNode] = {
