@@ -10,13 +10,12 @@ import outwatch.dom._
 import rxscalajs.Observable
 
 import scala.scalajs.js
-import scala.scalajs.js.{Dictionary, JSApp, UndefOr}
 import scalacss.Defaults._
 
 /**
   * Created by pascal.mengelt on 17.05.2017.
   */
-object NextDSApp extends JSApp {
+object NextDSApp extends js.JSApp {
 
   def main(): Unit = {
     val nextDS = NextDS()
@@ -25,7 +24,7 @@ object NextDSApp extends JSApp {
     GlobalStyles.addToDocument()
     EntityDetailView.Style.addToDocument()
     UIElements.Style.addToDocument()
-
+    nextDS.addSorting()
   }
 }
 
@@ -142,7 +141,7 @@ case class NextDS() {
 
   def addSorting(): Sortable = {
     def prop = new SortableProps {
-      override val group = Dictionary(
+      override val group = js.Dictionary(
         "name" -> "TEMPL-PLAYER",
         "pull" -> pull2
 
@@ -152,7 +151,7 @@ case class NextDS() {
     }
 
     def prop2 = new SortableProps {
-      override val group = Dictionary(
+      override val group = js.Dictionary(
         "name" -> "COMP-PLAYER"
         //  , "put" -> Array("TEMPL-PLAYER")
         , "put" -> put2
@@ -160,17 +159,17 @@ case class NextDS() {
       )
       override val animation = 500
       override val handle = ".glyphicon-move"
-      override val onAdd: UndefOr[js.Function1[EventS, Unit]] = fs
+      override val onAdd: js.UndefOr[js.Function1[EventS, Unit]] = fs
     }
 
     Sortable(dom.document.getElementById("TEMPL-PLAYER"), prop)
     Sortable(dom.document.getElementById("COMP-PLAYER"), prop2)
 
 
-    new Sortable(dom.document.getElementById("foo1"), Dictionary("group" -> "foo1", "animation" -> 100))
+    new Sortable(dom.document.getElementById("foo1"), js.Dictionary("group" -> "foo1", "animation" -> 100))
 
     val bar1Prop = new SortableProps {
-      override val group = Dictionary(
+      override val group = js.Dictionary(
 
         "name" -> "bar1",
         "put" -> Array("qux1"),
@@ -183,8 +182,8 @@ case class NextDS() {
 
     new Sortable(dom.document.getElementById("bar1"), bar1Prop)
 
-    new Sortable(dom.document.getElementById("qux1"), Dictionary(
-      "group" -> Dictionary(
+    new Sortable(dom.document.getElementById("qux1"), js.Dictionary(
+      "group" -> js.Dictionary(
         "name" -> "qux1",
         "put" -> put2),
       "animation" -> 100

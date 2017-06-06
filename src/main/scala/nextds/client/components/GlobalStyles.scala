@@ -144,6 +144,7 @@ object GlobalStyles extends StyleSheet.Inline {
   val siteEntityIdent: StyleA = style(
     fontWeight.bold
     , float.left
+    , cursor.pointer
   )
 
   val siteEntityTitle: StyleA = style(

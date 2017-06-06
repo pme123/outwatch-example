@@ -52,10 +52,10 @@ object EntityDetailView {
   }
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
-   val setStream = store.map(_.selectedSET)
+    val setStream = store.map(_.selectedSET)
     div(className := bss.grid.col3.htmlClass
-     , hidden <-- setStream.map(_.isEmpty)
-     , child <-- setStream
+      , hidden <-- setStream.map(_.isEmpty)
+      , child <-- setStream
         .map(_.map(entityProps)
           .getOrElse(""))
     )
@@ -94,7 +94,6 @@ object EntityCard {
       , bss.grid.row)
 
     li(className := styles
-      , click(Edit(entity)) --> store
       , entityIcon(entity)
       , entityIdent(entity)
       , entityMenu(entity)
@@ -105,8 +104,10 @@ object EntityCard {
   def entityIcon(entity: SiteEntityTrait): VNode =
     div(className := stylesIcon, css.siteTypeIcon(entity.siteType))
 
-  def entityIdent(entity: SiteEntityTrait): VNode =
-    div(className := stylesIdent, entity.ident)
+  def entityIdent(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode =
+    div(className := stylesIdent
+      , click(Edit(entity)) --> store
+      , entity.ident)
 
   def entityMenu(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode = {
     def entityDropdown(entityTrait: SiteEntityTrait): VNode = {

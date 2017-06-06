@@ -32,6 +32,11 @@ object UIElements {
       , textAlign.right
     ).htmlClass
 
+    val entityInputCol: String = style(
+      width(100.%%)
+      , cursor.pointer
+      , textDecoration := "underline"
+    ).htmlClass
   }
 
 }
@@ -40,12 +45,15 @@ trait UIElements {
 
   import UIElements.Style
 
-  protected def siteEntityRef(siteEntity: SiteEntityTrait): VNode = {
-    inputText(siteEntity.label
-      , ""
-      , Some(siteEntity.ident)
-      , Some(siteEntity.title)
-      , disabledFlag = true)
+  protected def siteEntityRef(siteEntity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode = {
+    editValue(siteEntity.label, div(className := Style.entityInputCol
+      , tpe := "text"
+      , siteEntity.ident
+      , Attribute("data-toggle", "tooltip")
+      , Attribute("title", siteEntity.title)
+      , disabled := true
+      , click(Edit(siteEntity)) --> store
+    ))
   }
 
   protected def inputText(label: String

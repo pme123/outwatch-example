@@ -13,7 +13,7 @@ trait UISiteEntity
   def levelType: LevelType = siteEntity.levelType
   def siteType: SiteType = siteEntity.siteType
 
-  def parameterEdit(): Seq[VNode] = {
+  def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     Seq(
       inputText("Title", siteEntity.title, siteEntity.maybeTitle)
       , inputTextarea("Description", siteEntity.descr, siteEntity.maybeDescr)
@@ -29,7 +29,7 @@ trait UIPlayer extends UISiteEntity {
 trait UILayout extends UISiteEntity {
   def siteEntity: LayoutTrait
 
-  override def parameterEdit(): Seq[VNode] = {
+  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
    super.parameterEdit() ++
      Seq(
        inputNumber("From Left"
