@@ -17,6 +17,9 @@ trait UISiteConf
       siteEntityRef(siteComp)) ++ siteEntityRefs
       .map(siteEntityRef)
   }
+
+  override val hideMenuItem = true
+
 }
 
 object UISiteConf {

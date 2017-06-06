@@ -96,7 +96,7 @@ object EntityCard {
     li(className := styles
       , entityIcon(entity)
       , entityIdent(entity)
-      , entityMenu(entity)
+      , entityMenu(uiEntity)
       , div(className := stylesTitle, entity.title)
     )
   }
@@ -109,18 +109,12 @@ object EntityCard {
       , click(Edit(entity)) --> store
       , entity.ident)
 
-  def entityMenu(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode = {
-    def entityDropdown(entityTrait: SiteEntityTrait): VNode = {
+  def entityMenu(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
+    def entityDropdown(uiEntity: UISiteEntity): VNode = {
       val dd = bss.dropdown
       val stylesButton = css.styleClassNames(
         css.siteEntityMenuIcon
         , dd.button)
-      val stylesMenu = css.styleClassNames(
-        css.siteEntityMenu
-        , dd.menu)
-      val stylesMenuItem = css.styleClassNames(
-        css.siteEntityMenuItem)
-
 
       div(className := dd.inputGroup.htmlClass
         , button(tpe := "button"
@@ -129,21 +123,11 @@ object EntityCard {
           , dd.haspopup(true)
           , dd.expanded(false)
           , dd.icon)
-        , ul(className := stylesMenu
-          , li(className := stylesMenuItem
-            , click(Edit(entityTrait)) --> store
-            , "edit")
-          , li(className := stylesMenuItem
-            , click(CreateFrom(entityTrait)) --> store
-            , "create")
-          , li(role := "separator"
-            , className := "divider")
-          , li(className := stylesMenuItem
-            , "delete")
-        ))
+        , uiEntity.createMenu()
+      )
     }
 
-    div(className := stylesMenu, entityDropdown(entity))
+    div(className := stylesMenu, entityDropdown(uiEntity))
   }
 
 

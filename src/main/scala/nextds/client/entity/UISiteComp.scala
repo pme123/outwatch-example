@@ -18,6 +18,9 @@ trait UISiteComp
     super.parameterEdit() ++
       customNodes :+ siteEntityRef(siteEntity.siteComp.templ)
   }
+
+  override val menuItemCreate = s"create ${siteType.label} ${CONF.label}"
+
 }
 
 object UISiteComp {
@@ -46,20 +49,22 @@ case class UILayoutComp(siteEntity: LayoutComp)
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     customParamEdit(
-        inputNumber("From Left"
-          , siteEntity.screenRegion.fromLeft.toString
-          , siteEntity.maybeScreenRegion.map(_.fromLeft))
-        ,inputNumber("From Top"
-          , siteEntity.screenRegion.fromTop.toString
-          , siteEntity.maybeScreenRegion.map(_.fromLeft))
-        ,inputNumber("Width"
-          , siteEntity.screenRegion.width.toString
-          , siteEntity.maybeScreenRegion.map(_.width))
-        ,inputNumber("From Left"
-          , siteEntity.screenRegion.height.toString
-          , siteEntity.maybeScreenRegion.map(_.height))
-      )
+      inputNumber("From Left"
+        , siteEntity.screenRegion.fromLeft.toString
+        , siteEntity.maybeScreenRegion.map(_.fromLeft))
+      , inputNumber("From Top"
+        , siteEntity.screenRegion.fromTop.toString
+        , siteEntity.maybeScreenRegion.map(_.fromLeft))
+      , inputNumber("Width"
+        , siteEntity.screenRegion.width.toString
+        , siteEntity.maybeScreenRegion.map(_.width))
+      , inputNumber("From Left"
+        , siteEntity.screenRegion.height.toString
+        , siteEntity.maybeScreenRegion.map(_.height))
+    )
   }
+
+  override val hideMenuItem2 = false
 
 }
 

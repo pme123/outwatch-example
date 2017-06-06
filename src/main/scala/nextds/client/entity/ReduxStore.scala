@@ -47,8 +47,8 @@ object ReduxStore {
       case Edit(siteEntityTrait) =>
         previousState.copy(selectedSET = Some(uiEntity(siteEntityTrait)))
 
-      case CreateFrom(siteEntityTrait) =>
-        val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent())
+      case CreateFrom(siteEntityTrait, isRegion) =>
+        val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent(), isRegion)
         println(s"newSET: ${newSET.ident}")
         val newSets = previousState.siteModel.entities(newSET.levelType, newSET.siteType) :+ uiEntity(newSET)
         previousState.copy(selectedSET = Some(uiEntity(newSET)))
@@ -67,7 +67,7 @@ case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Se
 
 case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
-case class CreateFrom(siteEntityTrait: SiteEntityTrait) extends Action
+case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
 
 case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[UISiteEntity] = None) {
 

@@ -1,7 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
-import outwatch.dom.{VNode, tbody}
+import outwatch.dom.{VNode, s, tbody}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -10,6 +10,7 @@ trait UISiteTempl
   extends UISiteEntity {
   def siteEntity: SiteTemplTrait
 
+  override val menuItemCreate = s"create ${siteType.label} ${COMP.label}"
 
 }
 
