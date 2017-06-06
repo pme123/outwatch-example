@@ -6,11 +6,11 @@ import nextds.client.entity._
 import nextds.entity._
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLDivElement
-import outwatch.dom.{id, _}
+import outwatch.dom._
 import rxscalajs.Observable
 
 import scala.scalajs.js
-import scala.scalajs.js.{JSApp, UndefOr}
+import scala.scalajs.js.{Dictionary, JSApp, UndefOr}
 import scalacss.Defaults._
 
 /**
@@ -25,8 +25,6 @@ object NextDSApp extends JSApp {
     GlobalStyles.addToDocument()
     EntityDetailView.Style.addToDocument()
     UIElements.Style.addToDocument()
-
-    nextDS.addSorting()
 
   }
 }
@@ -43,11 +41,10 @@ case class NextDS() {
   val listViews: Observable[Seq[VNode]] = store
     .map(
       _.siteModel.allLevels
-        .map(m => levelComponent(m))
+        .map(m => levelComponent(m.levelType))
     )
 
-  def levelComponent(siteLevel: UISiteLevel): VNode = {
-    val levelType = siteLevel.levelType
+  def levelComponent(levelType: LevelType): VNode = {
 
     val stylesDiv1 = css.styleClassNames(
       css.levelTypeStyle(levelType)
@@ -60,25 +57,28 @@ case class NextDS() {
       , bss.panel.row
     )
 
-    val uiSiteLevel =
-      siteLevel.allSiteTypes
-        .filterNot(siteType => levelType != CONF && siteType == REGION)
-        .map(siteType =>
-          entityListComponent(levelType, siteType, siteLevel.entities(siteType)))
+    val siteLevel = {
+      store.map(
+        _.siteModel.level(levelType)
+          .allSiteTypes
+          .filterNot(siteType => levelType != CONF && siteType == REGION)
+          .map(siteType =>
+            entityListComponent(levelType, siteType))
+      )
+    }
 
     div(className := stylesDiv1
       , div(className := stylesDiv2
         , id := s"$levelType"
-        , div(
-          uiSiteLevel: _*
-        )
+        , children <-- siteLevel
       ))
   }
 
+  def entityListComponent(levelType: LevelType, siteType: SiteType): VNode = {
 
-  def entityListComponent(levelType: LevelType
-                          , siteType: SiteType
-                          , uiSiteEntities: Seq[UISiteEntity]): VNode = {
+    val entities =
+      store.map(_.siteModel.entities(levelType, siteType)
+        .map(EntityCard.apply))
 
     val stylesDiv = css.styleClassNames(
       css.siteEntityDiv
@@ -91,12 +91,10 @@ case class NextDS() {
       css.siteEntityUL
       , bss.listGroup.listGroup)
 
-    val entityCards: Seq[VNode] = uiSiteEntities.map(EntityCard.apply)
     div(className := stylesDiv
-      , div(id := s"$levelType-$siteType"
+      , ul(id := s"$levelType-$siteType"
         , className := stylesUL
-        , ul(entityCards: _*)
-      )
+        , children <-- entities)
     )
 
   }
@@ -109,7 +107,7 @@ case class NextDS() {
     println(s"${from.id} > ${to.id}:: ${item.id} - ${event.oldIndex}<>${event.newIndex}")
   }
 
-  val pull: js.Function2[Sortable, Sortable, js.Any] = { (to: Sortable, from: Sortable) => {
+  val pull: Function2[Sortable, Sortable, Any] = { (to: Sortable, from: Sortable) => {
     println("PULL")
 
     from.el.children.length match {
@@ -119,11 +117,11 @@ case class NextDS() {
   }
   }
 
-  val put: js.Function1[Sortable, js.Any] = { (to: Sortable) =>
+  val put: Function1[Sortable, Any] = { (to: Sortable) =>
     println("PUT")
     to.el.children.length < 2
   }
-  val pull2: js.Function2[Sortable, Sortable, js.Any] = { (to: Sortable, from: Sortable) => {
+  val pull2: Function2[Sortable, Sortable, Any] = { (to: Sortable, from: Sortable) => {
     println("Pullll")
 
     from.el.children.length match {
@@ -137,14 +135,14 @@ case class NextDS() {
   }
   }
 
-  val put2: js.Function1[Sortable, js.Any] = { (to: Sortable) =>
+  val put2: Function1[Sortable, Any] = { (to: Sortable) =>
     println("PUTT")
     to.el.children.length < 4
   }
 
   def addSorting(): Sortable = {
     def prop = new SortableProps {
-      override val group = js.Dictionary(
+      override val group = Dictionary(
         "name" -> "TEMPL-PLAYER",
         "pull" -> pull2
 
@@ -154,9 +152,9 @@ case class NextDS() {
     }
 
     def prop2 = new SortableProps {
-      override val group = js.Dictionary(
+      override val group = Dictionary(
         "name" -> "COMP-PLAYER"
-        //  , "put" -> js.Array("TEMPL-PLAYER")
+        //  , "put" -> Array("TEMPL-PLAYER")
         , "put" -> put2
 
       )
@@ -169,13 +167,13 @@ case class NextDS() {
     Sortable(dom.document.getElementById("COMP-PLAYER"), prop2)
 
 
-    new Sortable(dom.document.getElementById("foo1"), js.Dictionary("group" -> "foo1", "animation" -> 100))
+    new Sortable(dom.document.getElementById("foo1"), Dictionary("group" -> "foo1", "animation" -> 100))
 
     val bar1Prop = new SortableProps {
-      override val group = js.Dictionary(
+      override val group = Dictionary(
 
         "name" -> "bar1",
-        "put" -> js.Array("qux1"),
+        "put" -> Array("qux1"),
         "pull" -> pull2
 
 
@@ -185,8 +183,8 @@ case class NextDS() {
 
     new Sortable(dom.document.getElementById("bar1"), bar1Prop)
 
-    new Sortable(dom.document.getElementById("qux1"), js.Dictionary(
-      "group" -> js.Dictionary(
+    new Sortable(dom.document.getElementById("qux1"), Dictionary(
+      "group" -> Dictionary(
         "name" -> "qux1",
         "put" -> put2),
       "animation" -> 100

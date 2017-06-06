@@ -4,7 +4,6 @@ import nextds.entity._
 import nextds.server.boundary.SiteEntityBoundary
 import outwatch.Sink
 import outwatch.dom.createHandler
-import outwatch.util.Store
 import rxscalajs.Observable
 
 import scala.language.implicitConversions
@@ -20,7 +19,11 @@ case class ReduxStore[State, Action](initialState: State, reducer: (State, Actio
     sink
       .scan(initialState)(reducer)
       .startWith(initialState)
-      .share
+      .publishReplay(1)
+      .refCount
+
+  def subscribe(f: State => Unit) = source.subscribe(f)
+
 }
 
 object ReduxStore {
