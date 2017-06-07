@@ -6,6 +6,17 @@ import nextds.server.boundary.SiteEntityBoundary
 /**
   * Created by pascal.mengelt on 17.03.2017.
   */
+trait UISiteLevelTrait {
+  def levelType: LevelType
+
+  def entities(siteType: SiteType): Seq[UISiteEntity]
+
+  def replaceEntries(updateEntities: UpdateEntities): UISiteLevelTrait
+
+  def allSiteTypes: Seq[SiteType]
+
+}
+
 case class UISiteLevel(
                         levelType: LevelType
                         , players: Seq[UIPlayer] = Nil
@@ -13,7 +24,8 @@ case class UISiteLevel(
                         , regions: Seq[UIRegion] = Nil
                         , playlists: Seq[UIPlaylist] = Nil
                         , mediums: Seq[UIMedium] = Nil
-                      ) {
+                      )
+  extends UISiteLevelTrait {
 
 
   def replaceEntries(updateEntities: UpdateEntities): UISiteLevel =
@@ -59,5 +71,42 @@ object UISiteLevel {
       , SiteEntityBoundary.entitiesFor(levelType, MEDIUM)
         .map(uiEntity)
         .map(_.asInstanceOf[UIMedium])
+    )
+}
+
+case class UIFilterLevel(
+                          uiTagFilters: Seq[UITagFilter] = Nil
+                          , uiTimeFilters: Seq[UITimeFilter] = Nil
+                        )
+  extends UISiteLevelTrait {
+  val levelType: LevelType = FILTER
+
+  def replaceEntries(updateEntities: UpdateEntities): UIFilterLevel =
+    updateEntities.siteType match {
+      case TAG_FILTER => copy(uiTagFilters = updateEntities.entities.map(_.asInstanceOf[UITagFilter]))
+      case TIME_FILTER => copy(uiTimeFilters = updateEntities.entities.map(_.asInstanceOf[UITimeFilter]))
+      case _ => this
+    }
+
+  def entities(siteType: SiteType): Seq[UISiteEntity] =
+    siteType match {
+      case TAG_FILTER => uiTagFilters
+      case TIME_FILTER => uiTimeFilters
+      case _ => Nil
+    }
+
+  def allSiteTypes: Seq[SiteType] = Seq(TAG_FILTER, TIME_FILTER)
+
+}
+
+object UIFilterLevel {
+  def apply(): UIFilterLevel =
+    new UIFilterLevel(
+      SiteEntityBoundary.entitiesFor(FILTER, TAG_FILTER)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UITagFilter])
+      , SiteEntityBoundary.entitiesFor(FILTER, TIME_FILTER)
+        .map(uiEntity)
+        .map(_.asInstanceOf[UITimeFilter])
     )
 }

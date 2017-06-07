@@ -3,6 +3,7 @@ package nextds.client.components
 import nextds.client.entity._
 import nextds.entity.{LevelType, SiteEntityTrait, SiteType}
 import outwatch.dom._
+import rxscalajs.Observable
 
 import scalacss.Defaults._
 import scalacss.internal.mutable.StyleSheet
@@ -93,7 +94,11 @@ object EntityCard {
       , bss.listGroup.item
       , bss.grid.row)
 
+    val s = store.map(_.selectedSET.exists(_.siteEntity.ident == entity.ident)
+    )
+
     li(className := styles
+      , selected <-- s
       , entityIcon(entity)
       , entityIdent(entity)
       , entityMenu(uiEntity)

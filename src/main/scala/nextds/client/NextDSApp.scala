@@ -98,73 +98,19 @@ case class NextDS() {
 
   }
 
-  val fs: js.Function1[EventS, Unit] = (event) => {
-    val from = event.from.asInstanceOf[HTMLDivElement]
-    val item = event.item.asInstanceOf[HTMLDivElement]
-    val to = event.to.asInstanceOf[HTMLDivElement]
-    println(event.`type`)
-    println(s"${from.id} > ${to.id}:: ${item.id} - ${event.oldIndex}<>${event.newIndex}")
-  }
-
-  val pull: Function2[Sortable, Sortable, Any] = { (to: Sortable, from: Sortable) => {
-    println("PULL")
-
-    from.el.children.length match {
-      case x if x > 2 => true
-      case _ => "clone"
-    }
-  }
-  }
-
-  val put: Function1[Sortable, Any] = { (to: Sortable) =>
-    println("PUT")
-    to.el.children.length < 2
-  }
-  val pull2: Function2[Sortable, Sortable, Any] = { (to: Sortable, from: Sortable) => {
-    println("Pullll")
-
-    from.el.children.length match {
-      case x if x > 2 =>
-        println("Pullll")
-        true
-      case _ =>
-        println("Pullll")
-        "clone"
-    }
-  }
-  }
-
-  val put2: Function1[Sortable, Any] = { (to: Sortable) =>
-    println("PUTT")
-    to.el.children.length < 4
-  }
-
   def addSorting(): Sortable = {
-    def prop = new SortableProps {
-      override val group = js.Dictionary(
-        "name" -> "TEMPL-PLAYER",
-        "pull" -> pull2
+    //example3
+    //only with 1.5.0
+    val pull: js.Function2[Sortable, Sortable, js.Any] = { (to: Sortable, from: Sortable) => {
 
-      )
-      override val animation = 500
-      override val handle = ".glyphicon-move"
+      from.el.children.length match {
+        case x if x > 2 => true
+        case _ => "clone"
+      }
+    }
     }
 
-    def prop2 = new SortableProps {
-      override val group = js.Dictionary(
-        "name" -> "COMP-PLAYER"
-        //  , "put" -> Array("TEMPL-PLAYER")
-        , "put" -> put2
-
-      )
-      override val animation = 500
-      override val handle = ".glyphicon-move"
-      override val onAdd: js.UndefOr[js.Function1[EventS, Unit]] = fs
-    }
-
-    Sortable(dom.document.getElementById("TEMPL-PLAYER"), prop)
-    Sortable(dom.document.getElementById("COMP-PLAYER"), prop2)
-
+    val put: js.Function1[Sortable, js.Any] = { (to: Sortable) => to.el.children.length < 4 }
 
     new Sortable(dom.document.getElementById("foo1"), js.Dictionary("group" -> "foo1", "animation" -> 100))
 
@@ -172,8 +118,8 @@ case class NextDS() {
       override val group = js.Dictionary(
 
         "name" -> "bar1",
-        "put" -> Array("qux1"),
-        "pull" -> pull2
+        "put" -> js.Array("qux1"),
+        "pull" -> pull
 
 
       )
@@ -185,7 +131,7 @@ case class NextDS() {
     new Sortable(dom.document.getElementById("qux1"), js.Dictionary(
       "group" -> js.Dictionary(
         "name" -> "qux1",
-        "put" -> put2),
+        "put" -> put),
       "animation" -> 100
 
     )

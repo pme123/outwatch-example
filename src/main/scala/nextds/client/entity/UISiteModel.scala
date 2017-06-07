@@ -5,32 +5,37 @@ import nextds.entity._
 /**
   * Created by pascal.mengelt on 20.03.2017.
   */
+
+
 case class UISiteModel(
-                        templ: UISiteLevel = UISiteLevel(TEMPL)
-                        , comp: UISiteLevel = UISiteLevel(COMP)
-                        , conf: UISiteLevel = UISiteLevel(CONF)
+                        templ: UISiteLevelTrait = UISiteLevel(TEMPL)
+                        , comp: UISiteLevelTrait = UISiteLevel(COMP)
+                        , conf: UISiteLevelTrait = UISiteLevel(CONF)
+                        , filter: UISiteLevelTrait = UIFilterLevel()
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
     replaceLevel(level(entities.levelType).replaceEntries(entities))
 
-  def replaceLevel(siteLevel: UISiteLevel): UISiteModel =
+  def replaceLevel(siteLevel: UISiteLevelTrait): UISiteModel =
     siteLevel.levelType match {
       case TEMPL => copy(templ = siteLevel)
       case COMP => copy(comp = siteLevel)
       case CONF => copy(conf = siteLevel)
+      case FILTER => copy(filter = siteLevel)
       case _ => this
     }
 
-  def level(levelType: LevelType): UISiteLevel =
+  def level(levelType: LevelType): UISiteLevelTrait =
     levelType match {
       case TEMPL => templ
       case COMP => comp
       case CONF => conf
+      case FILTER => filter
       case _ => templ
     }
 
-  def allLevels: Seq[UISiteLevel] = Seq(templ, comp, conf)
+  def allLevels: Seq[UISiteLevelTrait] = Seq(templ, comp, conf, filter)
 
   def entities(levelType: LevelType, siteType: SiteType): Seq[UISiteEntity] =
     level(levelType).entities(siteType)
@@ -38,5 +43,5 @@ case class UISiteModel(
 
 object UISiteModel{
   def apply(): UISiteModel =
-    UISiteModel(UISiteLevel(TEMPL), UISiteLevel(COMP), UISiteLevel(CONF))
+    UISiteModel(UISiteLevel(TEMPL), UISiteLevel(COMP), UISiteLevel(CONF), UIFilterLevel())
 }

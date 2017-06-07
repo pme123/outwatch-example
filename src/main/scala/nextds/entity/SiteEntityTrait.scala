@@ -1,7 +1,5 @@
 package nextds.entity
 
-import outwatch.dom.{VNode, tbody}
-
 import scala.collection.mutable
 import scala.language.postfixOps
 
