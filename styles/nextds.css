@@ -1,6 +1,169 @@
-:root {
+body {
+    padding-top: 70px;
+    height: 100vh;
 }
 
 ul {
     list-style: none;
 }
+
+.player-style {
+    background-color: rgba(139, 0, 0, .1);
+    border-color: rgba(139, 0, 0, .2);
+}
+
+.layout-style {
+    background-color: rgba(0, 0, 139, .1);
+    border-color: rgba(0, 0, 139, .2);
+}
+
+.region-style {
+    background-color: rgba(0, 0, 39, .1);
+    border-color: rgba(0, 0, 39, .2);
+}
+
+.playlist-style {
+    background-color: rgba(0, 100, 0, .1);
+    border-color: rgba(0, 100, 0, .2);
+}
+
+.medium-style {
+    background-color: rgba(47, 79, 79, .1);
+    border-color: rgba(47, 79, 79, .2);
+}
+
+.time-filter-style {
+    background-color: rgba(216, 216, 33, .1);
+    border-color: rgba(216, 216, 33, .2);
+}
+
+.tag-filter-style {
+    background-color: rgba(216, 216, 216, .1);
+    border-color: rgba(216, 216, 216, .2);
+}
+
+.templ-style {
+    background-color: rgba(173, 216, 230, .1);
+    border-color: rgba(173, 216, 230, .4);
+}
+
+.comp-style {
+    background-color: rgba(144, 238, 144, .1);
+    border-color: rgba(144, 238, 144, .4);
+}
+
+.conf-style {
+    background-color: rgba(255, 182, 193, .1);
+    border-color: rgba(255, 182, 193, .4);
+}
+
+.filter-style {
+    background-color: rgba(216, 216, 216, .1);
+    border-color: rgba(216, 216, 216, .4);
+}
+
+.logo {
+    margin-right: 20px;
+    padding: 2px;
+    width: 50px;
+}
+
+.project-name {
+    margin-right: 120px;
+}
+
+.level-div {
+    width: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.main-cell {
+    height: 100%;
+    display: table-cell;
+    padding: 0;
+}
+
+.panel-inner-div {
+    width: 100%;
+    padding: 5px;
+    margin: 0;
+}
+
+.site-entity-ul {
+    margin: 0 ;
+    float: left ;
+    width: 98% ;
+}
+
+.site-entity-li {
+    padding: 0;
+}
+
+.site-entity-li:hover {
+    background-color: #eee;
+}
+
+.site-entity-elem {
+    padding: 4px;
+}
+
+.site-entity-icon {
+    float: left;
+}
+
+.site-entity-ident {
+    fontWeight: bold;
+    float: left;
+    cursor: pointer;
+}
+
+.site-entity-title {
+    fontStyle: italic;
+    opacity: .6;
+    float: left;
+    textOverflow: ellipsis;
+    whiteSpace: nowrap;
+    overflow: hidden;
+    font-size: small;
+}
+
+.site-entity-menu-icon {
+    background: transparent;
+    padding: 0;
+}
+
+.site-entity-menu-item {
+    padding: 0 6px;
+    cursor: pointer;
+}
+
+.chosen-entity {
+    background-color: rgba(255, 255, 0, .3);
+}
+
+/* UIElement */
+.label-col {
+width(40 . % %)
+}
+
+.value-col {
+    width: 100%;
+}
+
+.value-input-col {
+    width: 100%;
+}
+
+.number-input-col {
+    width: 100%;
+    text-align: right;
+}
+
+.entity-input-col {
+    width: 100%;
+    cursor: pointer;
+    text-decoration: underline;
+}
+

@@ -14,7 +14,6 @@ jsEnv := PhantomJSEnv().value
 
 libraryDependencies ++= Seq(
   "io.github.outwatch" %%% "outwatch" % "0.9.2"
-  , "com.github.japgolly.scalacss" %%% "core" % "0.5.1"
   , "net.scalapro" %%% "sortable-js-facade" % "0.2.1"
   , "org.scalatest" %%% "scalatest" % "3.0.1" % Test
 )

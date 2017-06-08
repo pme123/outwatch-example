@@ -8,9 +8,6 @@ import scala.scalajs.js
  */
 object Bootstrap {
 
-  // shorthand for styles
-  @inline private def bss = GlobalStyles.bootstrapStyles
-
   @js.native
   trait BootstrapJQuery extends JQuery {
     def modal(action: String): BootstrapJQuery = js.native

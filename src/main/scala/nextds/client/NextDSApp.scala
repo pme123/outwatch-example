@@ -1,16 +1,14 @@
 package nextds.client
 
-import net.scalapro.sortable.{EventS, Sortable, SortableProps}
-import nextds.client.components.{EntityCard, EntityDetailView, GlobalStyles}
+import net.scalapro.sortable.{Sortable, SortableProps}
+import nextds.client.components.{BootstrapStyles, EntityCard, EntityDetailView, GlobalStyles}
 import nextds.client.entity._
 import nextds.entity._
 import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
 import outwatch.dom._
 import rxscalajs.Observable
 
 import scala.scalajs.js
-import scalacss.Defaults._
 
 /**
   * Created by pascal.mengelt on 17.05.2017.
@@ -20,17 +18,13 @@ object NextDSApp extends js.JSApp {
   def main(): Unit = {
     val nextDS = NextDS()
     OutWatch.render("#app", nextDS.root)
-    // create stylesheet
-    GlobalStyles.addToDocument()
-    EntityDetailView.Style.addToDocument()
-    UIElements.Style.addToDocument()
-    nextDS.addSorting()
+   nextDS.addSorting()
   }
 }
 
 case class NextDS() {
 
-  @inline private def bss = GlobalStyles.bootstrapStyles
+  @inline private def bss = BootstrapStyles
 
   @inline private def css = GlobalStyles
 
@@ -45,16 +39,16 @@ case class NextDS() {
 
   def levelComponent(levelType: LevelType): VNode = {
 
-    val stylesDiv1 = css.styleClassNames(
+    val stylesDiv1 = Seq(
       css.levelTypeStyle(levelType)
-      , bss.panel.default
-    )
-    val stylesDiv2 = css.styleClassNames(
+      , bss.panel.standard
+    ) mkString " "
+    val stylesDiv2 = Seq(
       css.levelDiv
       , css.levelTypeStyle(levelType)
       , css.panelInnerDiv
       , bss.panel.row
-    )
+    ) mkString " "
 
     val siteLevel = {
       store.map(
@@ -79,16 +73,16 @@ case class NextDS() {
       store.map(_.siteModel.entities(levelType, siteType)
         .map(EntityCard.apply))
 
-    val stylesDiv = css.styleClassNames(
-      css.siteEntityDiv
-      , (levelType, siteType) match {
+    val stylesDiv = 
+      (levelType, siteType) match {
         case (CONF, REGION | PLAYLIST | MEDIUM) => bss.grid.col2
         case (_, _) => bss.grid.col3
       }
-    )
-    val stylesUL = css.styleClassNames(
+
+    val stylesUL = Seq(
       css.siteEntityUL
-      , bss.listGroup.listGroup)
+      , bss.listGroup.listGroup
+    ) mkString " "
 
     div(className := stylesDiv
       , ul(id := s"$levelType-$siteType"
@@ -141,9 +135,9 @@ case class NextDS() {
 
   val root: VNode =
     div(
-      div(className := bss.grid.row.htmlClass
-        , div(className := bss.grid.col9.htmlClass
-          , div(className := bss.grid.row.htmlClass
+      div(className := bss.grid.row
+        , div(className := bss.grid.col9
+          , div(className := bss.grid.row
             // , div(className := "col-sm-10"
             , children <-- listViews
           ))

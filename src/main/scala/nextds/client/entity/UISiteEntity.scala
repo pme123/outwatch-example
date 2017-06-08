@@ -1,6 +1,6 @@
 package nextds.client.entity
 
-import nextds.client.components.GlobalStyles
+import nextds.client.components.{BootstrapStyles, GlobalStyles}
 import nextds.entity._
 import outwatch.dom._
 
@@ -10,7 +10,7 @@ import outwatch.dom._
 trait UISiteEntity
   extends UIElements {
 
-  @inline private def bss = GlobalStyles.bootstrapStyles
+  @inline private def bss = BootstrapStyles
 
   @inline private def css = GlobalStyles
 
@@ -20,11 +20,10 @@ trait UISiteEntity
 
   def siteType: SiteType = siteEntity.siteType
 
-  val stylesMenu: String = css.styleClassNames(
-    css.siteEntityMenu
-    , bss.dropdown.menu)
-  val stylesMenuItem: String = css.styleClassNames(
-    css.siteEntityMenuItem)
+  val stylesMenu: String =  bss.dropdown.menu
+
+  val stylesMenuItem: String =
+    css.siteEntityMenuItem
 
   def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     Seq(

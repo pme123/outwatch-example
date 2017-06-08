@@ -3,32 +3,26 @@ package nextds.client.components
 import nextds.client.entity._
 import nextds.entity.{LevelType, SiteEntityTrait, SiteType}
 import outwatch.dom._
-import rxscalajs.Observable
-
-import scalacss.Defaults._
-import scalacss.internal.mutable.StyleSheet
 
 /**
   * Created by pascal.mengelt on 24.05.2017.
   */
 object EntityDetailView {
-  @inline private def bss = GlobalStyles.bootstrapStyles
+  @inline private def bss = BootstrapStyles
 
   @inline private def gStyles = GlobalStyles
 
-  object Style extends StyleSheet.Inline {
+  object Style {
 
     def detailView(levelType: LevelType): String =
-      gStyles.styleClassNames(
+      Seq(
         gStyles.levelTypeStyle(levelType)
-        , bss.panel.default
-      )
+        , bss.panel.standard
+      ) mkString " "
 
     def detailHeader(siteType: SiteType): String =
-      gStyles.siteTypeStyle(siteType).htmlClass
+      gStyles.siteTypeStyle(siteType)
 
-    val headerRow: String = style(
-    ).htmlClass
 
   }
 
@@ -38,10 +32,9 @@ object EntityDetailView {
     div(className := Style.detailView(entity.levelType)
       , table(className := "table"
         , thead(className := Style.detailHeader(entity.siteType)
-          , tr(className := Style.headerRow
-            , th(className := UIElements.Style.labelCol
-              , EntityCard.entityIcon(entity)
-            )
+          , tr(th(className := UIElements.Style.labelCol
+            , EntityCard.entityIcon(entity)
+          )
             , th(className := UIElements.Style.valueCol
               , EntityCard.entityIdent(entity))
           ))
@@ -54,7 +47,7 @@ object EntityDetailView {
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
     val setStream = store.map(_.selectedSET)
-    div(className := bss.grid.col3.htmlClass
+    div(className := bss.grid.col3
       , hidden <-- setStream.map(_.isEmpty)
       , child <-- setStream
         .map(_.map(entityProps)
@@ -64,41 +57,52 @@ object EntityDetailView {
 }
 
 object EntityCard {
-  @inline private def bss = GlobalStyles.bootstrapStyles
+  @inline private def bss = BootstrapStyles
 
   @inline private def css = GlobalStyles
 
-  private val stylesIcon = css.styleClassNames(
+  private val stylesIcon = Seq(
     css.siteEntityIcon
     , css.siteEntityElem
-    , bss.grid.col1)
-  private val stylesIdent = css.styleClassNames(
+    , bss.grid.col1
+  ) mkString " "
+
+  private val stylesIdent = Seq(
     css.siteEntityIdent
     , css.siteEntityElem
-    , bss.grid.col10)
-  private val stylesMenu = css.styleClassNames(
+    , bss.grid.col10
+  ) mkString " "
+
+  private val stylesMenu = Seq(
     css.siteEntityMenuIcon
     , css.siteEntityElem
-    , bss.grid.col1)
-  private val stylesTitle = css.styleClassNames(
+    , bss.grid.col1
+  ) mkString " "
+
+  private val stylesTitle = Seq(
     css.siteEntityTitle
     , css.siteEntityElem
-    , bss.grid.col12)
+    , bss.grid.col12
+  ) mkString " "
 
   def apply(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
 
-    val styles = css.styleClassNames(
-      css.siteTypeStyle(entity.siteType)
+    val styles = Seq(
+      bss.listGroup.item
+      , bss.grid.row
+      , css.siteTypeStyle(entity.siteType)
       , css.siteEntityLI
-      , bss.listGroup.item
-      , bss.grid.row)
+    ) mkString " "
 
-    val s = store.map(_.selectedSET.exists(_.siteEntity.ident == entity.ident)
-    )
+
+    val selObs = store
+      .map(_.selectedSET
+        .exists(_.siteEntity.ident == entity.ident)
+      )
 
     li(className := styles
-      , selected <-- s
+      , selected <-- selObs
       , entityIcon(entity)
       , entityIdent(entity)
       , entityMenu(uiEntity)
@@ -117,11 +121,12 @@ object EntityCard {
   def entityMenu(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     def entityDropdown(uiEntity: UISiteEntity): VNode = {
       val dd = bss.dropdown
-      val stylesButton = css.styleClassNames(
+      val stylesButton = Seq(
         css.siteEntityMenuIcon
-        , dd.button)
+        , dd.button
+      ) mkString " "
 
-      div(className := dd.inputGroup.htmlClass
+      div(className := dd.inputGroup
         , button(tpe := "button"
           , className := stylesButton
           , dd.dataToggle

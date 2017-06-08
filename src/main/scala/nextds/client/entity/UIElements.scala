@@ -3,40 +3,19 @@ package nextds.client.entity
 import nextds.entity.SiteEntityTrait
 import outwatch.dom._
 
-import scalacss.Defaults._
-import scalacss.internal.mutable.StyleSheet
-
 /**
   * Created by pascal.mengelt on 29.05.2017.
   */
 object UIElements {
 
-  object Style extends StyleSheet.Inline {
+  object Style {
 
-    import dsl._
+    val labelCol: String = "label-col"
+    val valueCol: String = "value-col"
+    val valueInputCol: String = "value-input-col"
+    val numberInputCol: String = "number-input-col"
+    val entityInputCol: String = "entity-input-col"
 
-    val labelCol: String = style(
-      width(40.%%)
-    ).htmlClass
-
-    val valueCol: String = style(
-      width(60.%%)
-    ).htmlClass
-
-    val valueInputCol: String = style(
-      width(100.%%)
-    ).htmlClass
-
-    val numberInputCol: String = style(
-      width(100.%%)
-      , textAlign.right
-    ).htmlClass
-
-    val entityInputCol: String = style(
-      width(100.%%)
-      , cursor.pointer
-      , textDecoration := "underline"
-    ).htmlClass
   }
 
 }
