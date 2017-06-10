@@ -1,14 +1,18 @@
 package nextds.client
 
-import net.scalapro.sortable.{Sortable, SortableProps}
-import nextds.client.components.{BootstrapStyles, EntityCard, EntityDetailView, GlobalStyles}
+import net.scalapro.sortable.{EventS, Sortable, SortableProps}
+import nextds.client.components._
 import nextds.client.entity._
 import nextds.entity._
 import org.scalajs.dom
+import org.scalajs.dom.raw.HTMLDivElement
+import outwatch.Sink
 import outwatch.dom._
+import outwatch.dom.helpers.EventEmitterBuilder
 import rxscalajs.Observable
 
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr
 
 /**
   * Created by pascal.mengelt on 17.05.2017.
@@ -18,7 +22,7 @@ object NextDSApp extends js.JSApp {
   def main(): Unit = {
     val nextDS = NextDS()
     OutWatch.render("#app", nextDS.root)
-   nextDS.addSorting()
+    nextDS.addSorting()
   }
 }
 
@@ -73,7 +77,7 @@ case class NextDS() {
       store.map(_.siteModel.entities(levelType, siteType)
         .map(EntityCard.apply))
 
-    val stylesDiv = 
+    val stylesDiv =
       (levelType, siteType) match {
         case (CONF, REGION | PLAYLIST | MEDIUM) => bss.grid.col2
         case (_, _) => bss.grid.col3
@@ -92,44 +96,41 @@ case class NextDS() {
 
   }
 
+  lazy val dragEmitter = new EventEmitterBuilder("dragEnd")
+  def runOnEnd(from: String, to: String): js.Function1[EventS, Unit] = (event) => {
+    if (!js.isUndefined(event) && !js.isUndefined(event.oldIndex)) {
+      store <-- Observable.create(obs => obs.next(CreateFromDrag(from, to, event.oldIndex.asInstanceOf[Int])))
+    }
+  }
+
+
   def addSorting(): Sortable = {
-    //example3
-    //only with 1.5.0
-    val pull: js.Function2[Sortable, Sortable, js.Any] = { (to: Sortable, from: Sortable) => {
 
-      from.el.children.length match {
-        case x if x > 2 => true
-        case _ => "clone"
-      }
-    }
-    }
-
-    val put: js.Function1[Sortable, js.Any] = { (to: Sortable) => to.el.children.length < 4 }
-
-    new Sortable(dom.document.getElementById("foo1"), js.Dictionary("group" -> "foo1", "animation" -> 100))
-
-    val bar1Prop = new SortableProps {
+    def prop = new SortableProps {
       override val group = js.Dictionary(
-
-        "name" -> "bar1",
-        "put" -> js.Array("qux1"),
-        "pull" -> pull
-
+        "name" -> "TEMPL-PLAYER"
+        , "pull" -> "clone" //pull("TEMPL-PLAYER", "COMP-PLAYER")
 
       )
-      override val animation = 100
+      override val sort = false
+      override val animation = 200
+      override val handle = s".${Icon.dragHandle}"
+      //override val onClone: UndefOr[js.Function1[EventS, Unit]] = fs("TEMPL-PLAYER", "COMP-PLAYER")
+      override val onEnd: UndefOr[js.Function1[EventS, Unit]] = runOnEnd("TEMPL-PLAYER", "COMP-PLAYER")
+      // override val onStart: UndefOr[js.Function1[EventS, Unit]] = fs("TEMPL-PLAYER", "COMP-PLAYER")
     }
 
-    new Sortable(dom.document.getElementById("bar1"), bar1Prop)
+    def prop2 = new SortableProps {
+      override val group = js.Dictionary(
+        "name" -> "COMP-PLAYER"
+        , "put" -> js.Array("TEMPL-PLAYER")
+      )
+      override val sort = false
+      override val animation = 200
+    }
 
-    new Sortable(dom.document.getElementById("qux1"), js.Dictionary(
-      "group" -> js.Dictionary(
-        "name" -> "qux1",
-        "put" -> put),
-      "animation" -> 100
-
-    )
-    )
+    Sortable(dom.document.getElementById("TEMPL-PLAYER"), prop)
+    Sortable(dom.document.getElementById("COMP-PLAYER"), prop2)
 
   }
 

@@ -54,6 +54,9 @@ object ReduxStore {
         previousState.copy(selectedSET = Some(uiEntity(newSET)))
           .updateEntities(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
 
+      case CreateFromDrag(groupFrom, groupTo, indexFrom) =>
+        println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
+        previousState
     }
   }
 
@@ -68,6 +71,8 @@ case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Se
 case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
 case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
+
+case class CreateFromDrag(groupFrom: String, groupTo: String, indexFrom: Int) extends Action
 
 case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[UISiteEntity] = None) {
 

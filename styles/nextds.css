@@ -38,8 +38,8 @@ ul {
 }
 
 .tag-filter-style {
-    background-color: rgba(216, 216, 216, .1);
-    border-color: rgba(216, 216, 216, .2);
+    background-color: rgba(33, 216, 216, .1);
+    border-color: rgba(33, 216, 216, .2);
 }
 
 .templ-style {
@@ -101,8 +101,8 @@ ul {
     padding: 0;
 }
 
-.site-entity-li:hover {
-    background-color: #eee;
+.site-entity-li[selected] {
+    background-color: white;
 }
 
 .site-entity-elem {

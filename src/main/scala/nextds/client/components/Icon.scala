@@ -5,8 +5,9 @@ import outwatch.dom._
  * Provides type-safe access to Font Awesome icons
  */
 object Icon {
+  val dragHandle = "glyphicon-move"
   type Icon = VNode
-  def apply(name: String): Icon = i(className := s"fa fa-$name")
+  def apply(name: String): Icon = i(className := s"fa fa-$name $dragHandle")
 
   def adjust = apply("adjust")
   def adn = apply("adn")

@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
 jsDependencies ++= Seq(
   "org.webjars" % "jquery" % "1.11.1" / "jquery.js" minified "jquery.min.js"
   , "org.webjars" % "bootstrap" % "3.3.6" / "bootstrap.js" minified "bootstrap.min.js" dependsOn "jquery.js"
-  , "org.webjars.bower" % "github-com-RubaXa-Sortable" % "1.4.2" / "1.4.2/Sortable.js" minified "Sortable.min.js"
+  // needs sortable 1.6.0 - not available with webjars
+  ,  ProvidedJS / "scripts/Sortable.min.js"
+  //, "org.webjars.bower" % "github-com-RubaXa-Sortable" % "1.4.2"  % Provided / "1.4.2/Sortable.js" minified "Sortable.min.js"
 
 )
