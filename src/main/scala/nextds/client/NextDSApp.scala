@@ -95,63 +95,8 @@ case class NextDS() {
 
   }
 
-  lazy val dragEmitter = new EventEmitterBuilder("dragEnd")
-
-  def runOnEnd(from: String, to: String): js.Function1[EventS, Unit] = (event) => {
-    val froms = event.from.asInstanceOf[HTMLDivElement]
-    val items = event.item.asInstanceOf[HTMLDivElement]
-    val tos = event.to.asInstanceOf[HTMLDivElement]
-    println(tos.innerHTML)
-    println(s"${froms.id} > ${tos.id}:: ${items.id} - ${event.oldIndex}<>${event.newIndex}")
-
-    println(event.`type`)
-    if (!js.isUndefined(event) && !js.isUndefined(event.oldIndex)) {
-      store <-- Observable.create(obs => obs.next(CreateFromDrag(from, to, event.oldIndex.asInstanceOf[Int])))
-    }
-  }
-
-
   def addSorting() {
-
-    def addSource(levelType1: LevelType, levelType2: LevelType, siteType: SiteType): Sortable = {
-
-      def prop1 = new SortableProps {
-        override val group = js.Dictionary(
-          "name" -> s"$levelType1-$siteType"
-            , "pull" -> "clone" //false //pull("TEMPL-PLAYER", "COMP-PLAYER")
-
-        )
-        override val sort = false
-        override val animation = 200
-        override val handle = s".${Icon.dragHandle}"
-        override val onEnd: UndefOr[js.Function1[EventS, Unit]] = runOnEnd(s"$levelType1-$siteType", s"$levelType2-$siteType")
-      }
-
-
-      Sortable(dom.document.getElementById(s"$levelType1-$siteType"), prop1)
-      //  Sortable(dom.document.getElementById(s"$levelType2-$siteType"), prop2)
-    }
-
-    def addTarget(levelType: LevelType, siteType: SiteType): Sortable = {
-
-      def prop2 = new SortableProps {
-        override val group = js.Dictionary(
-          "name" -> s"$levelType-$siteType"
-          //  , "put" -> false //js.Array("TEMPL-PLAYER")
-        )
-        override val sort = false
-        override val animation = 200
-      }
-
-      Sortable(dom.document.getElementById(s"$levelType-$siteType"), prop2)
-    }
-
-    Seq(PLAYER, LAYOUT, PLAYLIST, MEDIUM)
-      .map { siteType =>
-        addSource(TEMPL, COMP, siteType)
-        addSource(COMP, CONF, siteType)
-        addTarget(CONF, siteType)
-      }
+    DragDrop()
   }
 
   val root: VNode =

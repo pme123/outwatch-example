@@ -20,7 +20,7 @@ object SiteEntityBoundary {
         case LAYOUT => LayoutComp(siteIdent, siteEntityTrait.asInstanceOf[LayoutTempl])
         case PLAYLIST => PlaylistComp(siteIdent, siteEntityTrait.asInstanceOf[PlaylistTempl])
         case MEDIUM => MediumComp(siteIdent, siteEntityTrait.asInstanceOf[MediumTempl])
-        case _ => throw new IllegalArgumentException("Not supported!")
+        case other => throw new IllegalArgumentException(s"Not supported: $other!")
 
       }
     case COMP =>
@@ -30,9 +30,9 @@ object SiteEntityBoundary {
         case LAYOUT => LayoutConf(siteIdent, siteEntityTrait.asInstanceOf[LayoutComp])
         case PLAYLIST => PlaylistConf(siteIdent, siteEntityTrait.asInstanceOf[PlaylistComp])
         case MEDIUM => MediumConf(siteIdent, siteEntityTrait.asInstanceOf[MediumComp])
-        case _ => throw new IllegalArgumentException("Not supported!")
+        case other => throw new IllegalArgumentException(s"Not supported: $other!")
 
       }
-    case _ => throw new IllegalArgumentException("Not supported!")
+    case other => throw new IllegalArgumentException(s"Not supported: $other!")
   }
 }

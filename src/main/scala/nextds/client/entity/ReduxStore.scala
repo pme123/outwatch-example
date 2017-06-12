@@ -51,9 +51,15 @@ object ReduxStore {
       case CreateFrom(siteEntityTrait, isRegion) =>
         createFrom(previousState, siteEntityTrait, isRegion)
 
-      case CreateFromDrag(groupFrom, groupTo, indexFrom) =>
+      case CreateFromDrag(groupFrom, groupTo, indexFrom, None) =>
         val uiSiteEntity = previousState.siteModel.entity(groupFrom, indexFrom)
         println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
+        createFrom(previousState
+          , uiSiteEntity.siteEntity
+          , SiteType.createFromGroup(groupTo).isRegion)
+      case CreateFromDrag(groupFrom, groupTo, indexFrom, Some(indexTo)) =>
+        val uiSiteEntity = previousState.siteModel.entity(groupFrom, indexFrom)
+        println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom :: $indexTo")
         println(s"draggedEntity: ${uiSiteEntity.siteEntity.ident}")
         val state = createFrom(previousState
           , uiSiteEntity.siteEntity
@@ -61,10 +67,10 @@ object ReduxStore {
         val newSET = state.selectedSET.get
         println(s"newSET: $newSET")
         val newSETs = state.siteModel.entities(newSET.levelType, newSET.siteType)
-         // .filter(_.levelType == newSET.levelType)
+        // .filter(_.levelType == newSET.levelType)
         println("__" + newSETs.map(l => l.levelType + "-"+ l.siteType + "\n"))
         state.updateEntities(
-            UpdateEntities(newSET.levelType, newSET.siteType
+          UpdateEntities(newSET.levelType, newSET.siteType
             , newSETs))
     }
   }
@@ -88,7 +94,7 @@ case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
 case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
 
-case class CreateFromDrag(groupFrom: String, groupTo: String, indexFrom: Int) extends Action
+case class CreateFromDrag(groupFrom: String, groupTo: String, indexFrom: Int, indexTo: Option[Int] = None) extends Action
 
 case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[UISiteEntity] = None) {
 

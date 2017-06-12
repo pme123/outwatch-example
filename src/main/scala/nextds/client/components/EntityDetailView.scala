@@ -101,7 +101,8 @@ object EntityCard {
         .exists(_.siteEntity.ident == entity.ident)
       )
 
-    li(className := styles
+    li(id := entity.ident
+      , className := styles
       , selected <-- selObs
       , entityIcon(entity)
       , entityIdent(entity)
