@@ -7,11 +7,14 @@ import nextds.server.boundary.SiteEntityBoundary
   * Created by pascal.mengelt on 17.03.2017.
   */
 trait UISiteLevelTrait {
+
   def levelType: LevelType
 
   def entities(siteType: SiteType): Seq[UISiteEntity]
 
   def replaceEntries(updateEntities: UpdateEntities): UISiteLevelTrait
+
+  def entity(siteType: SiteType, indexFrom: Int): UISiteEntity
 
   def allSiteTypes: Seq[SiteType]
 
@@ -45,7 +48,17 @@ case class UISiteLevel(
       case REGION => regions
       case PLAYLIST => playlists
       case MEDIUM => mediums
-      case _ => Nil
+      case other => throw new IllegalArgumentException(s"Unsupported Type: $other")
+    }
+
+  def entity(siteType: SiteType, indexFrom: Int): UISiteEntity =
+    siteType match {
+      case PLAYER => players(indexFrom)
+      case LAYOUT => layouts(indexFrom)
+      case REGION => regions(indexFrom)
+      case PLAYLIST => playlists(indexFrom)
+      case MEDIUM => mediums(indexFrom)
+      case other => throw new IllegalArgumentException(s"Unsupported Type: $other")
     }
 
   def allSiteTypes: Seq[SiteType] = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM)
@@ -92,7 +105,14 @@ case class UIFilterLevel(
     siteType match {
       case TAG_FILTER => uiTagFilters
       case TIME_FILTER => uiTimeFilters
-      case _ => Nil
+      case other => throw new IllegalArgumentException(s"Unsupported Type: $other")
+    }
+
+  def entity(siteType: SiteType, indexFrom: Int): UISiteEntity =
+    siteType match {
+      case TAG_FILTER => uiTagFilters(indexFrom)
+      case TIME_FILTER => uiTimeFilters(indexFrom)
+      case other => throw new IllegalArgumentException(s"Unsupported Type: $other")
     }
 
   def allSiteTypes: Seq[SiteType] = Seq(TAG_FILTER, TIME_FILTER)

@@ -1,6 +1,6 @@
 package nextds.client.entity
 
-import nextds.entity._
+import nextds.entity.{LevelType, _}
 
 /**
   * Created by pascal.mengelt on 20.03.2017.
@@ -39,6 +39,11 @@ case class UISiteModel(
 
   def entities(levelType: LevelType, siteType: SiteType): Seq[UISiteEntity] =
     level(levelType).entities(siteType)
+
+  def entity(groupFrom: String, indexFrom: Int): UISiteEntity =
+    level(LevelType.createFromGroup(groupFrom))
+      .entity(SiteType.createFromGroup(groupFrom), indexFrom)
+
 }
 
 object UISiteModel{

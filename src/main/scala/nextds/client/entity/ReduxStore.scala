@@ -5,6 +5,7 @@ import nextds.server.boundary.SiteEntityBoundary
 import outwatch.Sink
 import outwatch.dom.createHandler
 import rxscalajs.Observable
+import rxscalajs.subscription.Subscription
 
 import scala.language.implicitConversions
 
@@ -22,7 +23,7 @@ case class ReduxStore[State, Action](initialState: State, reducer: (State, Actio
       .publishReplay(1)
       .refCount
 
-  def subscribe(f: State => Unit) = source.subscribe(f)
+  def subscribe(f: State => Unit): Subscription = source.subscribe(f)
 
 }
 
@@ -48,18 +49,33 @@ object ReduxStore {
         previousState.copy(selectedSET = Some(uiEntity(siteEntityTrait)))
 
       case CreateFrom(siteEntityTrait, isRegion) =>
-        val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent(), isRegion)
-        println(s"newSET: ${newSET.ident}")
-        val newSets = previousState.siteModel.entities(newSET.levelType, newSET.siteType) :+ uiEntity(newSET)
-        previousState.copy(selectedSET = Some(uiEntity(newSET)))
-          .updateEntities(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
+        createFrom(previousState, siteEntityTrait, isRegion)
 
       case CreateFromDrag(groupFrom, groupTo, indexFrom) =>
+        val uiSiteEntity = previousState.siteModel.entity(groupFrom, indexFrom)
         println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
-        previousState
+        println(s"draggedEntity: ${uiSiteEntity.siteEntity.ident}")
+        val state = createFrom(previousState
+          , uiSiteEntity.siteEntity
+          , SiteType.createFromGroup(groupTo).isRegion)
+        val newSET = state.selectedSET.get
+        println(s"newSET: $newSET")
+        val newSETs = state.siteModel.entities(newSET.levelType, newSET.siteType)
+         // .filter(_.levelType == newSET.levelType)
+        println("__" + newSETs.map(l => l.levelType + "-"+ l.siteType + "\n"))
+        state.updateEntities(
+            UpdateEntities(newSET.levelType, newSET.siteType
+            , newSETs))
     }
   }
 
+  private def createFrom(previousState: State, siteEntityTrait: SiteEntityTrait, isRegion: Boolean) = {
+    val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent(), isRegion)
+    println(s"newSET: ${newSET.ident}")
+    val newSets = previousState.siteModel.entities(newSET.levelType, newSET.siteType) :+ uiEntity(newSET)
+    previousState.copy(selectedSET = Some(uiEntity(newSET)))
+      .updateEntities(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
+  }
 }
 
 sealed trait Action
