@@ -177,6 +177,10 @@ width(40 . % %)
     text-decoration: underline;
 }
 
+.detail-view {
+    margin: 5px;
+}
+
 /* drop example */
 
 .drop-zone {

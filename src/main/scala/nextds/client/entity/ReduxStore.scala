@@ -1,6 +1,5 @@
 package nextds.client.entity
 
-import nextds.client.components.Bootstrap.CommonStyle.Value
 import nextds.entity._
 import nextds.server.boundary.SiteEntityBoundary
 import org.scalajs.dom.DragEvent
@@ -40,23 +39,20 @@ object ReduxStore {
 
   def reducer(previousState: State, action: Action): State = {
     println(s"reducer: $action")
-    State(siteModelReducer(previousState.siteModel, action)
-      , selectedSETReducer(previousState.selectedSET, action)
-      , draggedSETReducer(previousState.draggedSET, action))
+    stateReducer(previousState, action)
   }
 
-  private def siteModelReducer(previousState: UISiteModel, action: Action): UISiteModel = action match {
-    case RefreshEntities(levelType, siteType) =>
-      // send the request to the server
-      val entities = SiteEntityBoundary.entitiesFor(levelType, siteType)
-        .map(uiEntity)
-      previousState.replaceLevel(UpdateEntities(levelType, siteType, entities))
-    case ue: UpdateEntities =>
-      previousState.replaceLevel(ue)
+  private def stateReducer(previousState: State, action: Action): State = action match {
 
     case CreateFrom(siteEntityTrait, isRegion) =>
-      createFrom(previousState, siteEntityTrait, isRegion)
+      val selected = createFrom(previousState.selectedSET, siteEntityTrait, isRegion)
+      State(
+        createFrom(previousState.siteModel, selected.get, isRegion)
+        , selected
+        , draggedSETReducer(previousState.draggedSET, action)
+      )
 
+      /*
     case CreateFromDrag(groupFrom, groupTo, indexFrom, None) =>
       val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
       println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
@@ -80,6 +76,24 @@ object ReduxStore {
           UpdateEntities(newSET.levelType, newSET.siteType
             , newSETs)) */
       state
+       */
+
+    case _ => State(siteModelReducer(previousState.siteModel, action)
+      , selectedSETReducer(previousState.selectedSET, action)
+      , draggedSETReducer(previousState.draggedSET, action))
+  }
+
+  private def siteModelReducer(previousState: UISiteModel, action: Action): UISiteModel = action match {
+    case RefreshEntities(levelType, siteType) =>
+      // send the request to the server
+      val entities = SiteEntityBoundary.entitiesFor(levelType, siteType)
+        .map(uiEntity)
+      previousState.replaceLevel(UpdateEntities(levelType, siteType, entities))
+    case ue: UpdateEntities =>
+      previousState.replaceLevel(ue)
+
+
+
     case _ => previousState
   }
 
@@ -98,12 +112,12 @@ object ReduxStore {
       event.dataTransfer.setData("text", siteEntityTrait.ident)
       event.dataTransfer.effectAllowed = "link"
       println(s"StartDrag: ${siteEntityTrait.ident} - ${event.`type`}")
-      event.preventDefault();
+      event.preventDefault()
       event.stopPropagation()
       Some(uiEntity(siteEntityTrait))
     case DragAction(siteEntityTrait, DragEventType.enter, event) =>
-      event.stopPropagation();
-      event.preventDefault();
+      event.stopPropagation()
+      event.preventDefault()
 
       println(s"EnterDrag: ${siteEntityTrait.ident}  - ${event.`type`}")
       previousState
@@ -130,9 +144,8 @@ object ReduxStore {
   }
 
 
-  private def createFrom(previousState: UISiteModel, siteEntityTrait: SiteEntityTrait, isRegion: Boolean) = {
-    val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent(), isRegion)
-    val newSets = previousState.entities(newSET.levelType, newSET.siteType) :+ uiEntity(newSET)
+  private def createFrom(previousState: UISiteModel, newSET: UISiteEntity, isRegion: Boolean) = {
+    val newSets = previousState.entities(newSET.levelType, newSET.siteType) :+ newSET
     previousState.replaceLevel(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
   }
 
@@ -141,6 +154,7 @@ object ReduxStore {
     println(s"newSET: ${newSET.ident}")
     Some(uiEntity(newSET))
   }
+
 }
 
 sealed trait Action

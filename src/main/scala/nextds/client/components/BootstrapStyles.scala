@@ -71,7 +71,7 @@ def commonStyle(base: String) = (commonStyle: CommonStyle.Value) =>
   }
 
   object dropdown {
-    val inputGroup = "input-group-btn dropup"
+    val inputGroup = "input-group-btn"
     val button = "btn dropdown-toggle"
     val dataToggle = Attribute("data-toggle", "dropdown")
     def haspopup(value: Boolean) = Attribute("aria-haspopup", s"$value")
