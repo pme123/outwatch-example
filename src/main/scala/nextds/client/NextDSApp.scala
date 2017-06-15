@@ -1,17 +1,14 @@
 package nextds.client
 
-import net.scalapro.sortable.{EventS, Sortable, SortableProps}
 import nextds.client.components._
 import nextds.client.entity._
 import nextds.entity._
-import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
+import org.scalajs.dom.MouseEvent
+import org.scalajs.dom.raw.DragEvent
 import outwatch.dom._
-import outwatch.dom.helpers.EventEmitterBuilder
-import rxscalajs.Observable
+import rxscalajs.{Observable, Observer}
 
 import scala.scalajs.js
-import scala.scalajs.js.UndefOr
 
 /**
   * Created by pascal.mengelt on 17.05.2017.
@@ -44,6 +41,7 @@ case class NextDS() {
 
     val stylesDiv1 = Seq(
       css.levelTypeStyle(levelType)
+      , "level-style"
       , bss.panel.standard
     ) mkString " "
     val stylesDiv2 = Seq(
@@ -96,18 +94,40 @@ case class NextDS() {
   }
 
   def addSorting() {
-    DragDrop()
+    //  DragDrop()
+
   }
 
+  val menu =
+    ul(className := "nav nav-tabs"
+      , li(className := "active"
+        , a(Attribute("data-toggle", "tab"), href := "#composer"
+          , "Composer")
+      )
+      , li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
+          , "Sort Example")
+      )
+    )
+
+
   val root: VNode =
-    div(
-      div(className := bss.grid.row
-        , div(className := bss.grid.col9
+    div(menu
+      , div(className := "tab-content"
+        , div(id := "composer"
+          , className := "tab-pane fade in active"
           , div(className := bss.grid.row
-            // , div(className := "col-sm-10"
-            , children <-- listViews
-          ))
-        , EntityDetailView()
+            , div(className := bss.grid.col9
+              , div(className := bss.grid.row
+                // , div(className := "col-sm-10"
+                , children <-- listViews
+              ))
+            , EntityDetailView()
+          )
+        ),
+        div(id := "sortExample"
+          , className := "tab-pane fade"
+          , SortExample()
+        )
       )
     )
 }

@@ -1,6 +1,11 @@
 body {
-    padding-top: 70px;
+    padding-top: 7px;
     height: 100vh;
+}
+
+div {
+    margin: 0;
+    padding: 0;
 }
 
 ul {
@@ -40,6 +45,10 @@ ul {
 .tag-filter-style {
     background-color: rgba(33, 216, 216, .1);
     border-color: rgba(33, 216, 216, .2);
+}
+
+.level-style {
+    margin: 5px;
 }
 
 .templ-style {
@@ -111,6 +120,7 @@ ul {
 
 .site-entity-icon {
     float: left;
+    cursor: move;
 }
 
 .site-entity-ident {
@@ -167,3 +177,19 @@ width(40 . % %)
     text-decoration: underline;
 }
 
+/* drop example */
+
+.drop-zone {
+    min-height: 100px;
+}
+#members li {
+    cursor: move;
+}
+
+.highlighted {
+    background-color: yellow;
+}
+
+.validtarget {
+    background-color: lightblue;
+}

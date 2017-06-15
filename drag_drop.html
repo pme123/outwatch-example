@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drag n Drop example</title>
+  <style>
+    ul {
+      min-height: 100px;
+    }
+    #members li {
+      cursor: move;
+    }
+
+    .highlighted {
+      background-color: yellow;
+    }
+
+    .validtarget {
+      background-color: lightblue;
+    }
+  </style>
+</head>
+<body>
+<a href="http://apress.jensimmons.com/v5/pro-html5-programming/ch9.html">from Book</a>
+<p>Drag members to either the Racers or Volunteers list.</p>
+
+<ul id="members">
+  <li draggable="true" data-age="38">Brian Albers</li>
+  <li draggable="true" data-age="25">Frank Salim</li>
+  <li draggable="true" data-age="47">Jennifer Clark</li>
+  <li draggable="true" data-age="18">John Kemble</li>
+  <li draggable="true" data-age="20">Lorraine Gaunce</li>
+  <li draggable="true" data-age="30">Mark Wang</li>
+  <li draggable="true" data-age="41">Morgan Stephen</li>
+  <li draggable="true" data-age="39">Peter Lubbers</li>
+  <li draggable="true" data-age="33">Vanessa Combs</li>
+  <li draggable="true" data-age="54">Vivian Lopez</li>
+</ul>
+
+<div class="dropList">
+  <fieldset id="racersField">
+    <legend>Racers (by Age):</legend>
+    <ul id="racers"></ul>
+  </fieldset>
+</div>
+<div class="dropList">
+  <fieldset id="volunteersField">
+    <legend>Volunteers (by Name):</legend>
+    <ul id="volunteers"></ul>
+  </fieldset>
+</div>
+<script>
+  // these arrays hold the names of the members who are
+  // chosen to be racers and volunteers, respectively
+  var racers = [];
+  var volunteers = [];
+
+  // these variables store references to the visible
+  // elements for displaying who is a racer or volunteer
+  var racersList;
+  var volunteersList;
+
+  function loadDemo() {
+    racersList = document.getElementById("racers");
+    volunteersList = document.getElementById("volunteers");
+
+    // our target lists get handlers for drag enter, leave, and drop
+    var lists = [racersList, volunteersList];
+    [].forEach.call(lists, function (list) {
+      list.addEventListener("dragenter", handleDragEnter, false);
+      list.addEventListener("dragleave", handleDragLeave, false);
+      list.addEventListener("drop", handleDrop, false);
+    });
+
+    // each target list gets a particular dragover handler
+    racersList.addEventListener("dragover", handleDragOverRacers, false);
+    volunteersList.addEventListener("dragover", handleDragOverVolunteers, false);
+
+    // the fieldsets around our lists serve as buffers for resetting
+    // the style during drag over
+    var fieldsets = document.querySelectorAll("#racersField, #volunteersField");
+    [].forEach.call(fieldsets, function (fieldset) {
+      fieldset.addEventListener("dragover", handleDragOverOuter, false);
+    });
+
+    // each draggable member gets a handler for drag start and end
+    var members = document.querySelectorAll("#members li");
+    [].forEach.call(members, function (member) {
+      // HTML5 drag-and-dropevent handler registration
+      member.addEventListener("dragstart", handleDragStart, false);
+      member.addEventListener("dragend", handleDragEnd, false);
+    });
+
+  }
+  // called at the beginning of any drag
+  function handleDragStart(evt) {
+    console.log(evt.type);
+    // our drag only allows copy operations
+    evt.effectAllowed = "copy";
+
+    // the target of a drag start is one of our members
+    // the data for a member is either their name or age
+    evt.dataTransfer.setData("text/plain", evt.target.textContent);
+    evt.dataTransfer.setData("text/html", evt.target.dataset.age);
+
+    // highlight the potential drop targets
+    racersList.className = "validtarget";
+    volunteersList.className = "validtarget";
+
+    return true;
+  }
+
+  // stop propagation and prevent default drag behavior
+  // to show that our target lists are valid drop targets
+  function handleDragEnter(evt) {
+    console.log(evt.type);
+    evt.stopPropagation();
+    evt.preventDefault();
+    return false;
+  }
+
+  function handleDragLeave(evt) {
+    console.log(evt.type);
+    return false;
+  }
+
+  // for better drop feedback, we use an event for dragging
+  // over the surrounding control as a flag to turn off
+  // drop highlighting
+  function handleDragOverOuter(evt) {
+    console.log(evt.type);
+
+    // due to Mozilla firing drag over events to
+    // parents from nested children, we check the id
+    // before handling
+    if (evt.target.id == "racersField")
+      racersList.className = "validtarget";
+
+    else if (evt.target.id == "volunteersField")
+      volunteersList.className = "validtarget";
+
+    evt.stopPropagation();
+    return false;
+  }
+
+  // if the user drags over our list, show
+  // that it allows copy and highlight for better feedback
+  function handleDragOverRacers(evt) {
+    console.log(evt.type);
+    evt.dataTransfer.dropEffect = "copy";
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    racersList.className = "highlighted";
+    return false;
+  }
+
+  function handleDragOverVolunteers(evt) {
+    console.log(evt.type);
+    evt.dataTransfer.dropEffect = "copy";
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    volunteersList.className = "highlighted";
+    return false;
+  }
+
+  // when the user drops on a target list, transfer the data
+  function handleDrop(evt) {
+    console.log(evt.type);
+    evt.preventDefault();
+    evt.stopPropagation();
+
+    var dropTarget = evt.target;
+
+    // use the text flavor to get the name of the dragged item
+    var text = evt.dataTransfer.getData("text/plain");
+
+    var group = volunteers;
+    var list = volunteersList;
+
+    // if the drop target list was the racer list, grab an extra
+    // flavor of data representing the member age and prepend it
+    if ((dropTarget.id != "volunteers") &&
+      (dropTarget.parentNode.id != "volunteers")) {
+      text = evt.dataTransfer.getData("text/html") + ": " + text;
+      group = racers;
+      list = racersList;
+    }
+
+    // for simplicity, fully clear the old list and reset it
+    if (group.indexOf(text) == -1) {
+      group.push(text);
+      group.sort();
+
+      // remove all old children
+      while (list.hasChildNodes()) {
+        list.removeChild(list.lastChild);
+      }
+
+      // push in all new children
+      [].forEach.call(group, function(person) {
+        var newChild = document.createElement("li");
+        newChild.textContent = person;
+        list.appendChild(newChild);
+      });
+    }
+
+    return false;
+  }
+
+  // make sure to clean up any drag operation
+  function handleDragEnd(evt) {
+    console.log(evt.type);
+
+    // restore the potential drop target styles
+    racersList.className = null;
+    volunteersList.className = null;
+    return false;
+  }
+
+  window.addEventListener("load", loadDemo, false);
+</script>
+
+</body>
+</html>
