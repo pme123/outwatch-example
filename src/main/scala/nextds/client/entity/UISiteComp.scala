@@ -19,7 +19,7 @@ trait UISiteComp
       customNodes :+ siteEntityRef(siteEntity.siteComp.templ)
   }
 
-  override val menuItemCreate = s"create ${siteType.label} ${CONF.label}"
+  override val menuItemCreateFrom = s"create ${siteType.label} ${CONF.label}"
 
 }
 
@@ -64,7 +64,7 @@ case class UILayoutComp(siteEntity: LayoutComp)
     )
   }
 
-  override val hideMenuItem2 = false
+  override val hideMenuCreateRegion = false
 
 }
 

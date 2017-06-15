@@ -10,7 +10,7 @@ trait UISiteFilter
   extends UISiteEntity {
   def siteEntity: SiteFilterTrait
 
-  override val hideMenuItem = true
+  override val hideMenuCreateFrom = true
 
 }
 

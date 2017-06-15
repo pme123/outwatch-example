@@ -167,6 +167,8 @@ case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
 case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
 
+case class LinkTo(fromEntity: SiteEntityTrait) extends Action
+
 case class DragAction(siteEntityTrait: SiteEntityTrait, event: DragEventType.Value, dragEvent: DragEvent) extends Action
 
 object DragEventType extends Enumeration {

@@ -10,7 +10,7 @@ trait UISiteTempl
   extends UISiteEntity {
   def siteEntity: SiteTemplTrait
 
-  override val menuItemCreate = s"create ${siteType.label} ${COMP.label}"
+  override val menuItemCreateFrom = s"create ${siteType.label} ${COMP.label}"
 
 }
 

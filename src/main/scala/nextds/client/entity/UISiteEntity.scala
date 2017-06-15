@@ -3,6 +3,7 @@ package nextds.client.entity
 import nextds.client.components.{BootstrapStyles, GlobalStyles}
 import nextds.entity._
 import outwatch.dom._
+import rxscalajs.Observable
 
 /**
   * Created by pascal.mengelt on 28.05.2017.
@@ -39,26 +40,35 @@ trait UISiteEntity
         , s"edit ${siteEntity.ident}")
       , li(className := stylesMenuItem
         , click(CreateFrom(siteEntity)) --> store
-        , hidden := hideMenuItem
-        , menuItemCreate)
+        , hidden := hideMenuCreateFrom
+        , menuItemCreateFrom)
       // element for special region
       , li(className := stylesMenuItem
         , click(CreateFrom(siteEntity, isRegion = true)) --> store
-        , hidden := hideMenuItem2
-        , menuItemCreate2)
+        , hidden := hideMenuCreateRegion
+        , menuItemCreateRegion)
+      // element for add Config
+      , li(className := stylesMenuItem
+        , click(LinkTo(siteEntity)) --> store
+        , hidden := hideMenuLink
+        , menuItemLink)
       , li(role := "separator"
         , className := "divider")
       , li(className := stylesMenuItem
         , s"delete ${siteEntity.ident}")
     )
 
-  def menuItemCreate = ""
+  def menuItemCreateFrom = ""
 
-  def menuItemCreate2 = s"create ${REGION.label} ${CONF.label}"
+  def menuItemCreateRegion = s"create ${REGION.label} ${CONF.label}"
 
-  def hideMenuItem = false
+  def menuItemLink = ""
 
-  def hideMenuItem2 = true
+  def hideMenuCreateFrom = false
+
+  def hideMenuCreateRegion = true
+
+  def hideMenuLink = false
 
 }
 
