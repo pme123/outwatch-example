@@ -1,7 +1,5 @@
 package nextds.entity
 
-import outwatch.dom.VNode
-
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
@@ -10,7 +8,8 @@ trait SiteCompTrait
 
   def siteComp: SiteComp[_ <: SiteTemplTrait]
 
-  lazy val siteIdent: String = siteComp.siteId
+  lazy val siteIdent: String = siteComp.siteIdent
+  lazy val ident: String = siteComp.ident
 
   def templ: SiteTemplTrait = siteComp.templ
 
@@ -22,13 +21,19 @@ trait SiteCompTrait
 
 }
 
-case class SiteComp[T <: SiteTemplTrait](siteId: String
+case class SiteComp[T <: SiteTemplTrait](siteIdent: String
+                                         , ident: String
                                          , templ: T
                                          , titleOpt: Option[String] = None
                                          , descrOpt: Option[String] = None)
 
 object SiteComp {
-  def apply[T <: SiteTemplTrait](templ: T): SiteComp[T] = SiteComp(templ.siteIdent, templ)
+  def apply[T <: SiteTemplTrait](templ: T): SiteComp[T] = SiteComp(templ.siteIdent, Site.nextIdent(templ.siteIdent), templ)
+  def apply[T <: SiteTemplTrait](siteIdent: String
+                                 ,templ: T
+                                 , title:String): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ, Some(title))
+  def apply[T <: SiteTemplTrait](siteIdent: String
+                                 ,templ: T): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ)
 
 }
 
@@ -42,21 +47,21 @@ case class PlayerComp(siteComp: SiteComp[PlayerTempl]
 object PlayerComp {
 
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , templ: PlayerTempl): PlayerComp =
-      PlayerComp(SiteComp(siteId, templ))
+    PlayerComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ))
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , templ: PlayerTempl
             , title: String): PlayerComp =
-    PlayerComp(SiteComp(siteId, templ, Some(title)))
+    PlayerComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ, Some(title)))
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , templ: PlayerTempl
             , title: String
             , status: PlayerStatus
             , location: PlayerLocation): PlayerComp =
-    PlayerComp(SiteComp(siteId, templ, Some(title))
+    PlayerComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ, Some(title))
       , status, Some(location))
 }
 
@@ -88,15 +93,16 @@ object LayoutComp {
   def apply(templ: LayoutTempl): LayoutComp =
     LayoutComp(SiteComp(templ))
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , templ: LayoutTempl): LayoutComp =
-    LayoutComp(SiteComp(siteId, templ))
+    LayoutComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ))
 
-  def apply(siteId: String
+  def apply(siteIdent: String
             , templ: LayoutTempl
             , title: String
             , screenRegion: ScreenRegion): LayoutComp =
-    LayoutComp(SiteComp(siteId
+    LayoutComp(SiteComp(siteIdent
+      , Site.nextIdent(siteIdent)
       , templ
       , Some(title))
       , Some(screenRegion))
@@ -110,7 +116,7 @@ case class PlaylistComp(siteComp: SiteComp[PlaylistTempl])
 object PlaylistComp {
 
   def apply(siteIdent: String, templ: PlaylistTempl): PlaylistComp =
-    PlaylistComp(SiteComp(siteIdent, templ))
+    PlaylistComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ))
 
 }
 
@@ -120,5 +126,5 @@ case class MediumComp(siteComp: SiteComp[MediumTempl])
 
 object MediumComp {
   def apply(siteIdent: String, templ: MediumTempl): MediumComp =
-    MediumComp(SiteComp(siteIdent, templ))
+    MediumComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ))
 }

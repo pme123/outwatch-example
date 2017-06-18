@@ -8,7 +8,8 @@ trait SiteTemplTrait
   def templContent: SiteTempl
 
   lazy val levelType: LevelType = TEMPL
-  lazy val siteIdent: String = templContent.siteId
+  lazy val siteIdent: String = templContent.siteIdent
+  lazy val ident: String = templContent.ident
   lazy val title: String = templContent.title
   lazy val descr: String = templContent.descr
 
@@ -19,9 +20,10 @@ trait SiteTemplTrait
 object SiteTemplTrait {
 }
 
-case class SiteTempl(siteId: String, title: String, descr: String = "No description available")
+case class SiteTempl(siteIdent: String, ident: String, title: String, descr: String = "No description available")
 
 object SiteTempl {
+  def apply(siteIdent: String, title: String): SiteTempl = SiteTempl(siteIdent, Site.nextIdent(siteIdent), title)
 }
 
 case class PlayerTempl(templContent: SiteTempl)
@@ -31,7 +33,7 @@ case class PlayerTempl(templContent: SiteTempl)
 
 object PlayerTempl {
 
-  def apply(siteId: String, title: String): PlayerTempl = PlayerTempl(SiteTempl(siteId, title))
+  def apply(siteIdent: String, title: String): PlayerTempl = PlayerTempl(SiteTempl(siteIdent, Site.nextIdent(siteIdent), title))
 }
 
 case class LayoutTempl(templContent: SiteTempl
@@ -49,10 +51,10 @@ case class LayoutTempl(templContent: SiteTempl
 
 object LayoutTempl {
 
-  def singleLayout(siteId: String
+  def singleLayout(siteIdent: String
                    , title: String
                    , screenRegion: ScreenRegion): LayoutTempl =
-    LayoutTempl(SiteTempl(siteId, title)
+    LayoutTempl(SiteTempl(siteIdent, Site.nextIdent(siteIdent), title)
       , screenRegion)
 
 }

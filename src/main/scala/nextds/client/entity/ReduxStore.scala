@@ -40,6 +40,11 @@ object ReduxStore {
   def reducer(previousState: State, action: Action): State = {
     println(s"reducer: $action")
     stateReducer(previousState, action)
+      .copy(
+        draggedSET = draggedSETReducer(previousState.draggedSET, action)
+        , linkTo = linkToReducer(previousState.linkTo, action)
+      )
+
   }
 
   private def stateReducer(previousState: State, action: Action): State = action match {
@@ -49,38 +54,56 @@ object ReduxStore {
       State(
         createFrom(previousState.siteModel, selected.get, isRegion)
         , selected
-        , draggedSETReducer(previousState.draggedSET, action)
       )
+    case DoLinking =>
+      previousState.linkTo
+        .flatMap { linkTo =>
+          (for {
+            siteType <- linkTo.fromEntity.linkToType
+            ident <- linkTo.toIdent
+          } yield previousState.siteModel.entity(linkTo.fromEntity.levelType, siteType, ident))
+            .orElse(linkTo.fromEntity.linkToType
+              .flatMap(st => previousState.siteModel.entities(linkTo.fromEntity.levelType, st).headOption)
+            )
+            .map(_.siteEntity.addLink(linkTo.fromEntity.siteEntity))
+            .map(uiEntity)
+        }.map { selected =>
+        State(
+          previousState.siteModel.replaceEntity(selected)
+          , Some(selected)
+        )
+      }.getOrElse(previousState)
+    /*
+  case CreateFromDrag(groupFrom, groupTo, indexFrom, None) =>
+    val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
+    println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
+    createFrom(previousState
+      , uiSiteEntity.siteEntity
+      , SiteType.createFromGroup(groupTo).isRegion)
 
-      /*
-    case CreateFromDrag(groupFrom, groupTo, indexFrom, None) =>
-      val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
-      println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
-      createFrom(previousState
-        , uiSiteEntity.siteEntity
-        , SiteType.createFromGroup(groupTo).isRegion)
+  case CreateFromDrag(groupFrom, groupTo, indexFrom, Some(indexTo)) =>
+    val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
+    println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom :: $indexTo")
+    println(s"draggedEntity: ${uiSiteEntity.siteEntity.ident}")
+    val state = createFrom(previousState
+      , uiSiteEntity.siteEntity
+      , SiteType.createFromGroup(groupTo).isRegion)
+    /*  val newSET = state.get
+      println(s"newSET: $newSET")
+      val newSETs = state.entities(newSET.levelType, newSET.siteType)
+      // .filter(_.levelType == newSET.levelType)
+      println("__" + newSETs.map(l => l.levelType + "-"+ l.siteType + "\n"))
+      state.replaceLevel(
+        UpdateEntities(newSET.levelType, newSET.siteType
+          , newSETs)) */
+    state
+     */
 
-    case CreateFromDrag(groupFrom, groupTo, indexFrom, Some(indexTo)) =>
-      val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
-      println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom :: $indexTo")
-      println(s"draggedEntity: ${uiSiteEntity.siteEntity.ident}")
-      val state = createFrom(previousState
-        , uiSiteEntity.siteEntity
-        , SiteType.createFromGroup(groupTo).isRegion)
-      /*  val newSET = state.get
-        println(s"newSET: $newSET")
-        val newSETs = state.entities(newSET.levelType, newSET.siteType)
-        // .filter(_.levelType == newSET.levelType)
-        println("__" + newSETs.map(l => l.levelType + "-"+ l.siteType + "\n"))
-        state.replaceLevel(
-          UpdateEntities(newSET.levelType, newSET.siteType
-            , newSETs)) */
-      state
-       */
-
-    case _ => State(siteModelReducer(previousState.siteModel, action)
-      , selectedSETReducer(previousState.selectedSET, action)
-      , draggedSETReducer(previousState.draggedSET, action))
+    case _ =>
+      previousState.copy(
+        siteModel = siteModelReducer(previousState.siteModel, action)
+        , selectedSET = selectedSETReducer(previousState.selectedSET, action)
+      )
   }
 
   private def siteModelReducer(previousState: UISiteModel, action: Action): UISiteModel = action match {
@@ -91,8 +114,6 @@ object ReduxStore {
       previousState.replaceLevel(UpdateEntities(levelType, siteType, entities))
     case ue: UpdateEntities =>
       previousState.replaceLevel(ue)
-
-
 
     case _ => previousState
   }
@@ -111,7 +132,11 @@ object ReduxStore {
     case DragAction(siteEntityTrait, DragEventType.start, event) =>
       event.dataTransfer.setData("text", siteEntityTrait.ident)
       event.dataTransfer.effectAllowed = "link"
-      println(s"StartDrag: ${siteEntityTrait.ident} - ${event.`type`}")
+      println(s"StartDrag: ${
+        siteEntityTrait.ident
+      } - ${
+        event.`type`
+      }")
       event.preventDefault()
       event.stopPropagation()
       Some(uiEntity(siteEntityTrait))
@@ -119,28 +144,56 @@ object ReduxStore {
       event.stopPropagation()
       event.preventDefault()
 
-      println(s"EnterDrag: ${siteEntityTrait.ident}  - ${event.`type`}")
+      println(s"EnterDrag: ${
+        siteEntityTrait.ident
+      }  - ${
+        event.`type`
+      }")
       previousState
     case DragAction(siteEntityTrait, DragEventType.over, event) =>
-      println(s"OverDrag: ${siteEntityTrait.ident}  - ${event.`type`}")
+      println(s"OverDrag: ${
+        siteEntityTrait.ident
+      }  - ${
+        event.`type`
+      }")
       event.preventDefault()
       previousState
     case DragAction(siteEntityTrait, DragEventType.drop, event) =>
-      println(s"DataTransfer: ${event.dataTransfer.getData("Text")}")
-      println(s"DropDrag: ${siteEntityTrait.ident}  - ${event.`type`}")
+      println(s"DataTransfer: ${
+        event.dataTransfer.getData("Text")
+      }")
+      println(s"DropDrag: ${
+        siteEntityTrait.ident
+      }  - ${
+        event.`type`
+      }")
       event.preventDefault()
       previousState
     case DragAction(siteEntityTrait, DragEventType.end, event) =>
-      println(s"EndDrag: ${siteEntityTrait.ident}  - ${event.`type`}")
+      println(s"EndDrag: ${
+        siteEntityTrait.ident
+      }  - ${
+        event.`type`
+      }")
       event.preventDefault()
       None
     case DragAction(siteEntityTrait, other, event) =>
-      println(s"Other event: ${siteEntityTrait.ident}  - ${event.`type`}")
+      println(s"Other event: ${
+        siteEntityTrait.ident
+      }  - ${
+        event.`type`
+      }")
       event.dataTransfer.clearData("text")
       None
 
     case _ =>
       previousState
+  }
+
+  private def linkToReducer(previousState: Option[LinkTo], action: Action) = action match {
+    case linkTo: LinkTo => Some(linkTo)
+    case DoLinking => None
+    case _ => previousState
   }
 
 
@@ -151,7 +204,9 @@ object ReduxStore {
 
   private def createFrom(previousState: Option[UISiteEntity], siteEntityTrait: SiteEntityTrait, isRegion: Boolean) = {
     val newSET = SiteEntityBoundary.createFrom(siteEntityTrait, SiteEntityBoundary.siteIdent(), isRegion)
-    println(s"newSET: ${newSET.ident}")
+    println(s"newSET: ${
+      newSET.ident
+    }")
     Some(uiEntity(newSET))
   }
 
@@ -167,7 +222,9 @@ case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
 
 case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
 
-case class LinkTo(fromEntity: SiteEntityTrait) extends Action
+case class LinkTo(fromEntity: UISiteEntity, toIdent: Option[String] = None) extends Action
+
+case object DoLinking extends Action
 
 case class DragAction(siteEntityTrait: SiteEntityTrait, event: DragEventType.Value, dragEvent: DragEvent) extends Action
 
@@ -177,7 +234,10 @@ object DragEventType extends Enumeration {
 
 case class CreateFromDrag(groupFrom: String, groupTo: String, indexFrom: Int, indexTo: Option[Int] = None) extends Action
 
-case class State(siteModel: UISiteModel = UISiteModel(), selectedSET: Option[UISiteEntity] = None, draggedSET: Option[UISiteEntity] = None) {
+case class State(siteModel: UISiteModel
+                 , selectedSET: Option[UISiteEntity] = None
+                 , draggedSET: Option[UISiteEntity] = None
+                 , linkTo: Option[LinkTo] = None) {
 
   def updateEntities(entities: UpdateEntities): State =
     copy(siteModel = siteModel.replaceLevel(entities))

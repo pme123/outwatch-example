@@ -16,19 +16,19 @@ object SiteTemplRepo {
 
   import nextds.entity.ScreenRegion._
 
-  val defaultSiteId = "PUBLIC"
+  val defaultSiteIdent = "PUBLIC"
 
-  val playerTempl = PlayerTempl(defaultSiteId, "Web Player 2.0")
-  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(defaultSiteId, "Wide-Screen: Single Layout", fullHD)
-  val playlistTempl = PlaylistTempl(SiteTempl(defaultSiteId, "Basic Playlist"))
-  val mediumTempl = MediumTempl(SiteTempl(defaultSiteId, "Video"))
-  val mediumTempl2 = MediumTempl(SiteTempl(defaultSiteId, "Image"))
-  val mediumTempl3 = MediumTempl(SiteTempl(defaultSiteId, "AF"))
+  val playerTempl = PlayerTempl(defaultSiteIdent, "Web Player 2.0")
+  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(defaultSiteIdent, "Wide-Screen: Single Layout", fullHD)
+  val playlistTempl = PlaylistTempl(SiteTempl(defaultSiteIdent, "Basic Playlist"))
+  val mediumTempl = MediumTempl(SiteTempl(defaultSiteIdent, "Video"))
+  val mediumTempl2 = MediumTempl(SiteTempl(defaultSiteIdent, "Image"))
+  val mediumTempl3 = MediumTempl(SiteTempl(defaultSiteIdent, "AF"))
   val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
     PLAYER -> Seq(playerTempl
-      , PlayerTempl(SiteTempl(defaultSiteId, "Windows Player 2.3", "Special Configs for this Player type"))
+      , PlayerTempl(SiteTempl(defaultSiteIdent, "Windows Player 2.3", "Special Configs for this Player type"))
     ), LAYOUT -> Seq(layoutTempl
-      , LayoutTempl.singleLayout(defaultSiteId, "Basic Wide-Screen", ultraHD4K)
+      , LayoutTempl.singleLayout(defaultSiteIdent, "Basic Wide-Screen", ultraHD4K)
     ), REGION -> Seq(
     ), PLAYLIST -> Seq(
       playlistTempl
@@ -45,17 +45,17 @@ object SiteCompRepo {
 
   import SiteTemplRepo._
 
-  val defaultSiteId = "MGAA"
+  val defaultSiteIdent = "MGAA"
 
-  val playerComp = PlayerComp(defaultSiteId, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
-  val playerComp2 = PlayerComp(defaultSiteId, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
-  val playerComp3 = PlayerComp(defaultSiteId, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
-  val layoutComp = LayoutComp(defaultSiteId, layoutTempl)
-  val layoutComp2 = LayoutComp(SiteComp(defaultSiteId, layoutTempl, Some("Special configuration Layout.")))
-  val playlistComp = PlaylistComp(SiteComp(defaultSiteId, playlistTempl))
-  val mediumComp = MediumComp(SiteComp(defaultSiteId, mediumTempl, Some("Supervideo.mp4")))
-  val mediumComp2 = MediumComp(SiteComp(defaultSiteId, mediumTempl2, Some("TheVideo.mp4")))
-  val mediumComp3 = MediumComp(SiteComp(defaultSiteId, mediumTempl3, Some("rabbitRuns.mp4")))
+  val playerComp = PlayerComp(defaultSiteIdent, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
+  val playerComp2 = PlayerComp(defaultSiteIdent, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
+  val playerComp3 = PlayerComp(defaultSiteIdent, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
+  val layoutComp = LayoutComp(defaultSiteIdent, layoutTempl)
+  val layoutComp2 = LayoutComp(SiteComp(defaultSiteIdent, layoutTempl, "Special configuration Layout."))
+  val playlistComp = PlaylistComp(SiteComp(defaultSiteIdent, playlistTempl))
+  val mediumComp = MediumComp(SiteComp(defaultSiteIdent, mediumTempl, "Supervideo.mp4"))
+  val mediumComp2 = MediumComp(SiteComp(defaultSiteIdent, mediumTempl2, "TheVideo.mp4"))
+  val mediumComp3 = MediumComp(SiteComp(defaultSiteIdent, mediumTempl3, "rabbitRuns.mp4"))
   val allComps: Map[SiteType, Seq[SiteCompTrait]] = Map(
     PLAYER -> Seq(
       playerComp, playerComp2, playerComp3
@@ -75,27 +75,27 @@ object SiteConfRepo {
 
   import SiteCompRepo._
 
-  val defaultSiteId = "MGAA"
+  val defaultSiteIdent = "MGAA"
 
   private val mediumConfs = Seq(
-    MediumConf(SiteConf(defaultSiteId, mediumComp))
-    , MediumConf(SiteConf(defaultSiteId, mediumComp2))
-    , MediumConf(SiteConf(defaultSiteId, mediumComp3))
+    MediumConf(SiteConf(mediumComp))
+    , MediumConf(SiteConf( mediumComp2))
+    , MediumConf(SiteConf( mediumComp3))
   )
   private val playlistConfs = Seq(
-    PlaylistConf(SiteConf(defaultSiteId, playlistComp), siteConfRefs = mediumConfs)
+    PlaylistConf(SiteConf( playlistComp), siteConfRefs = mediumConfs)
   )
   private val regionConfs = Seq(
-    RegionConf(SiteConf(defaultSiteId, layoutComp), siteConfRefs = playlistConfs)
+    RegionConf(SiteConf( layoutComp), siteConfRefs = playlistConfs)
   )
   private val layoutConfs = Seq(
-    LayoutConf(defaultSiteId, layoutComp, regionConfs = regionConfs)
-    , LayoutConf(SiteConf(defaultSiteId, layoutComp2, Some("Extrem special configuration Layout.")), siteConfRefs = regionConfs)
+    LayoutConf(defaultSiteIdent, layoutComp, regionConfs = regionConfs)
+    , LayoutConf(SiteConf(layoutComp2, "Extrem special configuration Layout."), siteConfRefs = regionConfs)
   )
   private val playerConfs = Seq(
-    PlayerConf(defaultSiteId, playerComp, layoutConfs)
-    , PlayerConf(defaultSiteId, playerComp2)
-    , PlayerConf(defaultSiteId, playerComp3)
+    PlayerConf(defaultSiteIdent, playerComp, layoutConfs)
+    , PlayerConf(defaultSiteIdent, playerComp2)
+    , PlayerConf(defaultSiteIdent, playerComp3)
   )
 
   val allConfs: Map[SiteType, Seq[SiteConfTrait]] = Map(
@@ -110,18 +110,18 @@ object SiteConfRepo {
 
 object SiteFilterRepo {
 
-  val publicSiteId = "PUBLIC"
-  val defaultSiteId = "MGAA"
+  val publicSiteIdent = "PUBLIC"
+  val defaultSiteIdent = "MGAA"
 
   private val tagFilters = Seq(
-    TagFilter(SiteFilter(publicSiteId, "Languages"))
-    , TagFilter(SiteFilter(defaultSiteId, "Stores"))
-    , TagFilter(SiteFilter(defaultSiteId, "Scales"))
+    TagFilter(SiteFilter(publicSiteIdent, "Languages"))
+    , TagFilter(SiteFilter(defaultSiteIdent, "Stores"))
+    , TagFilter(SiteFilter(defaultSiteIdent, "Scales"))
   )
   private val timeFilters = Seq(
-    TimeFilter(SiteFilter(publicSiteId, "Weekdays"))
-    , TimeFilter(SiteFilter(publicSiteId, "Weekends"))
-    , TimeFilter(SiteFilter(defaultSiteId, "Opening Hours"))
+    TimeFilter(SiteFilter(publicSiteIdent, "Weekdays"))
+    , TimeFilter(SiteFilter(publicSiteIdent, "Weekends"))
+    , TimeFilter(SiteFilter(defaultSiteIdent, "Opening Hours"))
   )
 
   val allConfs: Map[SiteType, Seq[SiteFilterTrait]] = Map(

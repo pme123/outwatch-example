@@ -3,10 +3,8 @@ package nextds.client
 import nextds.client.components._
 import nextds.client.entity._
 import nextds.entity._
-import org.scalajs.dom.MouseEvent
-import org.scalajs.dom.raw.DragEvent
 import outwatch.dom._
-import rxscalajs.{Observable, Observer}
+import rxscalajs.Observable
 
 import scala.scalajs.js
 
@@ -128,7 +126,7 @@ case class NextDS() {
           , className := "tab-pane fade"
           , SortExample()
         )
-      )
+      ), ModalEntitySelecter()
     )
 }
 

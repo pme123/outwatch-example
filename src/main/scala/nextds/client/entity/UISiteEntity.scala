@@ -3,7 +3,6 @@ package nextds.client.entity
 import nextds.client.components.{BootstrapStyles, GlobalStyles}
 import nextds.entity._
 import outwatch.dom._
-import rxscalajs.Observable
 
 /**
   * Created by pascal.mengelt on 28.05.2017.
@@ -20,6 +19,10 @@ trait UISiteEntity
   def levelType: LevelType = siteEntity.levelType
 
   def siteType: SiteType = siteEntity.siteType
+
+  def ident: String = siteEntity.ident
+
+  def linkToType:Option[SiteType] = None
 
   val stylesMenu: String =  bss.dropdown.menu
 
@@ -45,13 +48,19 @@ trait UISiteEntity
       // element for special region
       , li(className := stylesMenuItem
         , click(CreateFrom(siteEntity, isRegion = true)) --> store
+          , menuItemCreateRegion
         , hidden := hideMenuCreateRegion
-        , menuItemCreateRegion)
+        )
       // element for add Config
       , li(className := stylesMenuItem
-        , click(LinkTo(siteEntity)) --> store
+        , button(`type`:="button"
+          ,data.toggle:="modal"
+          ,  data.target:="#modalDialog"
+          , click(LinkTo(this)) --> store
+          , menuItemLink
+        )
         , hidden := hideMenuLink
-        , menuItemLink)
+      )
       , li(role := "separator"
         , className := "divider")
       , li(className := stylesMenuItem

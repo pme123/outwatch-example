@@ -8,34 +8,21 @@ import nextds.entity.{LevelType, _}
 
 
 case class UISiteModel(
-                        templ: UISiteLevelTrait = UISiteLevel(TEMPL)
-                        , comp: UISiteLevelTrait = UISiteLevel(COMP)
-                        , conf: UISiteLevelTrait = UISiteLevel(CONF)
-                        , filter: UISiteLevelTrait = UIFilterLevel()
+                      siteLevels: Map[LevelType, UISiteLevelTrait]
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
     replaceLevel(level(entities.levelType).replaceEntries(entities))
 
   def replaceLevel(siteLevel: UISiteLevelTrait): UISiteModel =
-    siteLevel.levelType match {
-      case TEMPL => copy(templ = siteLevel)
-      case COMP => copy(comp = siteLevel)
-      case CONF => copy(conf = siteLevel)
-      case FILTER => copy(filter = siteLevel)
-      case _ => this
-    }
+    UISiteModel(
+      siteLevels.updated(siteLevel.levelType,siteLevel)
+    )
 
   def level(levelType: LevelType): UISiteLevelTrait =
-    levelType match {
-      case TEMPL => templ
-      case COMP => comp
-      case CONF => conf
-      case FILTER => filter
-      case _ => templ
-    }
+    siteLevels(levelType)
 
-  def allLevels: Seq[UISiteLevelTrait] = Seq(templ, comp, conf, filter)
+  def allLevels: Seq[UISiteLevelTrait] = siteLevels.values.toSeq
 
   def entities(levelType: LevelType, siteType: SiteType): Seq[UISiteEntity] =
     level(levelType).entities(siteType)
@@ -44,9 +31,21 @@ case class UISiteModel(
     level(LevelType.createFromGroup(groupFrom))
       .entity(SiteType.createFromGroup(groupFrom), indexFrom)
 
+  def entity(levelType: LevelType, siteType: SiteType, ident: String): UISiteEntity =
+    level(levelType)
+      .entity(siteType, ident)
+
+  def replaceEntity(set: UISiteEntity): UISiteModel =
+    UISiteModel(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
+
 }
 
-object UISiteModel{
+object UISiteModel {
   def apply(): UISiteModel =
-    UISiteModel(UISiteLevel(TEMPL), UISiteLevel(COMP), UISiteLevel(CONF), UIFilterLevel())
+    UISiteModel(Map(
+      TEMPL->UISiteLevel(TEMPL)
+      ,COMP-> UISiteLevel(COMP)
+      ,CONF-> UISiteLevel(CONF)
+      ,FILTER-> UIFilterLevel())
+    )
 }

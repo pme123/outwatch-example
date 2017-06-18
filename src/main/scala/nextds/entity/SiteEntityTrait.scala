@@ -16,7 +16,7 @@ trait SiteEntityTrait {
 
   def label: String = s"${siteType.label} ${levelType.label}"
 
-  lazy val ident: SiteEntityIdent = Site.nextIdent(siteIdent)
+  def ident: SiteEntityIdent
 
   def title: String
 
@@ -27,6 +27,9 @@ trait SiteEntityTrait {
   def maybeDescr: Option[String]
 
   lazy val typeDefinition: String = s"$levelType-$siteType"
+
+  def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait = this
+
 }
 
 object SiteEntityTrait {

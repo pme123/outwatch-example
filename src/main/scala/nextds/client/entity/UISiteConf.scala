@@ -48,9 +48,8 @@ case class UILayoutConf(siteEntity: LayoutConf)
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit(siteEntity.siteConfRefs)
 
-  override def menuItemLink = "link Layout to Player"
-
-
+  override val menuItemLink = "link Layout to Player"
+  override val linkToType:Option[SiteType] = Some(PLAYER)
 }
 
 case class UIRegionConf(siteEntity: RegionConf)
@@ -60,7 +59,8 @@ case class UIRegionConf(siteEntity: RegionConf)
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit(siteEntity.siteConfRefs)
 
-  override def menuItemLink = "link Region to Layout"
+  override val menuItemLink = "link Region to Layout"
+  override val linkToType:Option[SiteType] = Some(LAYOUT)
 
 }
 
@@ -70,7 +70,8 @@ case class UIPlaylistConf(siteEntity: PlaylistConf)
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit(siteEntity.siteConfRefs)
 
-  override def menuItemLink = "link Playlist to Region"
+  override val menuItemLink = "link Playlist to Region"
+  override val linkToType:Option[SiteType] = Some(REGION)
 
 }
 
@@ -82,7 +83,8 @@ case class UIMediumConf(siteEntity: MediumConf)
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit(siteEntity.siteConfRefs)
 
-  override def menuItemLink = "link Medium to Playlist"
+  override val menuItemLink = "link Medium to Playlist"
+  override val linkToType:Option[SiteType] = Some(PLAYLIST)
 
 }
 
