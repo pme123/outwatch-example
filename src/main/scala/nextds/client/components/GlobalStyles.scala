@@ -6,6 +6,7 @@ import nextds.entity._
 
 object GlobalStyles {
 
+  @inline private def bss = BootstrapStyles
 
   def siteTypeIcon(siteType: SiteType): Icon =
     Icon(siteType.logo)
@@ -52,7 +53,11 @@ object GlobalStyles {
   val mainCell = "main-cell"
   val panelInnerDiv = "panel-inner-div"
 
-  val siteEntityUL = "site-entity-ul"
+  val siteEntityUL =  Seq(
+    "site-entity-ul"
+    , bss.listGroup.listGroup
+  ) mkString " "
+
   val siteEntityLI = "site-entity-li"
   val siteEntityElem = "site-entity-elem"
   val siteEntityIcon = "site-entity-icon"

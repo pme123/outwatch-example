@@ -78,14 +78,10 @@ case class NextDS() {
         case (_, _) => bss.grid.col3
       }
 
-    val stylesUL = Seq(
-      css.siteEntityUL
-      , bss.listGroup.listGroup
-    ) mkString " "
 
     div(className := stylesDiv
       , ul(id := s"$levelType-$siteType"
-        , className := stylesUL
+        , className := css.siteEntityUL
         , children <-- entities)
     )
 
