@@ -12,6 +12,13 @@ ul {
     list-style: none;
 }
 
+.tab-contents{
+    height: calc(100% - 60px);
+}
+.full-height {
+    height: 100%;
+}
+
 .player-style {
     background-color: rgba(139, 0, 0, .1);
     border-color: rgba(139, 0, 0, .2);
@@ -101,9 +108,9 @@ ul {
 }
 
 .site-entity-ul {
-    margin: 0 ;
-    float: left ;
-    width: 98% ;
+    margin: 0;
+    float: left;
+    width: 98%;
 }
 
 .site-entity-li {
@@ -181,11 +188,17 @@ width(40 . % %)
     margin: 5px;
 }
 
+/* player monitor */
+.monitor-map {
+    height: 100%;
+}
+
 /* drop example */
 
 .drop-zone {
     min-height: 100px;
 }
+
 #members li {
     cursor: move;
 }

@@ -98,21 +98,23 @@ case class NextDS() {
 
   val menu =
     ul(className := "nav nav-tabs"
-      , li(className := "active"
-        , a(Attribute("data-toggle", "tab"), href := "#composer"
+      , li(a(Attribute("data-toggle", "tab"), href := "#composer"
           , "Composer")
-      )
-      , li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
-          , "Sort Example")
+      ), li(className := "active"
+        , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
+        , "Player Monitor")
+      ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
+        , "Sort Example")
       )
     )
 
 
   val root: VNode =
-    div(menu
-      , div(className := "tab-content"
+    div(className := "full-height"
+      , menu
+      , div(className := "tab-content tab-contents"
         , div(id := "composer"
-          , className := "tab-pane fade in active"
+          , className := "tab-pane fade in"
           , div(className := bss.grid.row
             , div(className := bss.grid.col9
               , div(className := bss.grid.row
@@ -121,6 +123,10 @@ case class NextDS() {
               ))
             , EntityDetailView()
           )
+        ),
+        div(id := "playerMonitor"
+          , className := "tab-pane fade in full-height active"
+          , PlayerMonitor()
         ),
         div(id := "sortExample"
           , className := "tab-pane fade"
