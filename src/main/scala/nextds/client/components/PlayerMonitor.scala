@@ -2,7 +2,7 @@ package nextds.client.components
 
 import google.maps._
 import nextds.client.entity.{Action, ReduxStore, State, UIPlayerComp}
-import nextds.entity.{COMP, PLAYER}
+import nextds.entity.{COMP, PLAYER, PlayerComp}
 import org.scalajs.dom._
 import outwatch.Sink
 import outwatch.dom._
@@ -19,15 +19,28 @@ object PlayerMonitor {
 
   @inline private def css = GlobalStyles
 
+  def infoWindow(playerComp: PlayerComp) = {
+    val contentString =
+      s"""
+        <div id="${playerComp.ident}-info">
+            <h1 id="firstHeading" class="firstHeading">${playerComp.ident}</h1>
+            <p>${playerComp.title}</p>
+            <p>${playerComp.maybeLocation.get}</p>
+        </div>
+       """
+    new google.maps.InfoWindow(google.maps.InfoWindowOptions(
+      content = contentString
+    ))
+  }
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
-    var actPlayers: Seq[UIPlayerComp] = Nil
 
-    val players: Observable[Seq[UIPlayerComp]] = store.map { st =>
-      actPlayers = st.siteModel.entities(COMP, PLAYER)
+
+    val players: Observable[Seq[UIPlayerComp]] =
+      store.map(_.siteModel.entities(COMP, PLAYER)
         .asInstanceOf[Seq[UIPlayerComp]]
-      actPlayers
-    }
+      )
+    val selectPlayer = store.map(_.selectedSET)
 
     def initialize(elem: Element)() = js.Function {
       val opts = MapOptions(
@@ -37,13 +50,31 @@ object PlayerMonitor {
         streetViewControl = false,
         mapTypeControl = false)
       val gmap = new google.maps.Map(elem, opts)
-      players.subscribe(_.foreach { pl =>
-        pl.siteEntity.maybeLocation.foreach { loc =>
+      players.subscribe(_.foreach { uie =>
+        val pl = uie.siteEntity
+        pl.maybeLocation.foreach { loc =>
           val marker = new Marker(MarkerOptions(
             position = new LatLng(loc.lat, loc.lng),
             map = gmap,
-            title = pl.ident
+            title = s"${pl.ident}: ${pl.title}"
+            , clickable = true
+            , icon = js.Dynamic.literal(
+              path = SymbolPath.FORWARD_CLOSED_ARROW
+              , rotation = 90
+              , strokeColor = css.markerColorRun(pl.status)
+              , scale = 5
+            ).asInstanceOf[MarkerShape]
           ))
+
+          val window1 = infoWindow(pl)
+          selectPlayer.subscribe(set => set match {
+            case Some(selPl: UIPlayerComp) if selPl.ident == pl.ident =>
+              window1.open(gmap, marker)
+            case _=> window1.close()
+          })
+          google.maps.event.addListener(marker, "click", () => {
+            window1.open(gmap, marker)
+          })
         }
       }
       )

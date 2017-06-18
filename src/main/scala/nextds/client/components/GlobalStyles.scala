@@ -68,4 +68,9 @@ object GlobalStyles {
 
   val chosenEntity = "chosen-entity"
 
+  def markerColorRun(status: PlayerStatus): String = status match {
+    case PlayerStatus.RUNNING => "#16631D"
+    case PlayerStatus.NOT_CONNECTED => "#B92F2A"
+    case PlayerStatus.STOPPED => "#E59C2A"
+  }
 }
