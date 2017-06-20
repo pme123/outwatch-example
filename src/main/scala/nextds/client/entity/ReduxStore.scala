@@ -115,7 +115,8 @@ object ReduxStore {
     case ue: UpdateEntities =>
       previousState.replaceLevel(ue)
 
-    case f:UIFilters => previousState.withFilter(f)
+    case f: UIFilters =>
+      previousState.withFilter(f)
 
     case _ => previousState
   }
@@ -240,7 +241,8 @@ case class UIFilters(ident: Option[String] = None
                      , title: Option[String] = None
                      , sites: Option[Seq[String]] = None
                      , levels: Option[Seq[LevelType]] = None
-                     , siteTypes: Option[Seq[SiteType]] = None) extends Action
+                     , siteTypes: Option[Seq[SiteType]] = None
+                     , maxEnties: Option[Int] = None) extends Action
 
 case class State(siteModel: UISiteModel
                  , selectedSET: Option[UISiteEntity] = None

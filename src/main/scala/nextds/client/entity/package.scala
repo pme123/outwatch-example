@@ -7,7 +7,9 @@ import nextds.entity._
   */
 package object entity {
 
-  def uiEntity(siteEntity: SiteEntityTrait) = siteEntity match {
+  val defaultMaxEntries = 7
+
+  def uiEntity(siteEntity: SiteEntityTrait): UISiteEntity = siteEntity match {
     case e: PlayerTempl => UIPlayerTempl(e)
     case e: LayoutTempl => UILayoutTempl(e)
     case e: PlaylistTempl => UIPlaylistTempl(e)

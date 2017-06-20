@@ -100,7 +100,7 @@ trait UISiteEntity
       case Some(Nil) | None => true
       case Some(siteTypes) => siteTypes.contains(siteType)
     }
-    println(s"appendFilter: $siteIdent - ident: $identMatch - title: $titleMatch sites: $siteMatch - levelTypes: $levelTypeMatch - siteTypeMatch: $siteTypeMatch")
+    // println(s"appendFilter: $siteIdent - ident: $identMatch - title: $titleMatch sites: $siteMatch - levelTypes: $levelTypeMatch - siteTypeMatch: $siteTypeMatch")
 
     filter(!(identMatch && titleMatch && siteMatch && levelTypeMatch && siteTypeMatch))
   }

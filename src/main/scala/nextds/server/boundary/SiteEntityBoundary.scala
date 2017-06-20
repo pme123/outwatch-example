@@ -1,14 +1,14 @@
 package nextds.server.boundary
 
 import nextds.entity._
-import nextds.server.control.{SiteTemplRepo, SitesCreator, SitesRepo}
+import nextds.server.control.SitesCreator
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
 object SiteEntityBoundary {
 
-  def allSites(): Seq[SiteIdent] = SitesRepo.allSites()
+  def allSites(): Seq[SiteIdent] = SitesCreator.allSites
 
   def siteIdent(): SiteIdent = allSites()(1)
 

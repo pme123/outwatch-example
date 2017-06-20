@@ -18,10 +18,13 @@ object Composer {
     def entityListComponent(levelType: LevelType, siteType: SiteType): VNode = {
 
       val entities =
-        store.map(_.siteModel.entities(levelType, siteType)
-          .filterNot(_.isFiltered)
-          .map(EntityCard.apply)
-        )
+        store.map {st =>
+          val model = st.siteModel
+          model.entities(levelType, siteType)
+            .filterNot(_.isFiltered)
+            .take(model.maxEntries)
+            .map(EntityCard.apply)
+        }
 
       val stylesDiv =
         (levelType, siteType) match {

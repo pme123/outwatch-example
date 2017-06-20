@@ -1,6 +1,6 @@
 package nextds.client.components
 
-import nextds.client.entity.{Action, ReduxStore, State, UIFilters}
+import nextds.client.entity._
 import nextds.entity.{LevelType, SiteType}
 import nextds.server.boundary.SiteEntityBoundary
 import org.scalajs.dom.raw.HTMLSelectElement
@@ -63,6 +63,16 @@ object UIFiltersForm {
           , change { (ie: InputEvent) =>
             UIFilters(siteTypes = Some(extractSelectedOptions(ie).map(SiteType.createFrom)))
           } --> store        )
+        , label(forLabel := "maxEntitiesField"
+          , "Display max Entities:")
+        , input(`type` := "number"
+          , className := "form-control"
+          , id := "maxEntitiesField"
+          , blur { (ie: InputEvent) =>
+            val strValue = ie.target.value
+            UIFilters(maxEnties = Some(if(strValue.isEmpty) defaultMaxEntries else strValue.toInt))
+          }--> store
+        )
 
       )
 
