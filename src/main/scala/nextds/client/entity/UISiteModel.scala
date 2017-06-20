@@ -8,7 +8,8 @@ import nextds.entity.{LevelType, _}
 
 
 case class UISiteModel(
-                      siteLevels: Map[LevelType, UISiteLevelTrait]
+                        siteLevels: Map[LevelType, UISiteLevelTrait]
+                        , uiFilters: UIFilters = UIFilters()
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
@@ -16,7 +17,7 @@ case class UISiteModel(
 
   def replaceLevel(siteLevel: UISiteLevelTrait): UISiteModel =
     UISiteModel(
-      siteLevels.updated(siteLevel.levelType,siteLevel)
+      siteLevels.updated(siteLevel.levelType, siteLevel)
     )
 
   def level(levelType: LevelType): UISiteLevelTrait =
@@ -38,14 +39,33 @@ case class UISiteModel(
   def replaceEntity(set: UISiteEntity): UISiteModel =
     UISiteModel(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
 
+  def withFilter(f: UIFilters): UISiteModel = {
+    val newFilter = f match {
+      case UIFilters(opt@Some(_), _, _, _, _) if opt != uiFilters.ident =>
+        uiFilters.copy(ident = opt)
+      case UIFilters(_, opt@Some(_), _, _, _) if opt != uiFilters.title =>
+        uiFilters.copy(title = opt)
+      case UIFilters(_, _, opt@Some(_), _, _) if opt != uiFilters.sites =>
+        uiFilters.copy(sites = opt)
+      case UIFilters(_, _, _, opt@Some(_), _) if opt != uiFilters.levels =>
+        uiFilters.copy(levels = opt)
+      case UIFilters(_, _, _, _, opt@Some(_)) if opt != uiFilters.siteTypes =>
+        uiFilters.copy(siteTypes = opt)
+      case _ => uiFilters
+    }
+    UISiteModel(siteLevels.map {
+      case (k, v) => k -> v.appendFilter(newFilter)
+    }, newFilter)
+  }
+
 }
 
 object UISiteModel {
   def apply(): UISiteModel =
     UISiteModel(Map(
-      TEMPL->UISiteLevel(TEMPL)
-      ,COMP-> UISiteLevel(COMP)
-      ,CONF-> UISiteLevel(CONF)
-      ,FILTER-> UIFilterLevel())
+      TEMPL -> UISiteLevel(TEMPL)
+      , COMP -> UISiteLevel(COMP)
+      , CONF -> UISiteLevel(CONF)
+      , FILTER -> UIFilterLevel())
     )
 }

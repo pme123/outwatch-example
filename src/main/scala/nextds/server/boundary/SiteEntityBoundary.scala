@@ -1,14 +1,16 @@
 package nextds.server.boundary
 
 import nextds.entity._
-import nextds.server.control.SiteTemplRepo
+import nextds.server.control.{SiteTemplRepo, SitesRepo}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
 object SiteEntityBoundary {
 
-  def siteIdent() = "MGAA"
+  def allSites(): Seq[SiteIdent] = SitesRepo.allSites()
+
+  def siteIdent(): SiteIdent = allSites()(1)
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
     SiteTemplRepo.entitiesFor(levelType, siteType)

@@ -28,7 +28,7 @@ trait UISiteConf
 object UISiteConf {
 }
 
-case class UIPlayerConf(siteEntity: PlayerConf)
+case class UIPlayerConf(siteEntity: PlayerConf, isFiltered: Boolean = false)
   extends UISiteConf
     with UIPlayer {
 
@@ -37,9 +37,11 @@ case class UIPlayerConf(siteEntity: PlayerConf)
 
   override def hideMenuCreateRegion = true
 
+  def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
 }
 
-case class UILayoutConf(siteEntity: LayoutConf)
+case class UILayoutConf(siteEntity: LayoutConf, isFiltered: Boolean = false)
   extends UISiteConf
     with UILayout {
 
@@ -49,10 +51,13 @@ case class UILayoutConf(siteEntity: LayoutConf)
     super.parameterEdit(siteEntity.siteConfRefs)
 
   override val menuItemLink = "link Layout to Player"
-  override val linkToType:Option[SiteType] = Some(PLAYER)
+  override val linkToType: Option[SiteType] = Some(PLAYER)
+
+  def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
 }
 
-case class UIRegionConf(siteEntity: RegionConf)
+case class UIRegionConf(siteEntity: RegionConf, isFiltered: Boolean = false)
   extends UISiteConf
     with UIRegion {
 
@@ -60,23 +65,29 @@ case class UIRegionConf(siteEntity: RegionConf)
     super.parameterEdit(siteEntity.siteConfRefs)
 
   override val menuItemLink = "link Region to Layout"
-  override val linkToType:Option[SiteType] = Some(LAYOUT)
+  override val linkToType: Option[SiteType] = Some(LAYOUT)
+
+  def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
 
 }
 
-case class UIPlaylistConf(siteEntity: PlaylistConf)
+case class UIPlaylistConf(siteEntity: PlaylistConf, isFiltered: Boolean = false)
   extends UISiteConf
     with UIPlaylist {
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit(siteEntity.siteConfRefs)
 
   override val menuItemLink = "link Playlist to Region"
-  override val linkToType:Option[SiteType] = Some(REGION)
+  override val linkToType: Option[SiteType] = Some(REGION)
+
+  def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
 
 }
 
 
-case class UIMediumConf(siteEntity: MediumConf)
+case class UIMediumConf(siteEntity: MediumConf, isFiltered: Boolean = false)
   extends UISiteConf
     with UIMedium {
 
@@ -84,7 +95,9 @@ case class UIMediumConf(siteEntity: MediumConf)
     super.parameterEdit(siteEntity.siteConfRefs)
 
   override val menuItemLink = "link Medium to Playlist"
-  override val linkToType:Option[SiteType] = Some(PLAYLIST)
+  override val linkToType: Option[SiteType] = Some(PLAYLIST)
+
+  def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
 }
 

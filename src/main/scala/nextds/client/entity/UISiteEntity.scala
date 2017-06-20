@@ -14,17 +14,23 @@ trait UISiteEntity
 
   @inline private def css = GlobalStyles
 
+  def isFiltered: Boolean
+
   def siteEntity: SiteEntityTrait
 
   def levelType: LevelType = siteEntity.levelType
 
   def siteType: SiteType = siteEntity.siteType
 
-  def ident: String = siteEntity.ident
+  def ident: SiteEntityIdent = siteEntity.ident
 
-  def linkToType:Option[SiteType] = None
+  def siteIdent: SiteIdent = siteEntity.siteIdent
 
-  val stylesMenu: String =  bss.dropdown.menu
+  def title: String = siteEntity.title
+
+  def linkToType: Option[SiteType] = None
+
+  val stylesMenu: String = bss.dropdown.menu
 
   val stylesMenuItem: String =
     css.siteEntityMenuItem
@@ -48,14 +54,14 @@ trait UISiteEntity
       // element for special region
       , li(className := stylesMenuItem
         , click(CreateFrom(siteEntity, isRegion = true)) --> store
-          , menuItemCreateRegion
+        , menuItemCreateRegion
         , hidden := hideMenuCreateRegion
-        )
+      )
       // element for add Config
       , li(className := stylesMenuItem
-        , button(`type`:="button"
-          ,data.toggle:="modal"
-          ,  data.target:="#modalDialog"
+        , button(`type` := "button"
+          , data.toggle := "modal"
+          , data.target := "#modalDialog"
           , click(LinkTo(this)) --> store
           , menuItemLink
         )
@@ -78,6 +84,22 @@ trait UISiteEntity
   def hideMenuCreateRegion = true
 
   def hideMenuLink = false
+
+  def appendFilter(filters: UIFilters): UISiteEntity = {
+    val identMatch = filters.ident.forall(i => ident.toLowerCase.contains(i.toLowerCase))
+    val titleMatch = filters.title.forall(t => title.toLowerCase.contains(t.toLowerCase))
+    val siteMatch = filters.sites match {
+      case Some(Nil) | None => true
+      case Some(levels) => levels.contains(siteIdent)
+    }
+    val siteTypeMatch = filters.siteTypes match {
+      case Some(Nil) | None => true
+      case Some(siteTypes) => siteTypes.contains(siteType)
+    }
+    filter(!(identMatch && titleMatch && siteMatch && siteTypeMatch))
+  }
+
+  protected def filter(isFiltered: Boolean): UISiteEntity
 
 }
 

@@ -1,7 +1,10 @@
 package nextds.server.control
 
 import nextds.entity._
+object SitesRepo {
+  def allSites(): Seq[SiteIdent] = Seq("PUBLIC", "MGAA")
 
+}
 object SiteTemplRepo {
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
@@ -16,7 +19,7 @@ object SiteTemplRepo {
 
   import nextds.entity.ScreenRegion._
 
-  val defaultSiteIdent = "PUBLIC"
+  val defaultSiteIdent: SiteIdent = SitesRepo.allSites().head
 
   val playerTempl = PlayerTempl(defaultSiteIdent, "Web Player 2.0")
   val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(defaultSiteIdent, "Wide-Screen: Single Layout", fullHD)
@@ -26,7 +29,7 @@ object SiteTemplRepo {
   val mediumTempl3 = MediumTempl(SiteTempl(defaultSiteIdent, "AF"))
   val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
     PLAYER -> Seq(playerTempl
-      , PlayerTempl(SiteTempl(defaultSiteIdent, "Windows Player 2.3", "Special Configs for this Player type"))
+      , PlayerTempl(SiteTempl(defaultSiteIdent, Site.nextIdent(defaultSiteIdent),"Windows Player 2.3", "Special Configs for this Player type"))
     ), LAYOUT -> Seq(layoutTempl
       , LayoutTempl.singleLayout(defaultSiteIdent, "Basic Wide-Screen", ultraHD4K)
     ), REGION -> Seq(
@@ -45,7 +48,7 @@ object SiteCompRepo {
 
   import SiteTemplRepo._
 
-  val defaultSiteIdent = "MGAA"
+  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
 
   val playerComp = PlayerComp(defaultSiteIdent, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
   val playerComp2 = PlayerComp(defaultSiteIdent, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
@@ -75,7 +78,7 @@ object SiteConfRepo {
 
   import SiteCompRepo._
 
-  val defaultSiteIdent = "MGAA"
+  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
 
   private val mediumConfs = Seq(
     MediumConf(SiteConf(mediumComp))
@@ -110,8 +113,8 @@ object SiteConfRepo {
 
 object SiteFilterRepo {
 
-  val publicSiteIdent = "PUBLIC"
-  val defaultSiteIdent = "MGAA"
+  val publicSiteIdent: SiteIdent = SitesRepo.allSites().head
+  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(0)
 
   private val tagFilters = Seq(
     TagFilter(SiteFilter(publicSiteIdent, "Languages"))

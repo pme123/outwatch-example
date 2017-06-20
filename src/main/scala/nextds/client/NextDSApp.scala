@@ -32,6 +32,11 @@ case class NextDS() {
   val listViews: Observable[Seq[VNode]] = store
     .map(
       _.siteModel.allLevels
+          .map{l=>
+            println(s"level ${l.levelType} - ${l.isFiltered}")
+            l
+          }
+        .filterNot(_.isFiltered)
         .map(m => levelComponent(m.levelType))
     )
 
@@ -70,6 +75,7 @@ case class NextDS() {
 
     val entities =
       store.map(_.siteModel.entities(levelType, siteType)
+        .filterNot(_.isFiltered)
         .map(EntityCard.apply))
 
     val stylesDiv =
@@ -95,10 +101,10 @@ case class NextDS() {
   val menu =
     ul(className := "nav nav-tabs"
       , li(a(Attribute("data-toggle", "tab"), href := "#composer"
-          , "Composer")
+        , "Composer")
       ), li(className := "active"
         , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
-        , "Player Monitor")
+          , "Player Monitor")
       ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
         , "Sort Example")
       )
@@ -117,7 +123,9 @@ case class NextDS() {
                 // , div(className := "col-sm-10"
                 , children <-- listViews
               ))
-            , EntityDetailView()
+            , div(UIFiltersForm()
+              , EntityDetailView()
+            )
           )
         ),
         div(id := "playerMonitor"

@@ -17,26 +17,33 @@ trait UISiteTempl
 object UISiteTempl {
 }
 
-case class UIPlayerTempl(siteEntity: PlayerTempl)
+case class UIPlayerTempl(siteEntity: PlayerTempl, isFiltered: Boolean = false)
   extends UISiteTempl
     with UIPlayer {
+  def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
+
 }
 
-case class UILayoutTempl(siteEntity: LayoutTempl)
+case class UILayoutTempl(siteEntity: LayoutTempl, isFiltered: Boolean = false)
   extends UISiteTempl
     with UILayout {
+  def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
 
 }
 
-case class UIPlaylistTempl(siteEntity: PlaylistTempl)
+case class UIPlaylistTempl(siteEntity: PlaylistTempl, isFiltered: Boolean = false)
   extends UISiteTempl
     with UIPlaylist {
+  def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
+
 }
 
 
-case class UIMediumTempl(siteEntity: MediumTempl)
+case class UIMediumTempl(siteEntity: MediumTempl, isFiltered: Boolean = false)
   extends UISiteTempl
     with UIMedium {
+  def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
+
 }
 
 

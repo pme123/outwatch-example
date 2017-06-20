@@ -8,7 +8,7 @@ import scala.language.postfixOps
   */
 trait SiteEntityTrait {
 
-  def siteIdent: String
+  def siteIdent: SiteIdent
 
   def siteType: SiteType
 
@@ -107,6 +107,8 @@ object SiteType {
 
   def createFromGroup(groupFrom: String): SiteType =
     SiteType.createFrom(groupFrom.dropWhile(_ != '-').drop(1))
+
+  def all = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM, TIME_FILTER, TAG_FILTER)
 }
 
 case object PLAYER extends SiteType {
@@ -171,6 +173,7 @@ object LevelType {
   def createFromGroup(groupFrom: String): LevelType =
     createFrom(groupFrom.takeWhile(_ != '-'))
 
+  def all = Seq(TEMPL, COMP, CONF, FILTER)
 }
 
 case object TEMPL extends LevelType {
