@@ -10,8 +10,6 @@ trait UISiteLevelTrait {
 
   def levelType: LevelType
 
-  def isFiltered: Boolean
-
   def entities(siteType: SiteType): Seq[UISiteEntity] =
     siteEntities(siteType)
 
@@ -45,24 +43,13 @@ trait UISiteLevelTrait {
   def allSiteTypes: Seq[SiteType]
 
   def appendFilter(filters: UIFilters): UISiteLevelTrait = {
-    val filtered = filters.levels match {
-      case Some(Nil) | None => false
-      case Some(levels) =>
-        !levels.contains(levelType)
-    }
-    println(s"appendFilter: $levelType - $filtered")
-
-    if (filtered)
-      filter(siteEntities, filtered)
-    else
-      filter(siteEntities.map {
-        case (k, v) =>
-          k -> v.map(_.appendFilter(filters))
-      }, filtered)
+    filter(siteEntities.map {
+      case (k, v) =>
+        k -> v.map(_.appendFilter(filters))
+    })
   }
 
-  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]], isFiltered: Boolean): UISiteLevelTrait
-
+  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait
 
 }
 
@@ -78,12 +65,8 @@ case class UISiteLevel(
   def replaceAllEntries(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait =
     copy(siteEntities = siteEntities)
 
-  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]], filtered: Boolean): UISiteLevelTrait =
-    {
-      println(s"copy: $levelType - $filtered")
-      copy(siteEntities = siteEntities, isFiltered = filtered)
-    }
-
+  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait =
+    copy(siteEntities = siteEntities)
 
 }
 
@@ -108,7 +91,7 @@ object UISiteLevel {
 
 case class UIFilterLevel(
                           siteEntities: Map[SiteType, Seq[UISiteEntity]] = Map()
-                          , isFiltered: Boolean = false)
+                        )
   extends UISiteLevelTrait {
   val levelType: LevelType = FILTER
 
@@ -117,8 +100,8 @@ case class UIFilterLevel(
 
   def allSiteTypes: Seq[SiteType] = Seq(TAG_FILTER, TIME_FILTER)
 
-  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]], isFiltered: Boolean): UISiteLevelTrait =
-    copy(siteEntities = siteEntities, isFiltered = isFiltered)
+  protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait =
+    copy(siteEntities = siteEntities)
 
 }
 

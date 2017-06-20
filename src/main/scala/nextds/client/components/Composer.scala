@@ -20,7 +20,8 @@ object Composer {
       val entities =
         store.map(_.siteModel.entities(levelType, siteType)
           .filterNot(_.isFiltered)
-          .map(EntityCard.apply))
+          .map(EntityCard.apply)
+        )
 
       val stylesDiv =
         (levelType, siteType) match {
@@ -71,16 +72,11 @@ object Composer {
     val listViews: Observable[Seq[VNode]] = store
       .map(
         _.siteModel.allLevels
-          .map { l =>
-            println(s"level ${l.levelType} - ${l.isFiltered}")
-            l
-          }
-          .filterNot(_.isFiltered)
           .map(m => levelComponent(m.levelType))
       )
 
-    div(className := bss.grid.row
-      , div(className := bss.grid.col9
+    div(className := bss.grid.row + " full-height"
+      , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
           // , div(className := "col-sm-10"
           , children <-- listViews

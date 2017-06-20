@@ -92,11 +92,17 @@ trait UISiteEntity
       case Some(Nil) | None => true
       case Some(levels) => levels.contains(siteIdent)
     }
+    val levelTypeMatch = filters.levels match {
+      case Some(Nil) | None => true
+      case Some(levelTypes) => levelTypes.contains(levelType)
+    }
     val siteTypeMatch = filters.siteTypes match {
       case Some(Nil) | None => true
       case Some(siteTypes) => siteTypes.contains(siteType)
     }
-    filter(!(identMatch && titleMatch && siteMatch && siteTypeMatch))
+    println(s"appendFilter: $siteIdent - ident: $identMatch - title: $titleMatch sites: $siteMatch - levelTypes: $levelTypeMatch - siteTypeMatch: $siteTypeMatch")
+
+    filter(!(identMatch && titleMatch && siteMatch && levelTypeMatch && siteTypeMatch))
   }
 
   protected def filter(isFiltered: Boolean): UISiteEntity
