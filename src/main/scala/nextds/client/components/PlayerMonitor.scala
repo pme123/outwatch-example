@@ -61,7 +61,9 @@ object PlayerMonitor {
             , icon = js.Dynamic.literal(
               path = SymbolPath.FORWARD_CLOSED_ARROW
               , rotation = 90
-              , strokeColor = css.markerColorRun(pl.status)
+              , fillColor = css.markerColorRun(pl.status)
+              , fillOpacity = 1
+              , strokeWeight = 1
               , scale = 5
             ).asInstanceOf[MarkerShape]
           ))
