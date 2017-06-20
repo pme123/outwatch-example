@@ -21,8 +21,8 @@ trait SiteCompTrait
 
 }
 
-case class SiteComp[T <: SiteTemplTrait](siteIdent: String
-                                         , ident: String
+case class SiteComp[T <: SiteTemplTrait](siteIdent: SiteIdent
+                                         , ident: SiteEntityIdent
                                          , templ: T
                                          , titleOpt: Option[String] = None
                                          , descrOpt: Option[String] = None)

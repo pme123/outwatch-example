@@ -1,7 +1,7 @@
 package nextds.server.boundary
 
 import nextds.entity._
-import nextds.server.control.{SiteTemplRepo, SitesRepo}
+import nextds.server.control.{SiteTemplRepo, SitesCreator, SitesRepo}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -13,7 +13,7 @@ object SiteEntityBoundary {
   def siteIdent(): SiteIdent = allSites()(1)
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
-    SiteTemplRepo.entitiesFor(levelType, siteType)
+    SitesCreator.entitiesFor(levelType, siteType)
 
   def createFrom(siteEntityTrait: SiteEntityTrait, siteIdent: String, isForRegion: Boolean = false): SiteEntityTrait = siteEntityTrait.levelType match {
     case TEMPL =>

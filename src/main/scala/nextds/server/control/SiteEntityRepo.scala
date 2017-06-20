@@ -1,6 +1,8 @@
 package nextds.server.control
 
 import nextds.entity._
+
+// not in use - see SiteEntityCreator
 object SitesRepo {
   def allSites(): Seq[SiteIdent] = Seq("PUBLIC", "MGAA")
 

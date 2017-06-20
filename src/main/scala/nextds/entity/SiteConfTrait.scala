@@ -137,7 +137,7 @@ object RegionConf {
 }
 
 case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
-                        , siteConfRefs: Seq[MediumConf] = Nil)
+                        , siteConfRefs: Seq[MediumConf])
   extends SiteConfTrait
     with PlaylistTrait {
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
@@ -148,7 +148,7 @@ case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
 object PlaylistConf {
   def apply(siteIdent: String
             , comp: PlaylistComp): PlaylistConf =
-    PlaylistConf(SiteConf(siteIdent, Site.nextIdent(siteIdent), comp))
+    PlaylistConf(SiteConf(siteIdent, Site.nextIdent(siteIdent), comp), Nil)
 
 }
 

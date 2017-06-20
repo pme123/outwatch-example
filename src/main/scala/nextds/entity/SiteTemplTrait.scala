@@ -56,6 +56,10 @@ object LayoutTempl {
                    , screenRegion: ScreenRegion): LayoutTempl =
     LayoutTempl(SiteTempl(siteIdent, Site.nextIdent(siteIdent), title)
       , screenRegion)
+  def singleLayout(templContent: SiteTempl
+                   , screenRegion: ScreenRegion): LayoutTempl =
+    LayoutTempl(templContent
+      , screenRegion)
 
 }
 
