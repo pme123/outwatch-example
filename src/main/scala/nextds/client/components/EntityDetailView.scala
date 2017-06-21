@@ -28,7 +28,6 @@ object EntityDetailView {
 
   private def entityProps(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
-    val handler = createHandler[Seq[VNode]]()
     div(className := Style.detailView(entity.levelType)
       , table(className := "table"
         , thead(className := Style.detailHeader(entity.siteType)
@@ -47,7 +46,7 @@ object EntityDetailView {
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
     val setStream = store.map(_.selectedSET)
-    div(className := bss.grid.col3// + " detal-view"
+    div(className := bss.grid.col3
       , hidden <-- setStream.map(_.isEmpty)
       , child <-- setStream
         .map(_.map(entityProps)

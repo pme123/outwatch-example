@@ -188,6 +188,17 @@ width(40 . % %)
     margin: 5px;
 }
 
+/* filter view */
+.filter-view {
+    margin-top: 5px;
+    background-color: rgba(216, 216, 216, .1);
+    border-color: rgba(216, 216, 216, .4);
+}
+.filter-view-header {
+    background-color: rgba(216, 216, 216, .2);
+    border-color: rgba(216, 216, 216, .6);
+}
+
 /* player monitor */
 .monitor-map {
     height: 100%;

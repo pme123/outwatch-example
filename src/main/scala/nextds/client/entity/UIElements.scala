@@ -18,6 +18,16 @@ object UIElements {
 
   }
 
+  def editValue(label: String, input: VNode): VNode = {
+    tr(
+      td(className := Style.labelCol
+        , label)
+      , td(
+        className := Style.valueCol
+        , input)
+    )
+  }
+
 }
 
 trait UIElements {
@@ -67,15 +77,7 @@ trait UIElements {
     )
   }
 
-  private def editValue(label: String, input: VNode) = {
-    tr(
-      td(className := Style.labelCol
-        , label)
-      , td(
-        className := Style.valueCol
-        , input)
-    )
-  }
+  private def editValue(label: String, input: VNode) = UIElements.editValue(label,input)
 
 
 }

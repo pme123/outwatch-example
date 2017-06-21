@@ -151,7 +151,7 @@ case object TIME_FILTER extends SiteType {
 }
 
 case object TAG_FILTER extends SiteType {
-  val name = "time-filter"
+  val name = "tag-filter"
   val label = "Tag Filter"
   val logo = "tags"
 }
