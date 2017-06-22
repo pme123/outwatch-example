@@ -37,6 +37,8 @@ case class NextDS() {
       ), li(className := "active"
         , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
           , "Player Monitor")
+      ), li(a(Attribute("data-toggle", "tab"), href := "#configurator"
+        , "Configurator")
       ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
         , "Sort Example")
       )
@@ -48,15 +50,19 @@ case class NextDS() {
       , menu
       , div(className := "tab-content tab-contents"
         , div(id := "composer"
-          , className := "tab-pane fade in full-height"
+          , className := "tab-pane fade full-height"
           , Composer()
         ),
         div(id := "playerMonitor"
           , className := "tab-pane fade in full-height active"
           , PlayerMonitor()
         ),
+        div(id := "configurator"
+          , className := "tab-pane fade full-height"
+          , Configurator()
+        ),
         div(id := "sortExample"
-          , className := "tab-pane fade"
+          , className := "tab-pane fade  full-height"
           , SortExample()
         )
       ), ModalEntitySelecter()
