@@ -1,6 +1,6 @@
 package nextds.client.entity
 
-import nextds.client.components.{BootstrapStyles, GlobalStyles}
+import nextds.client.components._
 import nextds.entity._
 import outwatch.dom._
 
@@ -9,10 +9,6 @@ import outwatch.dom._
   */
 trait UISiteEntity
   extends UIElements {
-
-  @inline private def bss = BootstrapStyles
-
-  @inline private def css = GlobalStyles
 
   def isFiltered: Boolean
 
@@ -106,6 +102,9 @@ trait UISiteEntity
   }
 
   protected def filter(isFiltered: Boolean): UISiteEntity
+
+  def withLinked(uiModel: UISiteModel): Set[SiteEntityIdent] =
+    Set(ident)
 
 }
 

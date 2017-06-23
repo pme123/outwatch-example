@@ -1,7 +1,6 @@
 package nextds.client.entity
 
 import nextds.entity._
-import outwatch.dom.{VNode, s, tbody}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -17,32 +16,40 @@ trait UISiteTempl
 object UISiteTempl {
 }
 
-case class UIPlayerTempl(siteEntity: PlayerTempl, isFiltered: Boolean = false)
+case class UIPlayerTempl(siteEntity: PlayerTempl
+                        , isFiltered: Boolean = false)
   extends UISiteTempl
     with UIPlayer {
   def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
 
+
 }
 
-case class UILayoutTempl(siteEntity: LayoutTempl, isFiltered: Boolean = false)
+case class UILayoutTempl(siteEntity: LayoutTempl
+                        , isFiltered: Boolean = false)
   extends UISiteTempl
     with UILayout {
   def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
 
+
 }
 
-case class UIPlaylistTempl(siteEntity: PlaylistTempl, isFiltered: Boolean = false)
+case class UIPlaylistTempl(siteEntity: PlaylistTempl
+                        , isFiltered: Boolean = false)
   extends UISiteTempl
     with UIPlaylist {
   def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
 
+
 }
 
 
-case class UIMediumTempl(siteEntity: MediumTempl, isFiltered: Boolean = false)
+case class UIMediumTempl(siteEntity: MediumTempl
+                        , isFiltered: Boolean = false)
   extends UISiteTempl
     with UIMedium {
   def filter(isFiltered:Boolean): UISiteEntity =   copy(isFiltered = isFiltered)
+
 
 }
 

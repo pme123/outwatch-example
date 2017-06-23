@@ -11,6 +11,7 @@ case class UISiteModel(
                         siteLevels: Map[LevelType, UISiteLevelTrait]
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
+                        , linkedEntities: Set[SiteEntityIdent] = Set()
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
@@ -66,6 +67,11 @@ case class UISiteModel(
       }, newFilter)
     }
   }
+
+  def withLinks(siteEntityTrait: SiteEntityTrait): _root_.nextds.client.entity.UISiteModel =
+    copy(linkedEntities =
+      uiEntity(siteEntityTrait).withLinked(this)
+    )
 
 }
 

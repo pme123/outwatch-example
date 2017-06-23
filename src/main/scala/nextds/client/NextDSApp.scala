@@ -55,7 +55,7 @@ case class NextDS() {
         ),
         div(id := "playerMonitor"
           , className := "tab-pane fade in full-height active"
-          , PlayerMonitor()
+        //  , PlayerMonitor()
         ),
         div(id := "configurator"
           , className := "tab-pane fade full-height"

@@ -117,6 +117,9 @@ object ReduxStore {
 
     case f: UIFilters =>
       previousState.withFilter(f)
+    case Edit(siteEntityTrait) =>
+      previousState.withLinks(siteEntityTrait)
+
 
     case _ => previousState
   }

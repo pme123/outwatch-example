@@ -9,15 +9,15 @@ import outwatch.dom._
   */
 object ConfigViewer {
 
-  def apply()(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(levelType: LevelType)(implicit store: ReduxStore[State, Action]): VNode = {
 
     def entityListComponent(siteType: SiteType): VNode = {
 
       val entities =
-        store.map {st =>
+        store.map { st =>
           val model = st.siteModel
-          model.entities(CONF, siteType)
-            .filter(e => st.selectedSET.exists(_.ident == e.ident))
+          model.entities(levelType, siteType)
+            .filter(e => model.linkedEntities.contains(e.ident))
             .take(model.maxEntries)
             .map(EntityCard.apply)
         }
@@ -39,20 +39,20 @@ object ConfigViewer {
 
 
     val stylesDiv1 = Seq(
-      css.levelTypeStyle(CONF)
+      css.levelTypeStyle(levelType)
       , "level-style"
       , bss.panel.standard
     ) mkString " "
     val stylesDiv2 = Seq(
       css.levelDiv
-      , css.levelTypeStyle(CONF)
+      , css.levelTypeStyle(levelType)
       , css.panelInnerDiv
       , bss.panel.row
     ) mkString " "
 
     val siteLevel = {
       store.map(
-        _.siteModel.level(CONF)
+        _.siteModel.level(levelType)
           .allSiteTypes
           .map(siteType =>
             entityListComponent(siteType))

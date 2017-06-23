@@ -8,6 +8,7 @@ import nextds.server.boundary.SiteEntityBoundary
   */
 trait UISiteLevelTrait {
 
+
   def levelType: LevelType
 
   def entities(siteType: SiteType): Seq[UISiteEntity] =

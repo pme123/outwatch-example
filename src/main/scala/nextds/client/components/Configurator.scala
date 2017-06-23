@@ -1,7 +1,7 @@
 package nextds.client.components
 
 import nextds.client.entity.{Action, ReduxStore, State}
-import nextds.entity.CONF
+import nextds.entity.{COMP, CONF, TEMPL}
 import outwatch.dom._
 
 /**
@@ -16,8 +16,11 @@ object Configurator {
     div(className := bss.grid.row + " full-height"
       , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
+          , ConfigViewer(TEMPL)
+          , ConfigViewer(COMP)
+          , ConfigViewer(CONF)
           , LevelComponent(CONF)
-          , ConfigViewer()
+
         ))
       , div(
         UIFiltersForm()

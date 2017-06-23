@@ -21,12 +21,15 @@ trait UISiteComp
 
   override val menuItemCreateFrom = s"create ${siteType.label} ${CONF.label}"
 
+  override def withLinked(uiModel: UISiteModel): Set[SiteEntityIdent] =
+   super.withLinked(uiModel) ++ uiModel.level(TEMPL).entities(siteType).map(_.ident).filter(_ == siteEntity.templ.ident).toSet
 }
 
 object UISiteComp {
 }
 
-case class UIPlayerComp(siteEntity: PlayerComp, isFiltered: Boolean = false)
+case class UIPlayerComp(siteEntity: PlayerComp
+                        , isFiltered: Boolean = false)
   extends UISiteComp
     with UIPlayer {
 
@@ -42,9 +45,12 @@ case class UIPlayerComp(siteEntity: PlayerComp, isFiltered: Boolean = false)
   }
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
+
 }
 
-case class UILayoutComp(siteEntity: LayoutComp, isFiltered: Boolean = false)
+case class UILayoutComp(siteEntity: LayoutComp
+                        , isFiltered: Boolean = false)
   extends UISiteComp
     with UILayout {
 
@@ -69,20 +75,25 @@ case class UILayoutComp(siteEntity: LayoutComp, isFiltered: Boolean = false)
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
+
 }
 
-case class UIPlaylistComp(siteEntity: PlaylistComp, isFiltered: Boolean = false)
+case class UIPlaylistComp(siteEntity: PlaylistComp
+                        , isFiltered: Boolean = false)
   extends UISiteComp
     with UIPlaylist {
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
+
 }
 
 
-case class UIMediumComp(siteEntity: MediumComp, isFiltered: Boolean = false)
+case class UIMediumComp(siteEntity: MediumComp
+                        , isFiltered: Boolean = false)
   extends UISiteComp
     with UIMedium {
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
+
 
 }
 
