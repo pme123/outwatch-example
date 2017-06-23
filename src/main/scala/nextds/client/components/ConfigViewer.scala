@@ -22,33 +22,19 @@ object ConfigViewer {
             .map(EntityCard.apply)
         }
 
-      val stylesDiv =
+      val siteEntitiesDiv =
         siteType match {
           case (REGION | PLAYLIST | MEDIUM) => bss.grid.col2
           case (_) => bss.grid.col3
         }
 
-
-      div(className := stylesDiv
+      div(className := siteEntitiesDiv
         , ul(id := s"config-viewer-$siteType"
-          , className := css.siteEntityUL
+          , className := css.siteEntitiesUL
           , children <-- entities)
       )
 
     }
-
-
-    val stylesDiv1 = Seq(
-      css.levelTypeStyle(levelType)
-      , "level-style"
-      , bss.panel.standard
-    ) mkString " "
-    val stylesDiv2 = Seq(
-      css.levelDiv
-      , css.levelTypeStyle(levelType)
-      , css.panelInnerDiv
-      , bss.panel.row
-    ) mkString " "
 
     val siteLevel = {
       store.map(
@@ -59,8 +45,8 @@ object ConfigViewer {
       )
     }
 
-    div(className := stylesDiv1
-      , div(className := stylesDiv2
+    div(className := css.siteLevelDiv(levelType)
+      , div(className := css.siteLevelInnerDiv(levelType)
         , id := s"config-viewer"
         , children <-- siteLevel
       ))

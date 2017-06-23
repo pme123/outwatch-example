@@ -32,20 +32,31 @@ object GlobalStyles {
   val timeFilterStyle = "time-filter-style"
 
 
-  def levelTypeStyle(levelType: LevelType) = {
-
+  def levelTypeStyle(levelType: LevelType): String =
     levelType match {
       case TEMPL => templStyle
       case COMP => compStyle
       case CONF => confStyle
       case FILTER => filterStyle
     }
-  }
 
   val templStyle = "templ-style"
   val compStyle = "comp-style"
   val confStyle = "conf-style"
   val filterStyle = "filter-style"
+
+  def siteLevelDiv(levelType: LevelType): String = Seq(
+    css.levelTypeStyle(levelType)
+    , "level-style"
+    , bss.panel.standard
+  ) mkString " "
+
+  def siteLevelInnerDiv(levelType: LevelType): String = Seq(
+    css.levelDiv
+    , css.levelTypeStyle(levelType)
+    , css.panelInnerDiv
+    , bss.panel.row
+  ) mkString " "
 
   val logo = "logo"
   val projectName = "project-name"
@@ -53,7 +64,13 @@ object GlobalStyles {
   val mainCell = "main-cell"
   val panelInnerDiv = "panel-inner-div"
 
-  val siteEntityUL =  Seq(
+  def siteEntitiesDiv(levelType:LevelType, siteType:SiteType): String =
+    (levelType, siteType) match {
+      case (CONF, REGION | PLAYLIST | MEDIUM) => bss.grid.col2
+      case (_, _) => bss.grid.col3
+    }
+
+  val siteEntitiesUL: String =  Seq(
     "site-entity-ul"
     , bss.listGroup.listGroup
   ) mkString " "

@@ -92,7 +92,7 @@ object PlayerMonitor {
         , insert --> initMapSink)
       , div(
         className := bss.grid.col3
-        , ul(className := css.siteEntityUL
+        , ul(className := css.siteEntitiesUL
           , children <-- players.map(_.map(EntityCard.apply)))
       ))
   }
