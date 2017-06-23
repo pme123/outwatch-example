@@ -6,12 +6,10 @@ import nextds.entity._
 
 object GlobalStyles {
 
-  @inline private def bss = BootstrapStyles
-
   def siteTypeIcon(siteType: SiteType): Icon =
     Icon(siteType.logo)
 
-  def siteTypeStyle(siteType: SiteType) = {
+  def siteTypeStyle(siteType: SiteType): String = {
     siteType match {
       case PLAYER => playerStyle
       case LAYOUT => layoutStyle
@@ -77,13 +75,42 @@ object GlobalStyles {
 
   val siteEntityLI = "site-entity-li"
   val siteEntityElem = "site-entity-elem"
-  val siteEntityIcon = "site-entity-icon"
-  val siteEntityIdent = "site-entity-ident"
-  val siteEntityTitle = "site-entity-title"
   val siteEntityMenuIcon = "site-entity-menu-icon"
   val siteEntityMenuItem = "site-entity-menu-item"
 
   val chosenEntity = "chosen-entity"
+
+  def entityCardLI(siteType: SiteType) = Seq(
+    bss.listGroup.item
+    , bss.grid.row
+    , siteTypeStyle(siteType)
+    , "site-entity-li"
+  ) mkString " "
+
+  val entityCardIcon: String = Seq(
+    "site-entity-icon"
+    , siteEntityElem
+    , bss.grid.col1
+  ) mkString " "
+
+  val entityCardIdent: String = Seq(
+    "site-entity-ident"
+    , siteEntityElem
+    , bss.grid.col10
+  ) mkString " "
+
+  val entityCardMenu: String = Seq(
+    siteEntityMenuIcon
+    , siteEntityElem
+    , bss.grid.col1
+  ) mkString " "
+
+  val entityCardTitle: String = Seq(
+    "site-entity-title"
+    , siteEntityElem
+    , bss.grid.col12
+  ) mkString " "
+
 
   def markerColorRun(status: PlayerStatus): String = status match {
     case PlayerStatus.RUNNING => "#16631D"

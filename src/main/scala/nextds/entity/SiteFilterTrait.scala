@@ -92,6 +92,7 @@ case class FilterTagConf(siteIdent: String
                          , filterTags: Seq[FilterTag] = Nil
                          , descr: String = "No description available") {
 
+
 }
 
 object FilterTagConf {

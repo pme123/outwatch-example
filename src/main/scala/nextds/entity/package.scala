@@ -6,4 +6,5 @@ package nextds
 package object entity {
   type SiteIdent = String
   type SiteEntityIdent = String
+
 }

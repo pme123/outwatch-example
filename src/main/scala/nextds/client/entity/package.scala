@@ -1,6 +1,9 @@
 package nextds.client
 
 import nextds.entity._
+import outwatch.dom._
+
+import scala.language.implicitConversions
 
 /**
   * Created by pascal.mengelt on 28.05.2017.
@@ -26,4 +29,26 @@ package object entity {
     case e: TagFilter => UITagFilter(e)
     case e: TimeFilter => UITimeFilter(e)
   }
+
+  val specialWord = Seq("(", ")", "AND", "OR")
+
+  // extending StringClass to HTML capabilities
+  implicit def stringToString(s: String): HTMLString = new HTMLString(s)
+
+  class HTMLString(val s: String) {
+
+    lazy val italic: VNode = {
+      val modifiers: Seq[VDomModifier] = s.replace("(", " ( ").s.replace(")", " ) ").trim.split(" ")
+        .map {
+          case str if specialWord.contains(str.trim) =>
+            i(str)
+          case str => b(s" $str ")
+        }.toSeq
+      p(
+        modifiers: _*
+      )
+    }
+
+  }
+
 }

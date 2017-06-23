@@ -20,6 +20,7 @@ object Configurator {
           , ConfigViewer(COMP)
           , ConfigViewer(CONF)
           , LevelComponent(CONF)
+          , FilterTagComponent()
 
         ))
       , div(

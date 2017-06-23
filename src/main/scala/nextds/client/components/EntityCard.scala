@@ -9,44 +9,9 @@ import outwatch.dom._
   * Created by pascal.mengelt on 15.06.2017.
   */
 object EntityCard {
-  @inline private def bss = BootstrapStyles
-
-  @inline private def css = GlobalStyles
-
-  private val stylesIcon = Seq(
-    css.siteEntityIcon
-    , css.siteEntityElem
-    , bss.grid.col1
-  ) mkString " "
-
-  private val stylesIdent = Seq(
-    css.siteEntityIdent
-    , css.siteEntityElem
-    , bss.grid.col10
-  ) mkString " "
-
-  private val stylesMenu = Seq(
-    css.siteEntityMenuIcon
-    , css.siteEntityElem
-    , bss.grid.col1
-  ) mkString " "
-
-  private val stylesTitle = Seq(
-    css.siteEntityTitle
-    , css.siteEntityElem
-    , bss.grid.col12
-  ) mkString " "
 
   def apply(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
-
-    val styles = Seq(
-      bss.listGroup.item
-      , bss.grid.row
-      , css.siteTypeStyle(entity.siteType)
-      , css.siteEntityLI
-    ) mkString " "
-
 
     val selObs = store
       .map(_.selectedSET
@@ -54,16 +19,16 @@ object EntityCard {
       )
 
     li(id := entity.ident
-      , className := styles
+      , className := css.entityCardLI(entity.siteType)
       , selected <-- selObs
       // , draggable := true
-      , dragenter((e:DragEvent) => DragAction(entity, DragEventType.enter, e)) --> store
+      , dragenter((e: DragEvent) => DragAction(entity, DragEventType.enter, e)) --> store
       // , dragover((e:DragEvent) => DragAction(entity, DragEventType.over, e)) --> store
-      , drop((e:DragEvent) => DragAction(entity, DragEventType.drop, e)) --> store
+      , drop((e: DragEvent) => DragAction(entity, DragEventType.drop, e)) --> store
       , entityIcon(entity)
       , entityIdent(entity)
       , entityMenu(uiEntity)
-      , div(className := stylesTitle, entity.title)
+      , div(className := css.entityCardTitle, entity.title)
     )
   }
 
@@ -72,14 +37,14 @@ object EntityCard {
   dragEvents.map(e => println("drag event: " + e.`type`))
 
   def entityIcon(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode =
-    div(className := stylesIcon
+    div(className := css.entityCardIcon
       , Attribute("draggable", "true")
-      , dragstart ((e:DragEvent) => DragAction(entity, DragEventType.start, e)) --> store
-      , dragend ((e:DragEvent) => DragAction(entity, DragEventType.end, e)) --> store
+      , dragstart((e: DragEvent) => DragAction(entity, DragEventType.start, e)) --> store
+      , dragend((e: DragEvent) => DragAction(entity, DragEventType.end, e)) --> store
       , css.siteTypeIcon(entity.siteType))
 
   def entityIdent(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode =
-    div(className := stylesIdent
+    div(className := css.entityCardIdent
       , click(Edit(entity)) --> store
       , entity.ident)
 
@@ -102,7 +67,7 @@ object EntityCard {
       )
     }
 
-    div(className := stylesMenu, entityDropdown(uiEntity))
+    div(className := css.entityCardMenu, entityDropdown(uiEntity))
   }
 
 
