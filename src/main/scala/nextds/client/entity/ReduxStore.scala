@@ -120,7 +120,6 @@ object ReduxStore {
     case Edit(siteEntityTrait) =>
       previousState.withLinks(siteEntityTrait)
 
-
     case _ => previousState
   }
 

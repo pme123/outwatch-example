@@ -9,6 +9,7 @@ import nextds.entity.{LevelType, _}
 
 case class UISiteModel(
                         siteLevels: Map[LevelType, UISiteLevelTrait]
+                        , filterTags: UIFilterTags = UIFilterTags()
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
                         , linkedEntities: Set[SiteEntityIdent] = Set()
@@ -64,7 +65,7 @@ case class UISiteModel(
       }
       UISiteModel(siteLevels.map {
         case (k, v) => k -> v.appendFilter(newFilter)
-      }, newFilter)
+      }, uiFilters = newFilter)
     }
   }
 
@@ -81,6 +82,5 @@ object UISiteModel {
       TEMPL -> UISiteLevel(TEMPL)
       , COMP -> UISiteLevel(COMP)
       , CONF -> UISiteLevel(CONF)
-      , FILTER -> UIFilterLevel())
-    )
+    ))
 }
