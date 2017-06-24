@@ -17,6 +17,7 @@ object LinkedLevelViewer {
         store.map { st =>
           val model = st.siteModel
           model.entities(levelType, siteType)
+            .filterNot(_.isFiltered)
             .filter(e => model.linkedEntities.contains(e.ident))
             .take(model.maxEntries)
             .map(EntityCard.apply)

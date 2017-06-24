@@ -23,7 +23,8 @@ object LinkedViewer {
 
         ))
       , div(
-        EntityDetailView()
+        UIFiltersForm()
+        , EntityDetailView()
       )
     )  }
 }

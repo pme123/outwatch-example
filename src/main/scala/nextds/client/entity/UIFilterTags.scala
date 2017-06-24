@@ -10,6 +10,8 @@ import outwatch.dom._
   */
 case class UIFilterTags(filterTags: FilterTags
                         , filterTagConfs: Seq[UIFilterTagConf]) {
+  def appendFilter(newFilter: UIFilters): UIFilterTags =
+   copy(filterTagConfs = filterTagConfs.map(_.appendFilter(newFilter).asInstanceOf[UIFilterTagConf]))
 }
 
 object UIFilterTags {

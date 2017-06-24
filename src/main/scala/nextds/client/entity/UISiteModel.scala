@@ -19,7 +19,7 @@ case class UISiteModel(
     replaceLevel(level(entities.levelType).replaceEntries(entities))
 
   def replaceLevel(siteLevel: UISiteLevelTrait): UISiteModel =
-    UISiteModel(
+    copy(
       siteLevels.updated(siteLevel.levelType, siteLevel)
     )
 
@@ -40,7 +40,7 @@ case class UISiteModel(
       .entity(siteType, ident)
 
   def replaceEntity(set: UISiteEntity): UISiteModel =
-    UISiteModel(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
+    copy(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
 
   def withFilter(f: UIFilters): UISiteModel = {
     (f.maxEnties match {
@@ -63,9 +63,9 @@ case class UISiteModel(
           uiFilters.copy(maxEnties = opt)
         case _ => uiFilters
       }
-      UISiteModel(siteLevels.map {
+      copy(siteLevels = siteLevels.map {
         case (k, v) => k -> v.appendFilter(newFilter)
-      }, uiFilters = newFilter)
+      }, uiFilters = newFilter,filterTags= filterTags.appendFilter(newFilter))
     }
   }
 
