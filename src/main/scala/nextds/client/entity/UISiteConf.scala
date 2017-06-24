@@ -20,14 +20,14 @@ trait UISiteConf
     siteEntity.filterTagConf
       .map(uiEntity)
 
-  def parameterEdit(siteEntityRefs: Seq[SiteEntityTrait])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
+  def parameterEdit(siteEntityRefs: Seq[UISiteEntity])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     super.parameterEdit() ++ Seq(
-      siteEntityRef(siteComp)) ++ siteEntityRefs
+      siteEntityRef(this)) ++ siteEntityRefs
       .map(siteEntityRef)
   }
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    parameterEdit(siteEntity.siteConfRefs ++ siteEntity.filterTagConf.toSeq)
+    parameterEdit(siteConfRefs ++ filterTagConf.toSeq)
 
 
   override val hideMenuCreateFrom = true

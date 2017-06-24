@@ -35,7 +35,7 @@ object EntityDetailView {
             , EntityCard.entityIcon(entity)
           )
             , th(className := UIElements.Style.valueCol
-              , EntityCard.entityIdent(entity))
+              , EntityCard.entityIdent(uiEntity))
           ))
         , tbody(
           uiEntity.parameterEdit(): _*

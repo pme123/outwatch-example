@@ -18,7 +18,7 @@ trait UISiteComp
 
   def customParamEdit(customNodes: VNode*)(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     super.parameterEdit() ++
-      customNodes :+ siteEntityRef(siteEntity.siteComp.templ)
+      customNodes :+ siteEntityRef(uiEntity(templ))
   }
 
   override val menuItemCreateFrom = s"create ${siteType.label} ${CONF.label}"

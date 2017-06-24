@@ -34,14 +34,14 @@ trait UIElements {
 
   import UIElements.Style
 
-  protected def siteEntityRef(siteEntity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode = {
-    editValue(siteEntity.label, div(className := Style.entityInputCol
+  protected def siteEntityRef(uISiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
+    editValue(uISiteEntity.label, div(className := Style.entityInputCol
       , tpe := "text"
-      , siteEntity.ident
+      , uISiteEntity.ident
       , Attribute("data-toggle", "tooltip")
-      , Attribute("title", siteEntity.title)
+      , Attribute("title", uISiteEntity.title)
       , disabled := true
-      , click(Edit(siteEntity)) --> store
+      , click(Edit(uISiteEntity)) --> store
     ))
   }
 

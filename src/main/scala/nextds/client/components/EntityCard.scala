@@ -26,7 +26,7 @@ object EntityCard {
       // , dragover((e:DragEvent) => DragAction(entity, DragEventType.over, e)) --> store
       , drop((e: DragEvent) => DragAction(entity, DragEventType.drop, e)) --> store
       , entityIcon(entity)
-      , entityIdent(entity)
+      , entityIdent(uiEntity)
       , entityMenu(uiEntity)
       , div(className := css.entityCardTitle, entity.title)
     )
@@ -43,10 +43,10 @@ object EntityCard {
       , dragend((e: DragEvent) => DragAction(entity, DragEventType.end, e)) --> store
       , css.siteTypeIcon(entity.siteType))
 
-  def entityIdent(entity: SiteEntityTrait)(implicit store: ReduxStore[State, Action]): VNode =
+  def entityIdent(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode =
     div(className := css.entityCardIdent
-      , click(Edit(entity)) --> store
-      , entity.ident)
+      , click(Edit(uiEntity)) --> store
+      , uiEntity.ident)
 
   def entityMenu(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     def entityDropdown(uiEntity: UISiteEntity): VNode = {

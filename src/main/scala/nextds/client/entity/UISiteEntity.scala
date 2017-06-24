@@ -20,6 +20,8 @@ trait UISiteEntity
 
   def ident: SiteEntityIdent = siteEntity.ident
 
+  def label: SiteEntityIdent = siteEntity.label
+
   def siteIdent: SiteIdent = siteEntity.siteIdent
 
   def title: String = siteEntity.title
@@ -41,7 +43,7 @@ trait UISiteEntity
   def createMenu()(implicit store: ReduxStore[State, Action]): VNode =
     ul(className := stylesMenu
       , li(className := stylesMenuItem
-        , click(Edit(siteEntity)) --> store
+        , click(Edit(this)) --> store
         , s"edit ${siteEntity.ident}")
       , li(className := stylesMenuItem
         , click(CreateFrom(siteEntity)) --> store

@@ -117,15 +117,15 @@ object ReduxStore {
 
     case f: UIFilters =>
       previousState.withFilter(f)
-    case Edit(siteEntityTrait) =>
-      previousState.withLinks(siteEntityTrait)
+    case Edit(uiSiteEntity) =>
+      previousState.withLinks(uiSiteEntity)
 
     case _ => previousState
   }
 
   private def selectedSETReducer(previousState: Option[UISiteEntity], action: Action): Option[UISiteEntity] = action match {
-    case Edit(siteEntityTrait) =>
-      Some(uiEntity(siteEntityTrait))
+    case Edit(uiSiteEntity) =>
+      Some(uiSiteEntity)
 
     case CreateFrom(siteEntityTrait, isRegion) =>
       createFrom(previousState, siteEntityTrait, isRegion)
@@ -223,7 +223,7 @@ case class RefreshEntities(levelType: LevelType, siteType: SiteType) extends Act
 
 case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Seq[UISiteEntity]) extends Action
 
-case class Edit(siteEntityTrait: SiteEntityTrait) extends Action
+case class Edit(uiSiteEntity: UISiteEntity) extends Action
 
 case class CreateFrom(siteEntityTrait: SiteEntityTrait, isRegion: Boolean = false) extends Action
 

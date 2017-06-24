@@ -69,9 +69,9 @@ case class UISiteModel(
     }
   }
 
-  def withLinks(siteEntityTrait: SiteEntityTrait): _root_.nextds.client.entity.UISiteModel =
+  def withLinks(uiSiteEntity: UISiteEntity): UISiteModel =
     copy(linkedEntities =
-      uiEntity(siteEntityTrait).withLinked(this)
+      uiSiteEntity.withLinked(this)
     )
 
 }

@@ -18,7 +18,7 @@ object FilterTagCard {
 
     def entityIdent: VNode =
       div(className := css.entityCardIdent
-        , click(Edit(entity)) --> store
+        , click(Edit(uiEntity)) --> store
         , entity.ident)
 
     val selSET = store
