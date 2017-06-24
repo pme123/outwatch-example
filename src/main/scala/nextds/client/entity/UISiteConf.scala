@@ -36,7 +36,8 @@ trait UISiteConf
 
   // all links to the level COMP
   def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
-    uiModel.level(COMP).entities(siteType)
+    val siteT = if(siteType==REGION) LAYOUT else siteType
+    uiModel.level(COMP).entities(siteT)
       .filter(_.ident == siteEntity.comp.ident)
       .flatMap(_.withLinkedUp(uiModel))
       .toSet ++ withLinkedConf(uiModel.level(CONF)) ++

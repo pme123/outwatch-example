@@ -21,6 +21,10 @@ object FilterTagCreator {
   lazy val createFilterTagConfs =
     Seq(
       FilterTagConf(allSites.last, "DE AND (MGA OR CPF)", Seq("DE", "MGA", "CPF").map(createFilterTags.filterTag))
-       , FilterTagConf(allSites.last, "(EN AND ORP) OR NJR)", Seq("EN", "ORP", "NJR").map(createFilterTags.filterTag))
+      , FilterTagConf(allSites.last, "(EN AND ORP) OR NJR)", Seq("EN", "ORP", "NJR").map(createFilterTags.filterTag))
+      , FilterTagConf(allSites.last, "EN", Seq("EN").map(createFilterTags.filterTag))
+      , FilterTagConf(allSites.last, "DE", Seq("DE").map(createFilterTags.filterTag))
+      , FilterTagConf(allSites.last, "FR", Seq("FR").map(createFilterTags.filterTag))
+      , FilterTagConf(allSites.last, "IT", Seq("IT").map(createFilterTags.filterTag))
     )
 }

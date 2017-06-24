@@ -28,7 +28,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
 
   // all links to the level CONF
   def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
-    uiModel.level(CONF).entities(siteType)
+    uiModel.level(CONF).siteEntities.values.flatten
       .filter(_.asInstanceOf[UISiteConf].filterTagConf.exists(_.ident == ident))
       .flatMap(_.withLinkedUp(uiModel))
       .toSet + ident
