@@ -7,21 +7,21 @@ import outwatch.dom.Attribute
 
 object BootstrapStyles {
 
-def commonStyle(base: String) = (commonStyle: CommonStyle.Value) =>
+def commonStyle(base: String): (Bootstrap.CommonStyle.Value) => String = (commonStyle: CommonStyle.Value) =>
  s"$base $base-$commonStyle"
   
-  val buttonOpt = commonStyle("btn")
+  val buttonOpt: (Bootstrap.CommonStyle.Value) => String = commonStyle("btn")
 
-  val button = buttonOpt(default)
+  val button: String = buttonOpt(default)
 
-  val panelOpt = commonStyle("panel")
+  val panelOpt: (Bootstrap.CommonStyle.Value) => String = commonStyle("panel")
 
 
-  val labelOpt = commonStyle("label")
+  val labelOpt: (Bootstrap.CommonStyle.Value) => String = commonStyle("label")
 
-  val label = labelOpt(default)
+  val label: String = labelOpt(default)
 
-  val alert = commonStyle("alert")
+  val alert: (Bootstrap.CommonStyle.Value) => String = commonStyle("alert")
 
 
   // wrap styles in a namespace, assign to val to prevent lazy initialization
@@ -35,15 +35,15 @@ def commonStyle(base: String) = (commonStyle: CommonStyle.Value) =>
     val footer = "modal-footer"
   }
 
-  val _modal = modal
+  val _modal: modal.type = modal
 
   object listGroup {
     val listGroup = "list-group"
     val item = "list-group-item"
-    val itemOpt = commonStyle("list-group-item")
+    val itemOpt: (Bootstrap.CommonStyle.Value) => String = commonStyle("list-group-item")
   }
 
-  val _listGroup = listGroup
+  val _listGroup: listGroup.type = listGroup
   val pullRight = "pull-right"
   val buttonXS = "btn-xs"
   val close = "close"
@@ -60,6 +60,7 @@ def commonStyle(base: String) = (commonStyle: CommonStyle.Value) =>
     val col1 = "col-md-1"
     val col2 = "col-md-2"
     val col3 = "col-md-3"
+    val col4 = "col-md-4"
     val col9 = "col-md-9"
     val col10 = "col-md-10"
     val col12 = "col-md-12"

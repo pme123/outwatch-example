@@ -21,15 +21,15 @@ object FilterTagCard {
         , click(Edit(entity)) --> store
         , entity.ident)
 
-    val selObs = store
+    val selSET = store
       .map(_.selectedSET
-        .exists(_.siteEntity.ident == entity.ident)
+        .exists(_.ident == entity.ident)
       )
 
     div(className := bss.grid.col3
       , div(id := entity.ident
         , className := css.entityCardLI(FILTER_TAG)
-        , selected <-- selObs
+        , selected <-- selSET
         , entityIcon()
         , entityIdent
         , div(className := css.entityCardTitle, uiEntity.htmlCondition)

@@ -1,6 +1,6 @@
 package nextds.client.components
 
-import nextds.client.entity.{Action, ReduxStore, State, UISiteEntity}
+import nextds.client.entity.{Action, ReduxStore, State}
 import nextds.entity._
 import outwatch.dom._
 
@@ -22,13 +22,7 @@ object LinkedLevelViewer {
             .map(EntityCard.apply)
         }
 
-      val siteEntitiesDiv =
-        siteType match {
-          case (REGION | PLAYLIST | MEDIUM) => bss.grid.col2
-          case (_) => bss.grid.col3
-        }
-
-      div(className := siteEntitiesDiv
+      div(className := css.siteEntitiesDiv(levelType, siteType)
         , ul(id := s"config-viewer-$siteType"
           , className := css.siteEntitiesUL
           , children <-- entities)

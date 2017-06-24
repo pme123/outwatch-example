@@ -64,7 +64,9 @@ object GlobalStyles {
 
   def siteEntitiesDiv(levelType:LevelType, siteType:SiteType): String =
     (levelType, siteType) match {
-      case (CONF, REGION | PLAYLIST | MEDIUM) => bss.grid.col2
+      case (CONF, REGION | PLAYLIST | LAYOUT) => bss.grid.col2
+      case (_, PLAYLIST) => bss.grid.col2
+      case (_,LAYOUT) => bss.grid.col4
       case (_, _) => bss.grid.col3
     }
 
@@ -80,7 +82,7 @@ object GlobalStyles {
 
   val chosenEntity = "chosen-entity"
 
-  def entityCardLI(siteType: SiteType) = Seq(
+  def entityCardLI(siteType: SiteType): String = Seq(
     bss.listGroup.item
     , bss.grid.row
     , siteTypeStyle(siteType)
