@@ -1,6 +1,5 @@
 package nextds.client.entity
 
-import nextds.entity.SiteEntityTrait
 import outwatch.dom._
 
 /**
@@ -77,7 +76,7 @@ trait UIElements {
     )
   }
 
-  private def editValue(label: String, input: VNode) = UIElements.editValue(label,input)
+  protected def editValue(label: String, input: VNode): VNode = UIElements.editValue(label,input)
 
 
 }

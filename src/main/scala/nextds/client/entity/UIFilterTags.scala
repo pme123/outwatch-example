@@ -1,8 +1,9 @@
 package nextds.client.entity
 
+import nextds.client.entity.UIElements.Style
 import nextds.entity._
 import nextds.server.boundary.FilterTagBoundary
-import outwatch.dom.VNode
+import outwatch.dom._
 
 /**
   * Created by pascal.mengelt on 23.06.2017.
@@ -23,6 +24,18 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
   val condition: String = siteEntity.condition
 
   val htmlCondition: VNode = condition.italic
+
+  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
+    super.parameterEdit() ++
+      siteEntity.filterTags
+        .map(ft =>
+          editValue(siteType.label, div(
+             tpe := "text"
+            , ft.tag
+            , Attribute("data-toggle", "tooltip")
+            , Attribute("title", "TO DO")
+            , disabled := true
+          )))
 
   protected def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 

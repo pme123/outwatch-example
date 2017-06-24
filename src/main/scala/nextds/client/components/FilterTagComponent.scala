@@ -9,13 +9,13 @@ import outwatch.dom._
   */
 object FilterTagComponent {
 
-  def apply()(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(showAll:Boolean = false)(implicit store: ReduxStore[State, Action]): VNode = {
 
     val entities =
       store.map { st =>
         val model = st.siteModel
         model.filterTags.filterTagConfs
-          .filter(e => model.linkedEntities.contains(e.ident))
+          .filter(e => showAll || model.linkedEntities.contains(e.ident))
           .map(FilterTagCard.apply)
       }
 

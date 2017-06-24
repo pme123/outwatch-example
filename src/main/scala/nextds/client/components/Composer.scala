@@ -13,10 +13,11 @@ object Composer {
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
 
     val listViews: Observable[Seq[VNode]] = store
-      .map(
-        _.siteModel.allLevels
-          .map(m => LevelComponent(m.levelType))
-      )
+      .map { st =>
+        val model = st.siteModel
+        model.allLevels
+          .map(m => LevelComponent(m.levelType)) :+ FilterTagComponent(showAll = true)
+      }
 
     div(className := bss.grid.row + " full-height"
       , div(className := bss.grid.col9 + " full-height"
