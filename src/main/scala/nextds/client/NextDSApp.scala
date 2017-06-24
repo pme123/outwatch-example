@@ -2,9 +2,7 @@ package nextds.client
 
 import nextds.client.components._
 import nextds.client.entity._
-import nextds.entity._
 import outwatch.dom._
-import rxscalajs.Observable
 
 import scala.scalajs.js
 
@@ -30,20 +28,19 @@ case class NextDS() {
 
   }
 
-  val menu =
+  val menu: VNode =
     ul(className := "nav nav-tabs"
       , li(a(Attribute("data-toggle", "tab"), href := "#composer"
         , "Composer")
+      ), li(a(Attribute("data-toggle", "tab"), href := "#configurator"
+        , "Configurator")
       ), li(className := "active"
         , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
           , "Player Monitor")
-      ), li(a(Attribute("data-toggle", "tab"), href := "#configurator"
-        , "Configurator")
       ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
         , "Sort Example")
       )
     )
-
 
   val root: VNode =
     div(className := "full-height"

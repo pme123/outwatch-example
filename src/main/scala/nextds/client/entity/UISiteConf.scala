@@ -16,24 +16,42 @@ trait UISiteConf
     siteEntity.siteConfRefs
       .map(uiEntity)
       .map(_.asInstanceOf[UISiteConf])
+  lazy val filterTagConf: Option[UISiteEntity] =
+    siteEntity.filterTagConf
+      .map(uiEntity)
 
-  def parameterEdit(siteEntityRefs: Seq[SiteConfTrait])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
+  def parameterEdit(siteEntityRefs: Seq[SiteEntityTrait])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     super.parameterEdit() ++ Seq(
       siteEntityRef(siteComp)) ++ siteEntityRefs
       .map(siteEntityRef)
   }
 
+  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
+    parameterEdit(siteEntity.siteConfRefs ++ siteEntity.filterTagConf.toSeq)
+
+
   override val hideMenuCreateFrom = true
 
   override def hideMenuCreateRegion = false
 
+  // all links to the level COMP
+  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+    uiModel.level(COMP).entities(siteType)
+      .filter(_.ident == siteEntity.comp.ident)
+      .flatMap(_.withLinkedUp(uiModel))
+      .toSet ++ withLinkedConf(uiModel.level(CONF)) ++
+      withLinkedConfUp(uiModel.level(CONF)) + ident
+  }
 
-  override def withLinked(uiModel: UISiteModel): Set[SiteEntityIdent] =
-    super.withLinked(uiModel) ++
-      uiEntity(siteEntity.comp).withLinked(uiModel) ++
-      uiModel.level(COMP).entities(siteType).map(_.ident).filter(_ == siteEntity.comp.ident) ++
-      withLinkedConf(uiModel.level(CONF)) ++
-      withLinkedConfUp(uiModel.level(CONF))
+  // all links to the level Filter
+  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+    filterTagConf
+      .toSeq
+      .flatMap(f => f.withLinkedDown(uiModel))
+      .toSet ++ withLinkedConf(uiModel.level(CONF)) ++
+      withLinkedConfUp(uiModel.level(CONF)) + ident
+  }
+
 
   // all links to the left - e.g. REGION > PLAYLIST > MEDIUM
   def withLinkedConf(siteLevel: UISiteLevelTrait): Set[SiteEntityIdent] = {
@@ -71,9 +89,6 @@ case class UIPlayerConf(siteEntity: PlayerConf
   extends UISiteConf
     with UIPlayer {
 
-  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit(siteEntity.siteConfRefs)
-
   override def hideMenuCreateRegion = true
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
@@ -87,9 +102,6 @@ case class UILayoutConf(siteEntity: LayoutConf
 
   lazy val layoutComp: LayoutComp = siteEntity.siteConf.comp
 
-  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit(siteEntity.siteConfRefs)
-
   override val menuItemLink = "link Layout to Player"
   override val linkToType: Option[SiteType] = Some(PLAYER)
 
@@ -102,15 +114,10 @@ case class UIRegionConf(siteEntity: RegionConf
   extends UISiteConf
     with UIRegion {
 
-  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit(siteEntity.siteConfRefs)
-
   override val menuItemLink = "link Region to Layout"
   override val linkToType: Option[SiteType] = Some(LAYOUT)
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
-
-
 
 
 }
@@ -119,14 +126,11 @@ case class UIPlaylistConf(siteEntity: PlaylistConf
                           , isFiltered: Boolean = false)
   extends UISiteConf
     with UIPlaylist {
-  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit(siteEntity.siteConfRefs)
 
   override val menuItemLink = "link Playlist to Region"
   override val linkToType: Option[SiteType] = Some(REGION)
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
-
 
 
 }
@@ -137,14 +141,10 @@ case class UIMediumConf(siteEntity: MediumConf
   extends UISiteConf
     with UIMedium {
 
-  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit(siteEntity.siteConfRefs)
-
   override val menuItemLink = "link Medium to Playlist"
   override val linkToType: Option[SiteType] = Some(PLAYLIST)
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
-
 
 
 }

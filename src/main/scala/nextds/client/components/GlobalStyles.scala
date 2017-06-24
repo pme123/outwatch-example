@@ -17,7 +17,7 @@ object GlobalStyles {
       case PLAYLIST => playlistStyle
       case MEDIUM => mediumStyle
       case TIME_FILTER => timeFilterStyle
-      case TAG_FILTER => tagFilterStyle
+      case FILTER_TAG => tagFilterStyle
     }
   }
 

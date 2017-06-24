@@ -104,7 +104,13 @@ trait UISiteEntity
   protected def filter(isFiltered: Boolean): UISiteEntity
 
   def withLinked(uiModel: UISiteModel): Set[SiteEntityIdent] =
-    Set(ident)
+    withLinkedDown(uiModel) ++ withLinkedUp(uiModel)
+
+  // all links to the level up FILTER > CONF > COMP > TEMPL
+  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent]
+
+  // all links to the level down TEMPL < COMP > CONF > FILTER
+  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent]
 
 }
 

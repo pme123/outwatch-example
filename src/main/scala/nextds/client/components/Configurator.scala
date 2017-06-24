@@ -19,13 +19,11 @@ object Configurator {
           , ConfigViewer(TEMPL)
           , ConfigViewer(COMP)
           , ConfigViewer(CONF)
-          , LevelComponent(CONF)
           , FilterTagComponent()
 
         ))
       , div(
-        UIFiltersForm()
-        , EntityDetailView()
+        EntityDetailView()
       )
     )  }
 }

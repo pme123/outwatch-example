@@ -21,7 +21,6 @@ object SitesCreator {
       case TEMPL => SiteTemplCreator.allTempls(siteType)
       case COMP => SiteCompCreator.allComps(siteType)
       case CONF => SiteConfCreator.allConfs(siteType)
-      case FILTER => SiteFilterCreator.allConfs(siteType)
       case other => //TODO
         throw new IllegalArgumentException(s"Unsupported Level Type: $other")
     }).map(_.asInstanceOf[T])
@@ -100,6 +99,7 @@ object SiteConfCreator {
 
   import SiteCompCreator._
   import SitesCreator._
+  import FilterTagCreator._
 
   val entityCount = 20
 
@@ -111,6 +111,7 @@ object SiteConfCreator {
       , comp
       , oneOf(None,None, Some(s"$label 2.3"), Some(s"$i.0 $label"), Some(s"${label.take(2)}-CONF-$i"))
       , oneOf(None,Some(s"Special Config for this $label $i"))
+      , oneOf(None, Some(oneOfSeq(createFilterTagConfs)))
     )
   }
 
@@ -142,25 +143,4 @@ object SiteConfCreator {
 
 }
 
-object SiteFilterCreator {
-
-  val publicSiteIdent: SiteIdent = SitesRepo.allSites().head
-  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
-
-  private val tagFilters = Seq(
-    TagFilter(SiteFilter(publicSiteIdent, "Languages"))
-    , TagFilter(SiteFilter(defaultSiteIdent, "Stores"))
-    , TagFilter(SiteFilter(defaultSiteIdent, "Scales"))
-  )
-  private val timeFilters = Seq(
-    TimeFilter(SiteFilter(publicSiteIdent, "Weekdays"))
-    , TimeFilter(SiteFilter(publicSiteIdent, "Weekends"))
-    , TimeFilter(SiteFilter(defaultSiteIdent, "Opening Hours"))
-  )
-
-  val allConfs: Map[SiteType, Seq[SiteFilterTrait]] = Map(
-    TAG_FILTER -> tagFilters
-    , TIME_FILTER -> timeFilters
-  )
-}
 

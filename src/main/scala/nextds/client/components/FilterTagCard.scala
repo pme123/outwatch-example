@@ -1,8 +1,7 @@
 package nextds.client.components
 
 import nextds.client.entity._
-import nextds.entity.{FilterTagConf, SiteEntityIdent, SiteEntityTrait, TAG_FILTER}
-import org.scalajs.dom.DragEvent
+import nextds.entity.FILTER_TAG
 import outwatch.dom._
 
 /**
@@ -10,23 +9,32 @@ import outwatch.dom._
   */
 object FilterTagCard {
 
-  def apply(filterTagConf: UIFilterTagConf)(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(uiEntity: UIFilterTagConf)(implicit store: ReduxStore[State, Action]): VNode = {
+    val entity = uiEntity.siteEntity
+
+    def entityIcon()(implicit store: ReduxStore[State, Action]): VNode =
+      div(className := css.entityCardIcon
+        , css.siteTypeIcon(FILTER_TAG))
+
+    def entityIdent: VNode =
+      div(className := css.entityCardIdent
+        , click(Edit(entity)) --> store
+        , entity.ident)
+
+    val selObs = store
+      .map(_.selectedSET
+        .exists(_.siteEntity.ident == entity.ident)
+      )
+
     div(className := bss.grid.col3
-      , div(id := filterTagConf.ident
-        , className := css.entityCardLI(TAG_FILTER)
+      , div(id := entity.ident
+        , className := css.entityCardLI(FILTER_TAG)
+        , selected <-- selObs
         , entityIcon()
-        , entityIdent(filterTagConf.ident)
-        , div(className := css.entityCardTitle, filterTagConf.htmlCondition)
+        , entityIdent
+        , div(className := css.entityCardTitle, uiEntity.htmlCondition)
       ))
   }
-
-  def entityIcon()(implicit store: ReduxStore[State, Action]): VNode =
-    div(className := css.entityCardIcon
-      , css.siteTypeIcon(TAG_FILTER))
-
-  def entityIdent(ident: SiteEntityIdent): VNode =
-    div(className := css.entityCardIdent
-      , ident)
 
 }
 

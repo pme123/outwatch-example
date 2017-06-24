@@ -26,8 +26,7 @@ package object entity {
     case e: RegionConf => UIRegionConf(e)
     case e: PlaylistConf => UIPlaylistConf(e)
     case e: MediumConf => UIMediumConf(e)
-    case e: TagFilter => UITagFilter(e)
-    case e: TimeFilter => UITimeFilter(e)
+    case e: FilterTagConf => UIFilterTagConf(e)
   }
 
   val specialWord = Seq("(", ")", "AND", "OR")

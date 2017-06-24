@@ -14,7 +14,6 @@ object SiteTemplRepo {
       case TEMPL => SiteTemplRepo.allTempls(siteType)
       case COMP => SiteCompRepo.allComps(siteType)
       case CONF => SiteConfRepo.allConfs(siteType)
-      case FILTER => SiteFilterRepo.allConfs(siteType)
       case _ => //TODO
         SiteTemplRepo.allTempls(siteType)
     }).map(_.asInstanceOf[T])
@@ -111,27 +110,6 @@ object SiteConfRepo {
     , MEDIUM -> mediumConfs
 
   )
-}
 
-object SiteFilterRepo {
-
-  val publicSiteIdent: SiteIdent = SitesRepo.allSites().head
-  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(0)
-
-  private val tagFilters = Seq(
-    TagFilter(SiteFilter(publicSiteIdent, "Languages"))
-    , TagFilter(SiteFilter(defaultSiteIdent, "Stores"))
-    , TagFilter(SiteFilter(defaultSiteIdent, "Scales"))
-  )
-  private val timeFilters = Seq(
-    TimeFilter(SiteFilter(publicSiteIdent, "Weekdays"))
-    , TimeFilter(SiteFilter(publicSiteIdent, "Weekends"))
-    , TimeFilter(SiteFilter(defaultSiteIdent, "Opening Hours"))
-  )
-
-  val allConfs: Map[SiteType, Seq[SiteFilterTrait]] = Map(
-    TAG_FILTER -> tagFilters
-    , TIME_FILTER -> timeFilters
-  )
 }
 

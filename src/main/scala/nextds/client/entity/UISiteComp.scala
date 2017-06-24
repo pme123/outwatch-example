@@ -10,6 +10,8 @@ trait UISiteComp
   extends UISiteEntity {
   def siteEntity: SiteCompTrait
 
+  lazy val templ: SiteTemplTrait = siteEntity.templ
+
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     customParamEdit()
   }
@@ -21,8 +23,21 @@ trait UISiteComp
 
   override val menuItemCreateFrom = s"create ${siteType.label} ${CONF.label}"
 
-  override def withLinked(uiModel: UISiteModel): Set[SiteEntityIdent] =
-   super.withLinked(uiModel) ++ uiModel.level(TEMPL).entities(siteType).map(_.ident).filter(_ == siteEntity.templ.ident).toSet
+  // all links to the level TEMPL
+  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+    uiModel.level(TEMPL).entities(siteType)
+      .filter(_.ident == siteEntity.templ.ident)
+      .flatMap(_.withLinkedUp(uiModel))
+      .toSet + ident
+  }
+
+  // all links to the level CONF
+  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+    uiModel.level(CONF).entities(siteType)
+      .filter(_.asInstanceOf[UISiteConf].siteEntity.comp.ident == ident)
+      .flatMap(_.withLinkedDown(uiModel))
+      .toSet + ident
+  }
 }
 
 object UISiteComp {
@@ -79,7 +94,7 @@ case class UILayoutComp(siteEntity: LayoutComp
 }
 
 case class UIPlaylistComp(siteEntity: PlaylistComp
-                        , isFiltered: Boolean = false)
+                          , isFiltered: Boolean = false)
   extends UISiteComp
     with UIPlaylist {
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)

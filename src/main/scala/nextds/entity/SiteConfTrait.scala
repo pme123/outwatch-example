@@ -14,6 +14,8 @@ trait SiteConfTrait
 
   lazy val ident: String = siteConf.ident
 
+  lazy val filterTagConf: Option[FilterTagConf] = siteConf.filterTagConf
+
 
   def comp: SiteCompTrait = siteConf.comp
 
@@ -29,7 +31,8 @@ case class SiteConf[T <: SiteCompTrait](siteIdent: String
                                         , ident: String
                                         , comp: T
                                         , titleOpt: Option[String] = None
-                                        , descrOpt: Option[String] = None)
+                                        , descrOpt: Option[String] = None
+                                        , filterTagConf: Option[FilterTagConf] = None)
 
 object SiteConf {
   def apply[T <: SiteCompTrait](comp: T): SiteConf[T] = SiteConf(comp.siteIdent, Site.nextIdent(comp.siteIdent), comp)

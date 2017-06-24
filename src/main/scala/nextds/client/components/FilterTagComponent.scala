@@ -13,10 +13,11 @@ object FilterTagComponent {
 
     val entities =
       store.map { st =>
-        st.siteModel.filterTags.filterTagConfs
+        val model = st.siteModel
+        model.filterTags.filterTagConfs
+          .filter(e => model.linkedEntities.contains(e.ident))
           .map(FilterTagCard.apply)
       }
-
 
     div(className := css.siteLevelDiv(FILTER)
       , div(className := css.siteLevelInnerDiv(FILTER)

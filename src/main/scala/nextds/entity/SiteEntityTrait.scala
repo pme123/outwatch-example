@@ -102,13 +102,13 @@ object SiteType {
     case PLAYLIST.name => PLAYLIST
     case MEDIUM.name => MEDIUM
     case TIME_FILTER.name => TIME_FILTER
-    case TAG_FILTER.name => TAG_FILTER
+    case FILTER_TAG.name => FILTER_TAG
   }
 
   def createFromGroup(groupFrom: String): SiteType =
     SiteType.createFrom(groupFrom.dropWhile(_ != '-').drop(1))
 
-  def all = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM, TIME_FILTER, TAG_FILTER)
+  def all = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM, TIME_FILTER, FILTER_TAG)
 }
 
 case object PLAYER extends SiteType {
@@ -150,7 +150,7 @@ case object TIME_FILTER extends SiteType {
   val logo = "clock-o"
 }
 
-case object TAG_FILTER extends SiteType {
+case object FILTER_TAG extends SiteType {
   val name = "tag-filter"
   val label = "Tag Filter"
   val logo = "tags"
