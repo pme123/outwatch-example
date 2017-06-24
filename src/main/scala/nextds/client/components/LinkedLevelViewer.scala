@@ -7,7 +7,7 @@ import outwatch.dom._
 /**
   * Created by pascal.mengelt on 22.06.2017.
   */
-object ConfigViewer {
+object LinkedLevelViewer {
 
   def apply(levelType: LevelType)(implicit store: ReduxStore[State, Action]): VNode = {
 

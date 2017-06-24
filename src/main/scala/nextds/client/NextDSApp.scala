@@ -32,8 +32,8 @@ case class NextDS() {
     ul(className := "nav nav-tabs"
       , li(a(Attribute("data-toggle", "tab"), href := "#composer"
         , "Composer")
-      ), li(a(Attribute("data-toggle", "tab"), href := "#configurator"
-        , "Configurator")
+      ), li(a(Attribute("data-toggle", "tab"), href := "#linkedViewer"
+        , "Linked Viewer")
       ), li(className := "active"
         , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
           , "Player Monitor")
@@ -54,9 +54,9 @@ case class NextDS() {
           , className := "tab-pane fade in full-height active"
           , PlayerMonitor()
         ),
-        div(id := "configurator"
+        div(id := "linkedViewer"
           , className := "tab-pane fade full-height"
-          , Configurator()
+          , LinkedViewer()
         ),
         div(id := "sortExample"
           , className := "tab-pane fade  full-height"

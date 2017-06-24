@@ -7,7 +7,7 @@ import outwatch.dom._
 /**
   * Created by pascal.mengelt on 22.06.2017.
   */
-object Configurator {
+object LinkedViewer {
   @inline private def bss = BootstrapStyles
 
   @inline private def css = GlobalStyles
@@ -16,9 +16,9 @@ object Configurator {
     div(className := bss.grid.row + " full-height"
       , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
-          , ConfigViewer(TEMPL)
-          , ConfigViewer(COMP)
-          , ConfigViewer(CONF)
+          , LinkedLevelViewer(TEMPL)
+          , LinkedLevelViewer(COMP)
+          , LinkedLevelViewer(CONF)
           , FilterTagComponent()
 
         ))
