@@ -34,6 +34,7 @@ object LinkedLevelViewer {
       store.map(
         _.siteModel.level(levelType)
           .allSiteTypes
+          .filterNot(siteType => levelType != CONF && siteType == REGION)
           .map(siteType =>
             entityListComponent(siteType))
       )

@@ -31,9 +31,9 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
         .map(ft =>
           editValue(siteType.label, div(
              tpe := "text"
-            , ft.tag
+            , ft.path
             , Attribute("data-toggle", "tooltip")
-            , Attribute("title", "TO DO")
+            , Attribute("title", ft.path)
             , disabled := true
           )))
 

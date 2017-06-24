@@ -18,6 +18,9 @@ trait FilterTag {
 
   def addChildren(childTags: String*): FilterTag
 
+  def parent: Option[FilterTag]
+
+  def path: String = parent.map(_.path).getOrElse("") + s"> $tag "
 
   def filterTags(filterTag: String): Seq[FilterTag] =
     if (filterTag == tag)
@@ -32,10 +35,11 @@ trait FilterTag {
 case class TagGroup(siteIdent: String
                     , tag: String
                     , children: Seq[FilterTag] = Nil
-                    , descr: String = "No description available") extends FilterTag {
+                    , descr: String = "No description available"
+                    , parent: Option[TagGroup] = None) extends FilterTag {
 
   def addChildren(childTags: String*): FilterTag =
-    copy(children = children ++ childTags.map(Tag(siteIdent, _)))
+    copy(children = children ++ childTags.map(Tag(siteIdent, _, parent=Some(this))))
 
   protected def filterRest(filterTag: String): Seq[FilterTag] =
     children.flatMap(_.filterTags(filterTag))
@@ -44,7 +48,8 @@ case class TagGroup(siteIdent: String
 
 case class Tag(siteIdent: String
                , tag: String
-               , descr: String = "No description available") extends FilterTag {
+               , descr: String = "No description available"
+               , parent: Option[TagGroup] = None) extends FilterTag {
 
   def addChildren(childTags: String*): FilterTag =
     TagGroup(siteIdent, tag, Nil, descr).addChildren(childTags: _*)
