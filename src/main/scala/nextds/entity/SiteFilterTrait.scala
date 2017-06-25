@@ -13,7 +13,7 @@ trait SiteFilterTrait extends SiteEntityTrait {
 
 }
 
-trait FilterTag {
+sealed trait FilterTag {
 
   def siteIdent: String
 
@@ -35,6 +35,9 @@ trait FilterTag {
 
   protected def filterRest(filterTag: String): Seq[FilterTag]
 
+  def findPossibleTags(tagStr: SiteIdent): Seq[Tag]
+
+
 }
 
 case class TagGroup(siteIdent: String
@@ -49,6 +52,7 @@ case class TagGroup(siteIdent: String
   protected def filterRest(filterTag: String): Seq[FilterTag] =
     children.flatMap(_.filterTags(filterTag))
 
+  def findPossibleTags(tagStr: String): Seq[Tag] = children.flatMap(_.findPossibleTags(tagStr))
 }
 
 case class Tag(siteIdent: String
@@ -60,6 +64,9 @@ case class Tag(siteIdent: String
     TagGroup(siteIdent, tag, Nil, descr).addChildren(childTags: _*)
 
   protected def filterRest(filterTag: String): Seq[FilterTag] = Nil
+
+  def findPossibleTags(tagStr: SiteIdent): Seq[Tag] =
+    if (tag.contains(tagStr)) Seq(this) else Nil
 
 
 }
@@ -86,7 +93,7 @@ object FilterTagConf {
 }
 
 sealed trait FilterCond {
-
+  def filterTags: Seq[String]
 }
 
 
@@ -126,9 +133,13 @@ object FilterCond {
     Try(expr.parse(str).get.value)
   }
 
-  case class FilterCalc(left: FilterCond, right: FilterCond, operator: FilterOperator) extends FilterCond
+  case class FilterCalc(left: FilterCond, right: FilterCond, operator: FilterOperator) extends FilterCond {
+    def filterTags: Seq[String] = left.filterTags ++ right.filterTags
+  }
 
-  case class FilterElem(tag: String) extends FilterCond
+  case class FilterElem(tag: String) extends FilterCond {
+    def filterTags: Seq[String] = Seq(tag)
+  }
 
   sealed trait FilterOperator
 
@@ -143,6 +154,7 @@ object FilterCond {
 }
 
 case class FilterTags(filterTags: Seq[FilterTag]) {
+
   def filterTags(tag: String): Seq[FilterTag] =
     filterTags.flatMap(ft => ft.filterTags(tag: String))
 
@@ -151,5 +163,10 @@ case class FilterTags(filterTags: Seq[FilterTag]) {
 
   def filterTagOpt(tag: String): Option[FilterTag] =
     filterTags(tag).headOption
+
+  def findPossibleTags(tagStr: SiteIdent): Seq[FilterTag] =
+    filterTags.flatMap(_.findPossibleTags(tagStr))
+    .take(10)
+
 
 }

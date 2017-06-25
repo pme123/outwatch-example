@@ -1,5 +1,6 @@
 package nextds.client.entity
 
+import cats.data.Validated.{Invalid, Valid}
 import nextds.entity._
 import nextds.server.boundary.FilterTagBoundary
 import outwatch.Sink
@@ -28,11 +29,29 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
                            , isFiltered: Boolean = false) extends UISiteEntity {
   val condition: String = siteEntity.condition
 
+  val filterTags: Seq[FilterTag] = siteEntity.filterTags
+
   val htmlCondition: VNode = condition.italic
 
   val conditionEvents: Observable[String] with Sink[String] = createStringHandler()
+
+  private def differentFilterTags(fTags: List[FilterTag]): Boolean =
+    fTags.length != filterTags.length ||
+      fTags.exists(ft => !filterTags.contains(ft))
+
   private val filterCond = conditionEvents
-    .map(c => FilterCond(c))
+    .map(c => FilterCond(c)
+      .map(FilterTagBoundary.filterTags)
+      .flatMap {
+        case Valid(fTags) =>
+          Success(fTags.toList)
+        case Invalid(errors) =>
+          Failure(new IllegalArgumentException(errors.toList mkString ("\n")))
+      }.map { fTags =>
+      if (differentFilterTags(fTags))
+        println("has different FiterTags!")
+      fTags
+    })
 
   private val condGroupClasses = filterCond
     .map {
@@ -52,6 +71,19 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
       case Failure(fc) => fc.getMessage
     }
 
+  private lazy val allFilterTags = FilterTagBoundary.filterTags()
+
+  private val proposedTags = conditionEvents
+    .startWith("")
+    .map(_.split(" ").toSeq)
+    .map(_.last)
+    .map { c =>
+      println(s"c: $c")
+      if (c.length > 1)
+        allFilterTags.findPossibleTags(c)
+      else
+        Nil
+    }
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     super.parameterEdit() ++
@@ -82,7 +114,16 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
         ), span(
           className <-- condSpanClasses
         ),
-        child <-- condErrorMsg)
+        child <-- condErrorMsg
+        , select(className := "value-input-col"
+          , disabled := true
+          , size <-- proposedTags.map(_.length)
+          , hidden <-- proposedTags.map(_.isEmpty)
+          , children <-- proposedTags.map(_.map(t =>
+            option(id := t.tag
+              , selected := false
+              , t.path
+            )))))
       )
 
   protected def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)

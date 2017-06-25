@@ -1,14 +1,20 @@
 package nextds.server.boundary
 
-import nextds.entity.{FilterTag, FilterTagConf, FilterTags, SiteIdent}
+import cats.data.{NonEmptyList, Validated}
+import nextds.entity._
 import nextds.server.control.FilterTagCreator
+
+import scala.util.Try
 
 /**
   * Created by pascal.mengelt on 23.06.2017.
   */
 object FilterTagBoundary {
 
+
   def filterTags(): FilterTags = FilterTagCreator.createFilterTags
+
+  def filterTags(fc: FilterCond): Validated[NonEmptyList[String], NonEmptyList[FilterTag]] = FilterTagCreator.filterTags(fc)
 
   def filterTagConfs(): Seq[FilterTagConf] = FilterTagCreator.createFilterTagConfs
 

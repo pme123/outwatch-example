@@ -3,7 +3,6 @@ package nextds.client.components
 import nextds.client.entity._
 import nextds.entity.{LevelType, SiteType}
 import nextds.server.boundary.SiteEntityBoundary
-import org.scalajs.dom.raw.HTMLSelectElement
 import outwatch.dom._
 import outwatch.dom.helpers.InputEvent
 import rxscalajs.Observable
@@ -72,9 +71,5 @@ object UIFiltersForm {
 
     )
 
-  private def extractSelectedOptions(ie: InputEvent): List[String] = {
-    ie.target.asInstanceOf[HTMLSelectElement].options.filter(_.selected)
-      .map(_.id)
-      .toList
-  }
+
 }

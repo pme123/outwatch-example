@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   // , "org.scalatest" %%% "scalatest" % "3.0.1" % Test
   , "org.scalatest" %% "scalatest" % "3.0.1" % Test
   , "com.lihaoyi" %%% "fastparse" % "0.4.3"
-
+  , "org.typelevel" %%% "cats" % "0.9.0"
 )
 
 jsDependencies ++= Seq(
