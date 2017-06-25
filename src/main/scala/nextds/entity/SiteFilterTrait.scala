@@ -1,5 +1,10 @@
 package nextds.entity
 
+import fastparse.WhitespaceApi
+
+import scala.util.Try
+
+
 /**
   * Created by pascal.mengelt on 07.06.2017.
   */
@@ -39,7 +44,7 @@ case class TagGroup(siteIdent: String
                     , parent: Option[TagGroup] = None) extends FilterTag {
 
   def addChildren(childTags: String*): FilterTag =
-    copy(children = children ++ childTags.map(Tag(siteIdent, _, parent=Some(this))))
+    copy(children = children ++ childTags.map(Tag(siteIdent, _, parent = Some(this))))
 
   protected def filterRest(filterTag: String): Seq[FilterTag] =
     children.flatMap(_.filterTags(filterTag))
@@ -80,6 +85,58 @@ object FilterTagConf {
 
 }
 
+sealed trait FilterCond {
+
+}
+
+
+object FilterCond {
+
+  val White = WhitespaceApi.Wrapper {
+    import fastparse.all._
+    NoTrace(CharIn(Seq(' ', '\n', '\t', '\r')).rep)
+  }
+
+  import fastparse.noApi._
+  import White._
+
+  def eval(tree: (FilterCond, Seq[(String, FilterCond)])): FilterCond = {
+    val (base, ops) = tree
+    ops.foldLeft(base) { case (left, (op, right)) =>
+      FilterCalc(left, right, op match {
+        case "&" => AND
+        case "|" => OR
+      })
+    }
+  }
+
+  val number: P[FilterCond] = P(CharIn('0' to 'z').rep(1).!).map(FilterElem)
+  val parens: P[FilterCond] = P("(" ~/ orOp ~ ")")
+  val factor: P[FilterCond] = P(number | parens)
+
+  val andOp: P[FilterCond] = P(factor ~ (CharIn("&").! ~/ factor).rep).map(eval)
+  val orOp: P[FilterCond] = P(andOp ~ (CharIn("|").! ~/ andOp).rep).map(eval)
+  val expr: P[FilterCond] = P(" ".rep ~ orOp ~ " ".rep ~ End)
+
+  def apply(cond: String): Try[FilterCond] =
+    Try(expr.parse(cond.replace(AND.repr, "&").replace(OR.repr, "|"))
+      .get.value)
+
+  case class FilterCalc(left: FilterCond, right: FilterCond, operator: FilterOperator) extends FilterCond
+
+  case class FilterElem(tag: String) extends FilterCond
+
+  sealed trait FilterOperator
+
+  case object AND extends FilterOperator {
+    val repr = " AND "
+  }
+
+  case object OR extends FilterOperator {
+    val repr = " OR "
+  }
+
+}
 
 case class FilterTags(filterTags: Seq[FilterTag]) {
   def filterTags(tag: String): Seq[FilterTag] =
