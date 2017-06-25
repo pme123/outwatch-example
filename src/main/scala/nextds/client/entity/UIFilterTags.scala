@@ -46,7 +46,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
         case Valid(fTags) =>
           Success(fTags.toList)
         case Invalid(errors) =>
-          Failure(new IllegalArgumentException(errors.toList mkString ("\n")))
+          Failure(new IllegalArgumentException(errors.toList mkString "\n"))
       }.map { fTags =>
       if (differentFilterTags(fTags))
         println("has different FiterTags!")
@@ -57,7 +57,6 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
     .map {
       case Success(fc) => "has-success has-feedback"
       case Failure(fc) =>
-        println(s"fc: ${fc.getMessage}")
         "has-error has-feedback"
     }
   private val condSpanClasses = filterCond
@@ -78,7 +77,6 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
     .map(_.split(" ").toSeq)
     .map(_.last)
     .map { c =>
-      println(s"c: $c")
       if (c.length > 1)
         allFilterTags.findPossibleTags(c)
       else

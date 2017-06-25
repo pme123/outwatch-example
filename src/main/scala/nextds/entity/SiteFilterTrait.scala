@@ -1,6 +1,7 @@
 package nextds.entity
 
 import fastparse.WhitespaceApi
+import nextds.server.boundary.FilterTagBoundary
 
 import scala.util.Try
 
@@ -37,6 +38,8 @@ sealed trait FilterTag {
 
   def findPossibleTags(tagStr: SiteIdent): Seq[Tag]
 
+  def allTags(): Seq[String]
+
 
 }
 
@@ -53,6 +56,12 @@ case class TagGroup(siteIdent: String
     children.flatMap(_.filterTags(filterTag))
 
   def findPossibleTags(tagStr: String): Seq[Tag] = children.flatMap(_.findPossibleTags(tagStr))
+
+  def allTags(): Seq[String] = children.flatMap(_.allTags())
+}
+
+object TagGroup {
+
 }
 
 case class Tag(siteIdent: String
@@ -68,6 +77,7 @@ case class Tag(siteIdent: String
   def findPossibleTags(tagStr: SiteIdent): Seq[Tag] =
     if (tag.contains(tagStr)) Seq(this) else Nil
 
+  def allTags(): Seq[String] = Seq(tag)
 
 }
 
@@ -155,6 +165,7 @@ object FilterCond {
 
 case class FilterTags(filterTags: Seq[FilterTag]) {
 
+
   def filterTags(tag: String): Seq[FilterTag] =
     filterTags.flatMap(ft => ft.filterTags(tag: String))
 
@@ -168,5 +179,7 @@ case class FilterTags(filterTags: Seq[FilterTag]) {
     filterTags.flatMap(_.findPossibleTags(tagStr))
     .take(10)
 
+  def allTags(): Seq[String] =
+    filterTags.flatMap(_.allTags())
 
 }
