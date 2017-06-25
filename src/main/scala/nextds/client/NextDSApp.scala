@@ -47,11 +47,11 @@ case class NextDS() {
       , menu
       , div(className := "tab-content tab-contents"
         , div(id := "composer"
-          , className := "tab-pane fade full-height"
+          , className := "tab-pane fade full-height in active"
           , Composer()
         ),
         div(id := "playerMonitor"
-          , className := "tab-pane fade in full-height active"
+          , className := "tab-pane fade in full-height"
           , PlayerMonitor()
         ),
         div(id := "linkedViewer"

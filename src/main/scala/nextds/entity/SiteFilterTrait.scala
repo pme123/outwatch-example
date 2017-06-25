@@ -110,17 +110,21 @@ object FilterCond {
     }
   }
 
-  val number: P[FilterCond] = P(CharIn('0' to 'z').rep(1).!).map(FilterElem)
+  val chars: P[FilterCond] = P(CharIn('0' to '9', 'a' to 'z', 'A' to 'Z', Seq('-', '_', '$', '?', '!')).rep(1).!).map(FilterElem)
   val parens: P[FilterCond] = P("(" ~/ orOp ~ ")")
-  val factor: P[FilterCond] = P(number | parens)
+  val factor: P[FilterCond] = P(chars | parens)
 
   val andOp: P[FilterCond] = P(factor ~ (CharIn("&").! ~/ factor).rep).map(eval)
   val orOp: P[FilterCond] = P(andOp ~ (CharIn("|").! ~/ andOp).rep).map(eval)
   val expr: P[FilterCond] = P(" ".rep ~ orOp ~ " ".rep ~ End)
 
-  def apply(cond: String): Try[FilterCond] =
-    Try(expr.parse(cond.replace(AND.repr, "&").replace(OR.repr, "|"))
-      .get.value)
+  def apply(cond: String): Try[FilterCond] = {
+    val str = cond
+      .replace(AND.repr, "&")
+      .replace(OR.repr, "|")
+      .trim
+    Try(expr.parse(str).get.value)
+  }
 
   case class FilterCalc(left: FilterCond, right: FilterCond, operator: FilterOperator) extends FilterCond
 

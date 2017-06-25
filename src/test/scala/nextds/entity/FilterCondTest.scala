@@ -44,5 +44,9 @@ class FilterCondTest
       case other => false
     })
   }
+  it should "possible to have spaces in the tag" in {
+    val triedCond =
+    assert(FilterCond("DE EN").get == FilterElem("DE EN"))
+  }
 
 }

@@ -1,5 +1,6 @@
 package nextds.client
 
+import nextds.client.components.{BootstrapStyles, GlobalStyles}
 import nextds.entity._
 import outwatch.dom._
 
@@ -9,6 +10,10 @@ import scala.language.implicitConversions
   * Created by pascal.mengelt on 28.05.2017.
   */
 package object entity {
+
+  @inline def bss = BootstrapStyles
+
+  @inline def css = GlobalStyles
 
   val defaultMaxEntries = 7
 
