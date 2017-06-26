@@ -16,7 +16,7 @@ object FilterTagComponent {
         val model = st.siteModel
         model.filterTags.filterTagConfs
           .filterNot(_.isFiltered)
-          .filter(e => showAll || model.linkedEntities.contains(e.ident))
+          .filter(e => showAll || model.linkedEntities.contains(e.siteEntity))
           .take(model.maxEntries)
           .map(FilterTagCard.apply)
       }

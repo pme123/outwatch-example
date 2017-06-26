@@ -30,6 +30,8 @@ trait SiteEntityTrait {
 
   def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait = this
 
+  def filterLinks(siteEntities: Set[SiteEntityTrait]): Set[SiteEntityTrait] = siteEntities
+
 }
 
 object SiteEntityTrait {

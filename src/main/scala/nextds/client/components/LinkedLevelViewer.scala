@@ -18,7 +18,7 @@ object LinkedLevelViewer {
           val model = st.siteModel
           model.entities(levelType, siteType)
             .filterNot(_.isFiltered)
-            .filter(e => model.linkedEntities.contains(e.ident))
+            .filter(e => model.linkedEntities.contains(e.siteEntity))
             .take(model.maxEntries)
             .map(EntityCard.apply)
         }

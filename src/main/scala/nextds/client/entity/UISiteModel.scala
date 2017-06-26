@@ -12,7 +12,7 @@ case class UISiteModel(
                         , filterTags: UIFilterTags = UIFilterTags()
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
-                        , linkedEntities: Set[SiteEntityIdent] = Set()
+                        , linkedEntities: Set[SiteEntityTrait] = Set()
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
@@ -71,7 +71,7 @@ case class UISiteModel(
 
   def withLinks(uiSiteEntity: UISiteEntity): UISiteModel =
     copy(linkedEntities =
-      uiSiteEntity.withLinked(this)
+        uiSiteEntity.siteEntity.filterLinks(uiSiteEntity.withLinked(this))
     )
 
 }

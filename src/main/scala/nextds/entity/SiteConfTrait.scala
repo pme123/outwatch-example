@@ -25,6 +25,18 @@ trait SiteConfTrait
   lazy val maybeTitle: Option[String] = siteConf.titleOpt
   lazy val maybeDescr: Option[String] = siteConf.descrOpt
 
+  override def filterLinks(siteEntities: Set[SiteEntityTrait]): Set[SiteEntityTrait] = {
+    val filterCond: Seq[FilterCond] = filterTagConf.map(c => FilterCond(c.condition).get).toSeq
+    filterLinksLeft(siteEntities, filterCond) ++ filterLinksRight(siteEntities, filterCond)
+  }
+
+  // all links to the left - e.g. REGION > LAYOUT > PLAYER
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait]
+
+  // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait]
+
+
 }
 
 case class SiteConf[T <: SiteCompTrait](siteIdent: String
@@ -50,6 +62,15 @@ case class PlayerConf(siteConf: SiteConf[PlayerComp]
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[LayoutConf])
 
+  // all links to the left - nothing
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    Set(this)
+
+  // all links to the right - LAYOUT > REGION > PLAYLIST > MEDIUM
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
+
+
 }
 
 object PlayerConf {
@@ -74,6 +95,14 @@ case class LayoutConf(siteConf: SiteConf[LayoutComp]
 
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[RegionConf])
+
+  // all links to the left - PLAYER
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
+
+  // all links to the right - REGION > PLAYLIST > MEDIUM
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
 
 }
 
@@ -112,6 +141,13 @@ case class RegionConf(siteConf: SiteConf[LayoutComp]
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[PlaylistConf])
 
+  // all links to the left - LAYOUT > PLAYER
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
+
+  // all links to the right - PLAYLIST > MEDIUM
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
 }
 
 object RegionConf {
@@ -146,6 +182,13 @@ case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[MediumConf])
 
+  // all links to the left - REGION > LAYOUT > PLAYER
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
+
+  // all links to the right - MEDIUM
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
 }
 
 object PlaylistConf {
@@ -160,6 +203,14 @@ case class MediumConf(siteConf: SiteConf[MediumComp])
     with MediumTrait {
   // a MediumConf has no refs to other Confs
   val siteConfRefs = Nil
+
+  // all links to the left - PLAYLIST > REGION > LAYOUT > PLAYER
+  protected def filterLinksLeft(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    ???
+
+  // all links to the right - nothing
+  protected def filterLinksRight(siteEntities: Set[SiteEntityTrait], filtersToAdhere:Seq[FilterCond]): Set[SiteEntityTrait] =
+    Set(this)
 }
 
 object MediumConf {

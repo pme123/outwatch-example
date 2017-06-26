@@ -24,19 +24,19 @@ trait UISiteComp
   override val menuItemCreateFrom = s"create ${siteType.label} ${CONF.label}"
 
   // all links to the level TEMPL
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
     uiModel.level(TEMPL).entities(siteType)
       .filter(_.ident == siteEntity.templ.ident)
       .flatMap(_.withLinkedUp(uiModel))
-      .toSet + ident
+      .toSet + siteEntity
   }
 
   // all links to the level CONF
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait] = {
     uiModel.level(CONF).entities(siteType)
       .filter(_.asInstanceOf[UISiteConf].siteEntity.comp.ident == ident)
       .flatMap(_.withLinkedDown(uiModel))
-      .toSet + ident
+      .toSet + siteEntity
   }
 }
 

@@ -102,7 +102,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
           , Attribute("data-toggle", "tooltip")
           , Attribute("title",
             """Use a logical condition of your Filter Tags with AND OR. Use brackets for ordering.
-            Example: DE AND (FR OR EN)
+            Examples: 'DE AND (FR OR EN)' or short 'DE & (FR | EN)'
             In your tag names the following characters are allowed:
              - 0-9
              - a-z
@@ -128,16 +128,16 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
   protected def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
   // all links to the level CONF
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityIdent] = {
+  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
     uiModel.level(CONF).siteEntities.values.flatten
       .filter(_.asInstanceOf[UISiteConf].filterTagConf.exists(_.ident == ident))
       .flatMap(_.withLinkedUp(uiModel))
-      .toSet + ident
+      .toSet + siteEntity
   }
 
   // no levels below
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent] = {
-    Set(ident)
+  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait] = {
+    Set(siteEntity)
   }
 
 }
