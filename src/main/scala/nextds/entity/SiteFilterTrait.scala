@@ -1,7 +1,6 @@
 package nextds.entity
 
 import fastparse.WhitespaceApi
-import nextds.server.boundary.FilterTagBoundary
 
 import scala.util.Try
 
@@ -23,8 +22,9 @@ trait SiteFilterTrait extends SiteEntityTrait {
   * - a container describes what elements are added: e.g. DE OR (EN AND ORP)
   * - an element is added, when:
   *    - the element has no Filter
-  *    - the element adheres to the container's Filter, e.g. EN AND ORP
+  *    - the element adheres to its container Filters, e.g. the REGION must adhere to the Filters of its LAYOUTs and its PLAYERs
   *    - the container has no Filter
+  *
   */
 sealed trait FilterTag {
 
@@ -118,6 +118,7 @@ object FilterTagConf {
 sealed trait FilterCond {
   def filterTags: Seq[String]
 
+  // tested for basic cases
   def adheresFilter(elemFilter: FilterCond): Boolean
 
 }
@@ -165,8 +166,12 @@ object FilterCond {
     def adheresFilter(elemFilter: FilterCond): Boolean = (this, elemFilter) match {
       case (FilterCalc(l,r,OR),FilterElem(_)) => l.adheresFilter(elemFilter) || r.adheresFilter(elemFilter)
       case (FilterCalc(l,r,AND),FilterElem(_)) => l.adheresFilter(elemFilter) && r.adheresFilter(elemFilter)
-      case (FilterCalc(l,r,AND),FilterCalc(el,er,_)) => (l.adheresFilter(el) || l.adheresFilter(er)) && (r.adheresFilter(el) || r.adheresFilter(er))
-      case (FilterCalc(l,r,OR),FilterCalc(el,er,_)) => (l.adheresFilter(el) || l.adheresFilter(er)) || (r.adheresFilter(el) || r.adheresFilter(er))
+      case (FilterCalc(l,r,AND),FilterCalc(el,er,_)) =>
+        (l.adheresFilter(el) || l.adheresFilter(er)) && (r.adheresFilter(el) || r.adheresFilter(er))
+      case (FilterCalc(l,r,OR),FilterCalc(el,er,OR)) =>
+        (l.adheresFilter(el) || l.adheresFilter(er)) || (r.adheresFilter(el) || r.adheresFilter(er))
+      case (FilterCalc(l,r,OR),FilterCalc(el,er,AND)) =>
+        (l.adheresFilter(el) && l.adheresFilter(er)) || (r.adheresFilter(el) && r.adheresFilter(er))
     }
   }
 

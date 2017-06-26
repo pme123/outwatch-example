@@ -3,8 +3,6 @@ package nextds.entity
 import fastparse.core.ParseError
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
-import scala.util.Try
-
 /**
   * Created by pascal.mengelt on 24.06.2017.
   */
@@ -37,6 +35,16 @@ class FilterCondTest
           OR FR
       """).get === FilterCalc(FilterCalc(FilterElem("DE"), FilterElem("EN"), AND), FilterElem("FR"), OR))
   }
+  it should "create DE OR (EN AND FR) FilterCalc correctly" in {
+    assert(FilterCond("DE OR (EN AND FR)").get === FilterCalc(FilterElem("DE"), FilterCalc(FilterElem("EN"), FilterElem("FR"), AND), OR))
+  }
+  it should "create (DE OR EN) AND FR FilterCalc correctly" in {
+    assert(FilterCond("(DE OR EN) AND FR").get === FilterCalc(FilterCalc(FilterElem("DE"), FilterElem("EN"), OR), FilterElem("FR"), AND))
+  }
+  it should "create DE OR EN AND FR FilterCalc correctly" in {
+    assert(FilterCond("DE OR EN AND FR").get === FilterCalc(FilterElem("DE"), FilterCalc(FilterElem("EN"), FilterElem("FR"), AND), OR))
+  }
+
   it should "throw an exception if not correct syntax" in {
     val triedCond = FilterCond("(DE AND EN")
     assert(triedCond.failed.get match {
@@ -108,8 +116,33 @@ class FilterCondTest
   it should "NOT adhere to the containers (DE OR EN) AND FR" in {
     assert(!deOrEnAndFr2Filter.adheresFilter(deOrEnFilter))
   }
-  it should "NOT adhere to the containers DE OR (EN AND FR)" in {
+  it should "adhere to the containers DE OR (EN AND FR)" in {
     assert(deOrEnAndFr3Filter.adheresFilter(deOrEnFilter))
+  }
+
+  "The elements FilterCond DE AND FR" should "NOT adhere to the containers FR OR EN" in {
+    assert(!frOrEnFilter.adheresFilter(deAndFrFilter))
+  }
+  it should "NOT adhere to the containers DE" in {
+    assert(!deFilter.adheresFilter(deAndFrFilter))
+  }
+  it should "NOT adhere to the containers DE AND EN" in {
+    assert(!deAndEnFilter.adheresFilter(deAndFrFilter))
+  }
+  it should "NOT adhere to the containers IT OR FR" in {
+    assert(!itOrFrFilter.adheresFilter(deAndFrFilter))
+  }
+  it should "adhere to the containers DE AND FR" in {
+    assert(deAndFrFilter.adheresFilter(deAndFrFilter))
+  }
+  it should "NOT adhere to the containers DE OR EN AND FR" in {
+    assert(!deOrEnAndFr1Filter.adheresFilter(deAndFrFilter))
+  }
+  it should "adhere to the containers (DE OR EN) AND FR" in {
+    assert(deOrEnAndFr2Filter.adheresFilter(deAndFrFilter))
+  }
+  it should "NOT adhere to the containers DE OR (EN AND FR)" in {
+    assert(!deOrEnAndFr3Filter.adheresFilter(deAndFrFilter))
   }
 
 
