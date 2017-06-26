@@ -6,17 +6,16 @@ import nextds.entity._
 object SitesRepo {
   def allSites(): Seq[SiteIdent] = Seq("PUBLIC", "MGAA")
 
-}
-object SiteTemplRepo {
-
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
     (levelType match {
       case TEMPL => SiteTemplRepo.allTempls(siteType)
       case COMP => SiteCompRepo.allComps(siteType)
       case CONF => SiteConfRepo.allConfs(siteType)
-      case _ => //TODO
-        SiteTemplRepo.allTempls(siteType)
+      case FILTER => Seq()
     }).map(_.asInstanceOf[T])
+
+}
+object SiteTemplRepo {
 
   import nextds.entity.ScreenRegion._
 

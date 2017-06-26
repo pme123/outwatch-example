@@ -1,19 +1,19 @@
 package nextds.server.boundary
 
 import nextds.entity._
-import nextds.server.control.SitesCreator
+import nextds.server.control.{SitesCreator, SitesRepo}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
 object SiteEntityBoundary {
 
-  def allSites(): Seq[SiteIdent] = SitesCreator.allSites
+  def allSites(): Seq[SiteIdent] = SitesRepo.allSites() ++ SitesCreator.allSites
 
   def siteIdent(): SiteIdent = allSites()(1)
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
-    SitesCreator.entitiesFor(levelType, siteType)
+    SitesRepo.entitiesFor(levelType, siteType) ++ SitesCreator.entitiesFor(levelType, siteType)
 
   def createFrom(siteEntityTrait: SiteEntityTrait, siteIdent: String, isForRegion: Boolean = false): SiteEntityTrait = siteEntityTrait.levelType match {
     case TEMPL =>
@@ -28,7 +28,7 @@ object SiteEntityBoundary {
     case COMP =>
       siteEntityTrait.siteType match {
         case PLAYER => PlayerConf(siteIdent, siteEntityTrait.asInstanceOf[PlayerComp])
-        case LAYOUT if isForRegion=> RegionConf(siteIdent, siteEntityTrait.asInstanceOf[LayoutComp])
+        case LAYOUT if isForRegion => RegionConf(siteIdent, siteEntityTrait.asInstanceOf[LayoutComp])
         case LAYOUT => LayoutConf(siteIdent, siteEntityTrait.asInstanceOf[LayoutComp])
         case PLAYLIST => PlaylistConf(siteIdent, siteEntityTrait.asInstanceOf[PlaylistComp])
         case MEDIUM => MediumConf(siteIdent, siteEntityTrait.asInstanceOf[MediumComp])

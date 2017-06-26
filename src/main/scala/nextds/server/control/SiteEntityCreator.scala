@@ -6,7 +6,7 @@ import nextds.entity.{REGION, _}
 import scala.util.Random
 
 object SitesCreator {
-  val allSites: Seq[SiteIdent] = Seq("PUBLIC", "MGAA", "COM2A", "BETXY")
+  val allSites: Seq[SiteIdent] = Seq("PUBL2", "SFN", "COM2A", "BETXY")
 
   def siteIdent: SiteIdent = oneOfSeq(allSites)
 
