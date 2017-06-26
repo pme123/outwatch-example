@@ -50,10 +50,15 @@ class FilterCondTest
   }
 
   private val deFilter = FilterCond("DE").get
-  private val deEnOrFilter = FilterCond("DE OR EN").get
-  private val deEnAndfilter = FilterCond("DE AND EN").get
-  private val frEnOrFilter = FilterCond("FR OR EN").get
-  private val itFrOrFilter = FilterCond("IT OR FR").get
+  private val deOrEnFilter = FilterCond("DE OR EN").get
+  private val deAndEnFilter = FilterCond("DE AND EN").get
+  private val deAndFrFilter = FilterCond("DE AND FR").get
+  private val frOrEnFilter = FilterCond("FR OR EN").get
+  private val itOrFrFilter = FilterCond("IT OR FR").get
+
+  private val deOrEnAndFr1Filter = FilterCond("DE OR EN AND FR").get
+  private val deOrEnAndFr2Filter = FilterCond("(DE OR EN) AND FR").get
+  private val deOrEnAndFr3Filter = FilterCond("DE OR (EN AND FR)").get // same as 1
 
   "The elements FilterCond DE" should "adhere to the containers DE" in {
     assert(deFilter.adheresFilter(deFilter))
@@ -62,25 +67,50 @@ class FilterCondTest
     assert(!FilterCond("EN").get.adheresFilter(deFilter))
   }
   it should "adhere to the containers DE OR EN" in {
-    assert(deEnOrFilter.adheresFilter(deFilter))
+    assert(deOrEnFilter.adheresFilter(deFilter))
   }
   it should "NOT adhere to the containers FR OR EN" in {
-    assert(!frEnOrFilter.adheresFilter(deFilter))
+    assert(!frOrEnFilter.adheresFilter(deFilter))
   }
   it should "NOT adhere to the containers DE AND EN" in {
-    assert(!deEnAndfilter.adheresFilter(deFilter))
+    assert(!deAndEnFilter.adheresFilter(deFilter))
   }
-
+  it should "adhere to the containers DE OR EN AND FR" in {
+    assert(deOrEnAndFr1Filter.adheresFilter(deFilter))
+  }
+  it should "NOT adhere to the containers (DE OR EN) AND FR" in {
+    assert(!deOrEnAndFr2Filter.adheresFilter(deFilter))
+  }
+  it should "adhere to the containers DE OR (EN AND FR)" in {
+    assert(deOrEnAndFr3Filter.adheresFilter(deFilter))
+  }
   "The elements FilterCond DE OR EN" should "adhere to the containers FR OR EN" in {
-    assert(frEnOrFilter.adheresFilter(deEnOrFilter))
+    assert(frOrEnFilter.adheresFilter(deOrEnFilter))
   }
   it should "adhere to the containers DE" in {
-    assert(deFilter.adheresFilter(deEnOrFilter))
+    assert(deFilter.adheresFilter(deOrEnFilter))
+  }
+  it should "adhere to the containers DE AND En" in {
+    assert(deAndEnFilter.adheresFilter(deOrEnFilter))
   }
   it should "NOT adhere to the containers IT" in {
-    assert(!FilterCond("IT").get.adheresFilter(deEnOrFilter))
+    assert(!FilterCond("IT").get.adheresFilter(deOrEnFilter))
   }
   it should "NOT adhere to the containers IT OR FR" in {
-    assert(!itFrOrFilter.adheresFilter(deEnOrFilter))
+    assert(!itOrFrFilter.adheresFilter(deOrEnFilter))
   }
+  it should "NOT adhere to the containers DE AND FR" in {
+    assert(!deAndFrFilter.adheresFilter(deOrEnFilter))
+  }
+  it should "adhere to the containers DE OR EN AND FR" in {
+    assert(deOrEnAndFr1Filter.adheresFilter(deOrEnFilter))
+  }
+  it should "NOT adhere to the containers (DE OR EN) AND FR" in {
+    assert(!deOrEnAndFr2Filter.adheresFilter(deOrEnFilter))
+  }
+  it should "NOT adhere to the containers DE OR (EN AND FR)" in {
+    assert(deOrEnAndFr3Filter.adheresFilter(deOrEnFilter))
+  }
+
+
 }
