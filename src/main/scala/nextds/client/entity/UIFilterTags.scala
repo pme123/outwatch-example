@@ -11,6 +11,7 @@ import scala.util.{Failure, Success}
 
 /**
   * Created by pascal.mengelt on 23.06.2017.
+  *
   */
 case class UIFilterTags(filterTags: FilterTags
                         , filterTagConfs: Seq[UIFilterTagConf]) {
@@ -138,4 +139,5 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
   def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityIdent] = {
     Set(ident)
   }
+
 }

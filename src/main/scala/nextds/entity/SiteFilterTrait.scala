@@ -14,6 +14,18 @@ trait SiteFilterTrait extends SiteEntityTrait {
 
 }
 
+/**
+  * Filtering Rules:
+  * - from left to right: PLAYER > LAYOUT > REGION > PLAYLIST > MEDIUM
+  * - these relations we call always: container > elements
+  * - if no Filters are defined in a container: all elements are added
+  * - if no Filters are defined in an element: it is added to every container
+  * - a container describes what elements are added: e.g. DE OR (EN AND ORP)
+  * - an element is added, when:
+  *    - the element has no Filter
+  *    - the element adheres to the container's Filter, e.g. EN AND ORP
+  *    - the container has no Filter
+  */
 sealed trait FilterTag {
 
   def siteIdent: String
@@ -94,6 +106,7 @@ case class FilterTagConf(siteIdent: String
   def maybeTitle: Option[String] = Some(title)
 
   def maybeDescr: Option[String] = Some(descr)
+
 }
 
 object FilterTagConf {
@@ -104,6 +117,9 @@ object FilterTagConf {
 
 sealed trait FilterCond {
   def filterTags: Seq[String]
+
+  def adheresFilter(elemFilter: FilterCond): Boolean
+
 }
 
 
@@ -145,10 +161,25 @@ object FilterCond {
 
   case class FilterCalc(left: FilterCond, right: FilterCond, operator: FilterOperator) extends FilterCond {
     def filterTags: Seq[String] = left.filterTags ++ right.filterTags
+
+    def adheresFilter(elemFilter: FilterCond): Boolean = (this, elemFilter) match {
+      case (FilterCalc(l,r,OR),FilterElem(_)) => l.adheresFilter(elemFilter) || r.adheresFilter(elemFilter)
+      case (FilterCalc(l,r,AND),FilterElem(_)) => l.adheresFilter(elemFilter) && r.adheresFilter(elemFilter)
+      case (FilterCalc(l,r,AND),FilterCalc(el,er,_)) => (l.adheresFilter(el) || l.adheresFilter(er)) && (r.adheresFilter(el) || r.adheresFilter(er))
+      case (FilterCalc(l,r,OR),FilterCalc(el,er,_)) => (l.adheresFilter(el) || l.adheresFilter(er)) || (r.adheresFilter(el) || r.adheresFilter(er))
+    }
   }
 
   case class FilterElem(tag: String) extends FilterCond {
     def filterTags: Seq[String] = Seq(tag)
+
+    def adheresFilter(elemFilter: FilterCond): Boolean = elemFilter match {
+      case FilterElem(fTag) =>        tag == fTag
+      case FilterCalc(l,r,OR) => this.adheresFilter(l) || this.adheresFilter(r)
+      case FilterCalc(l,r,AND) => this.adheresFilter(l) && this.adheresFilter(r)
+
+
+    }
   }
 
   sealed trait FilterOperator
@@ -177,7 +208,7 @@ case class FilterTags(filterTags: Seq[FilterTag]) {
 
   def findPossibleTags(tagStr: SiteIdent): Seq[FilterTag] =
     filterTags.flatMap(_.findPossibleTags(tagStr))
-    .take(10)
+      .take(10)
 
   def allTags(): Seq[String] =
     filterTags.flatMap(_.allTags())

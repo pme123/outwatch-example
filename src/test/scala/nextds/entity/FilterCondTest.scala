@@ -46,7 +46,41 @@ class FilterCondTest
   }
   it should "possible to have spaces in the tag" in {
     val triedCond =
-    assert(FilterCond("DE EN").get == FilterElem("DE EN"))
+      assert(FilterCond("DE EN").get == FilterElem("DE EN"))
   }
 
+  private val deFilter = FilterCond("DE").get
+  private val deEnOrFilter = FilterCond("DE OR EN").get
+  private val deEnAndfilter = FilterCond("DE AND EN").get
+  private val frEnOrFilter = FilterCond("FR OR EN").get
+  private val itFrOrFilter = FilterCond("IT OR FR").get
+
+  "The elements FilterCond DE" should "adhere to the containers DE" in {
+    assert(deFilter.adheresFilter(deFilter))
+  }
+  it should "NOT adhere to the containers EN" in {
+    assert(!FilterCond("EN").get.adheresFilter(deFilter))
+  }
+  it should "adhere to the containers DE OR EN" in {
+    assert(deEnOrFilter.adheresFilter(deFilter))
+  }
+  it should "NOT adhere to the containers FR OR EN" in {
+    assert(!frEnOrFilter.adheresFilter(deFilter))
+  }
+  it should "NOT adhere to the containers DE AND EN" in {
+    assert(!deEnAndfilter.adheresFilter(deFilter))
+  }
+
+  "The elements FilterCond DE OR EN" should "adhere to the containers FR OR EN" in {
+    assert(frEnOrFilter.adheresFilter(deEnOrFilter))
+  }
+  it should "adhere to the containers DE" in {
+    assert(deFilter.adheresFilter(deEnOrFilter))
+  }
+  it should "NOT adhere to the containers IT" in {
+    assert(!FilterCond("IT").get.adheresFilter(deEnOrFilter))
+  }
+  it should "NOT adhere to the containers IT OR FR" in {
+    assert(!itFrOrFilter.adheresFilter(deEnOrFilter))
+  }
 }
