@@ -35,8 +35,12 @@ trait UISiteEntity
   def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     Seq(
       inputText("Title", siteEntity.title, siteEntity.maybeTitle)
-      , inputTextarea("Description", siteEntity.descr, siteEntity.maybeDescr)
+      , inputDescription
     )
+  }
+
+  def inputDescription = {
+    inputTextarea("Description", siteEntity.descr, siteEntity.maybeDescr)
   }
 
   def createMenu()(implicit store: ReduxStore[State, Action]): VNode =

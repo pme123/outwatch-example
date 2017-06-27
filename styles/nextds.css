@@ -131,19 +131,21 @@ ul {
 }
 
 .site-entity-ident {
-    fontWeight: bold;
+    font-weight: bold;
     float: left;
     cursor: pointer;
 }
 
 .site-entity-title {
-    fontStyle: italic;
+    font-style: italic;
     opacity: .6;
     float: left;
-    textOverflow: ellipsis;
-    whiteSpace: nowrap;
-    overflow: hidden;
     font-size: small;
+}
+.site-entity-title p{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .site-entity-menu-icon {
@@ -197,6 +199,10 @@ width(40 . % %)
 .filter-view-header {
     background-color: rgba(216, 216, 216, .2);
     border-color: rgba(216, 216, 216, .6);
+}
+.cond-error-message {
+    word-break: break-all;
+    word-wrap: break-word;
 }
 
 /* player monitor */

@@ -97,7 +97,7 @@ case class FilterTagConf(siteIdent: String
                          , ident: String
                          , condition: String
                          , filterTags: Seq[FilterTag] = Nil
-                         , descr: String = "No description available") extends SiteFilterTrait {
+                         , descr: String = "-") extends SiteFilterTrait {
 
   def siteType: SiteType = FILTER_TAG
 

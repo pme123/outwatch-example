@@ -26,7 +26,7 @@ object FilterTagCard {
         .exists(_.ident == entity.ident)
       )
 
-    div(className := bss.grid.col3
+    div(className := bss.grid.col2
       , div(id := entity.ident
         , className := css.entityCardLI(FILTER_TAG)
         , selected <-- selSET

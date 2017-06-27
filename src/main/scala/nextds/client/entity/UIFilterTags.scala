@@ -68,7 +68,8 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
   private val condErrorMsg = filterCond
     .map {
       case Success(fc) => ""
-      case Failure(fc) => fc.getMessage
+      case Failure(fc) => p( className:="cond-error-message"
+        , fc.getMessage)
     }
 
   private lazy val allFilterTags = FilterTagBoundary.filterTags()
@@ -85,16 +86,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
     }
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    super.parameterEdit() ++
-      siteEntity.filterTags
-        .map(ft =>
-          editValue(siteType.label, div(
-            tpe := "text"
-            , ft.path
-            , Attribute("data-toggle", "tooltip")
-            , Attribute("title", ft.path)
-            , disabled := true
-          ))) :+
+    Seq(
       editValue("Condition", div(className <-- condGroupClasses
         , textarea(
           className := "form-control"
@@ -123,7 +115,16 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
               , selected := false
               , t.path
             )))))
-      )
+      ), super.inputDescription) ++
+      siteEntity.filterTags
+        .map(ft =>
+          editValue(siteType.label, div(
+            tpe := "text"
+            , ft.path
+            , Attribute("data-toggle", "tooltip")
+            , Attribute("title", ft.path)
+            , disabled := true
+          )))
 
   protected def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
