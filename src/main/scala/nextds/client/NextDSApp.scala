@@ -2,7 +2,7 @@ package nextds.client
 
 import nextds.client.components._
 import nextds.client.entity._
-import outwatch.dom._
+import outwatch.dom.{Attribute, _}
 
 import scala.scalajs.js
 

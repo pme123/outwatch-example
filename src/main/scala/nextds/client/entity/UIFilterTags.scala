@@ -1,6 +1,7 @@
 package nextds.client.entity
 
 import cats.data.Validated.{Invalid, Valid}
+import nextds.client.components._
 import nextds.entity._
 import nextds.server.boundary.FilterTagBoundary
 import outwatch.Sink
@@ -68,7 +69,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
   private val condErrorMsg = filterCond
     .map {
       case Success(fc) => ""
-      case Failure(fc) => p( className:="cond-error-message"
+      case Failure(fc) => p(className := "cond-error-message"
         , fc.getMessage)
     }
 
@@ -91,16 +92,18 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
         , textarea(
           className := "form-control"
           , siteEntity.condition
+          , insert --> initTooltipSink
           , Attribute("data-toggle", "tooltip")
+          , Attribute("data-html", "true")
           , Attribute("title",
-            """Use a logical condition of your Filter Tags with AND OR. Use brackets for ordering.
-            Examples: 'DE AND (FR OR EN)' or short 'DE & (FR | EN)'
-            In your tag names the following characters are allowed:
-             - 0-9
-             - a-z
-             - A-Z
-             - !?_- $
-          """.stripMargin)
+            """<div class="tooltip-style"><p>Use a logical condition of your Filter Tags with AND OR. Use brackets for ordering.</p>
+            <p>Examples: '<b>DE AND (FR OR EN)</b>' or short '<b>DE & (FR | EN)</b>'</>
+            <p>In your tag names the following characters are allowed:</p>
+             <ul><li>0-9</li>
+             <li>a-z</li>
+             <li>A-Z</li>
+             <li>!?_- $</li></ul>
+          </div>""".stripMargin)
           , inputString --> conditionEvents
         ), span(
           className <-- condSpanClasses
