@@ -12,6 +12,7 @@ object SitesRepo {
       case COMP => SiteCompRepo.allComps(siteType)
       case CONF => SiteConfRepo.allConfs(siteType)
       case FILTER => Seq()
+      case TIME => Seq()
     }).map(_.asInstanceOf[T])
 
 }
@@ -24,13 +25,13 @@ object SiteTemplRepo {
 
   val playerTempl = PlayerTempl(defaultSiteIdent, "Web Player 2.0")
   val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(defaultSiteIdent, "Wide-Screen: Single Layout", fullHD)
-  val playlistTempl = PlaylistTempl(SiteTempl(defaultSiteIdent, "Basic Playlist"))
-  val mediumTempl = MediumTempl(SiteTempl(defaultSiteIdent, "Video"))
-  val mediumTempl2 = MediumTempl(SiteTempl(defaultSiteIdent, "Image"))
-  val mediumTempl3 = MediumTempl(SiteTempl(defaultSiteIdent, "AF"))
+  val playlistTempl = PlaylistTempl(SiteEntityInfo(defaultSiteIdent, "Basic Playlist"))
+  val mediumTempl = MediumTempl(SiteEntityInfo(defaultSiteIdent, "Video"))
+  val mediumTempl2 = MediumTempl(SiteEntityInfo(defaultSiteIdent, "Image"))
+  val mediumTempl3 = MediumTempl(SiteEntityInfo(defaultSiteIdent, "AF"))
   val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
     PLAYER -> Seq(playerTempl
-      , PlayerTempl(SiteTempl(defaultSiteIdent, Site.nextIdent(defaultSiteIdent), "Windows Player 2.3", "Special Configs for this Player type"))
+      , PlayerTempl(SiteEntityInfo(defaultSiteIdent, Site.nextIdent(defaultSiteIdent), "Windows Player 2.3", "Special Configs for this Player type"))
     ), LAYOUT -> Seq(layoutTempl
       , LayoutTempl.singleLayout(defaultSiteIdent, "Basic Wide-Screen", ultraHD4K)
     ), REGION -> Seq(
@@ -83,41 +84,41 @@ object SiteConfRepo {
   val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
 
   private val mediumConfs = Seq(
-    MediumConf(SiteConf(mediumComp))
-    , MediumConf(SiteConf(mediumComp2))
-    , MediumConf(SiteConf(mediumComp3))
-    , MediumConf(SiteConf(mediumComp, "Medium for DE", filterTagConf("DE")))
-    , MediumConf(SiteConf(mediumComp, "Medium for EN", filterTagConf("EN")))
-    , MediumConf(SiteConf(mediumComp, "Medium for IT", filterTagConf("IT")))
-    , MediumConf(SiteConf(mediumComp, "Medium for EN OR DE", filterTagConf("EN OR DE")))
-    , MediumConf(SiteConf(mediumComp, "Medium for EN AND DE", filterTagConf("EN AND DE")))
+    MediumConf(SiteConfInfo(mediumComp))
+    , MediumConf(SiteConfInfo(mediumComp2))
+    , MediumConf(SiteConfInfo(mediumComp3))
+    , MediumConf(SiteConfInfo(mediumComp, "Medium for DE", filterTagConf("DE")))
+    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN", filterTagConf("EN")))
+    , MediumConf(SiteConfInfo(mediumComp, "Medium for IT", filterTagConf("IT")))
+    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN OR DE", filterTagConf("EN OR DE")))
+    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN AND DE", filterTagConf("EN AND DE")))
   )
   private val playlistConfs = Seq(
-    PlaylistConf(SiteConf(playlistComp), siteConfRefs = mediumConfs.take(4))
-    , PlaylistConf(SiteConf(playlistComp, "Playlist for EN", filterTagConf("EN")), siteConfRefs = mediumConfs)
-    , PlaylistConf(SiteConf(playlistComp, "Playlist for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = mediumConfs)
-    , PlaylistConf(SiteConf(playlistComp, "Playlist for (IT OR EN) AND DE", filterTagConf("(IT OR EN) AND DE")), siteConfRefs = mediumConfs)
+    PlaylistConf(SiteConfInfo(playlistComp), siteConfRefs = mediumConfs.take(4))
+    , PlaylistConf(SiteConfInfo(playlistComp, "Playlist for EN", filterTagConf("EN")), siteConfRefs = mediumConfs)
+    , PlaylistConf(SiteConfInfo(playlistComp, "Playlist for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = mediumConfs)
+    , PlaylistConf(SiteConfInfo(playlistComp, "Playlist for (IT OR EN) AND DE", filterTagConf("(IT OR EN) AND DE")), siteConfRefs = mediumConfs)
   )
   private val regionConfs = Seq(
-    RegionConf(SiteConf(layoutComp), siteConfRefs = playlistConfs)
-    , RegionConf(SiteConf(layoutComp, "Region for EN", filterTagConf("EN")), siteConfRefs = playlistConfs)
-    , RegionConf(SiteConf(layoutComp, "Region for DE", filterTagConf("DE")), siteConfRefs = playlistConfs)
-    , RegionConf(SiteConf(layoutComp, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs)
+    RegionConf(SiteConfInfo(layoutComp), siteConfRefs = playlistConfs)
+    , RegionConf(SiteConfInfo(layoutComp, "Region for EN", filterTagConf("EN")), siteConfRefs = playlistConfs)
+    , RegionConf(SiteConfInfo(layoutComp, "Region for DE", filterTagConf("DE")), siteConfRefs = playlistConfs)
+    , RegionConf(SiteConfInfo(layoutComp, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs)
   )
   private val layoutConfs = Seq(
     LayoutConf(defaultSiteIdent, layoutComp, regionConfs = regionConfs)
-    , LayoutConf(SiteConf(layoutComp2, "Extrem special configuration Layout."), siteConfRefs = regionConfs)
-    , LayoutConf(SiteConf(layoutComp, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs)
-    , LayoutConf(SiteConf(layoutComp, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs)
-    , LayoutConf(SiteConf(layoutComp, "Layout for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = regionConfs)
+    , LayoutConf(SiteConfInfo(layoutComp2, "Extrem special configuration Layout."), siteConfRefs = regionConfs)
+    , LayoutConf(SiteConfInfo(layoutComp, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs)
+    , LayoutConf(SiteConfInfo(layoutComp, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs)
+    , LayoutConf(SiteConfInfo(layoutComp, "Layout for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = regionConfs)
   )
   private val playerConfs = Seq(
     PlayerConf(defaultSiteIdent, playerComp, layoutConfs)
     , PlayerConf(defaultSiteIdent, playerComp2, layoutConfs)
     , PlayerConf(defaultSiteIdent, playerComp3, layoutConfs)
-    , PlayerConf(SiteConf(playerComp, "Player for EN", filterTagConf("EN")), siteConfRefs = layoutConfs)
-    , PlayerConf(SiteConf(playerComp, "Player for DE", filterTagConf("DE")), siteConfRefs = layoutConfs)
-    , PlayerConf(SiteConf(playerComp, "Player for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = layoutConfs)
+    , PlayerConf(SiteConfInfo(playerComp, "Player for EN", filterTagConf("EN")), siteConfRefs = layoutConfs)
+    , PlayerConf(SiteConfInfo(playerComp, "Player for DE", filterTagConf("DE")), siteConfRefs = layoutConfs)
+    , PlayerConf(SiteConfInfo(playerComp, "Player for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = layoutConfs)
   )
 
   val allConfs: Map[SiteType, Seq[SiteConfTrait]] = Map(

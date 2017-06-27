@@ -5,38 +5,25 @@ package nextds.entity
   */
 trait SiteTemplTrait
   extends SiteEntityTrait {
-  def templContent: SiteTempl
+  def siteInfo: SiteEntityInfo
 
   lazy val levelType: LevelType = TEMPL
-  lazy val siteIdent: String = templContent.siteIdent
-  lazy val ident: String = templContent.ident
-  lazy val title: String = templContent.title
-  lazy val descr: String = templContent.descr
-
-  lazy val maybeTitle: Option[String] = Some(title)
-  lazy val maybeDescr: Option[String] = Some(descr)
 }
 
 object SiteTemplTrait {
 }
 
-case class SiteTempl(siteIdent: String, ident: String, title: String, descr: String = "No description available")
-
-object SiteTempl {
-  def apply(siteIdent: String, title: String): SiteTempl = SiteTempl(siteIdent, Site.nextIdent(siteIdent), title)
-}
-
-case class PlayerTempl(templContent: SiteTempl)
+case class PlayerTempl(siteInfo: SiteEntityInfo)
   extends SiteTemplTrait
     with PlayerTrait {
 }
 
 object PlayerTempl {
 
-  def apply(siteIdent: String, title: String): PlayerTempl = PlayerTempl(SiteTempl(siteIdent, Site.nextIdent(siteIdent), title))
+  def apply(siteIdent: String, title: String): PlayerTempl = PlayerTempl(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), title))
 }
 
-case class LayoutTempl(templContent: SiteTempl
+case class LayoutTempl(siteInfo: SiteEntityInfo
                        , screenRegion: ScreenRegion)
   extends SiteTemplTrait
     with LayoutTrait {
@@ -54,16 +41,16 @@ object LayoutTempl {
   def singleLayout(siteIdent: String
                    , title: String
                    , screenRegion: ScreenRegion): LayoutTempl =
-    LayoutTempl(SiteTempl(siteIdent, Site.nextIdent(siteIdent), title)
+    LayoutTempl(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), title)
       , screenRegion)
-  def singleLayout(templContent: SiteTempl
+  def singleLayout(templContent: SiteEntityInfo
                    , screenRegion: ScreenRegion): LayoutTempl =
     LayoutTempl(templContent
       , screenRegion)
 
 }
 
-case class PlaylistTempl(templContent: SiteTempl)
+case class PlaylistTempl(siteInfo: SiteEntityInfo)
   extends SiteTemplTrait
     with PlaylistTrait {
 }
@@ -71,7 +58,7 @@ case class PlaylistTempl(templContent: SiteTempl)
 object PlaylistTempl {
 }
 
-case class MediumTempl(templContent: SiteTempl)
+case class MediumTempl(siteInfo: SiteEntityInfo)
   extends SiteTemplTrait
     with MediumTrait {
 }

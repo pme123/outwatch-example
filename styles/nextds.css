@@ -44,7 +44,7 @@ ul {
     border-color: rgba(47, 79, 79, .2);
 }
 
-.time-filter-style {
+.timing-style {
     background-color: rgba(216, 216, 33, .1);
     border-color: rgba(216, 216, 33, .2);
 }
@@ -74,6 +74,11 @@ ul {
 }
 
 .filter-style {
+    background-color: rgba(216, 216, 216, .1);
+    border-color: rgba(216, 216, 216, .4);
+}
+
+.time-style {
     background-color: rgba(216, 216, 216, .1);
     border-color: rgba(216, 216, 216, .4);
 }

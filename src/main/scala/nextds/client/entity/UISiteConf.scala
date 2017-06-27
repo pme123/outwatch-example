@@ -12,7 +12,7 @@ trait UISiteConf
   extends UISiteEntity {
   def siteEntity: SiteConfTrait
 
-  lazy val siteComp: SiteCompTrait = siteEntity.siteConf.comp
+  lazy val siteComp: SiteCompTrait = siteEntity.siteInfo.comp
 
   lazy val siteConfRefs: Seq[UISiteConf] =
     siteEntity.siteConfRefs
@@ -102,7 +102,7 @@ case class UILayoutConf(siteEntity: LayoutConf
   extends UISiteConf
     with UILayout {
 
-  lazy val layoutComp: LayoutComp = siteEntity.siteConf.comp
+  lazy val layoutComp: LayoutComp = siteEntity.siteInfo.comp
 
   override val menuItemLink = "link Layout to Player"
   override val linkToType: Option[SiteType] = Some(PLAYER)

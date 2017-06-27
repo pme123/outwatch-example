@@ -16,7 +16,7 @@ object GlobalStyles {
       case REGION => layoutStyle
       case PLAYLIST => playlistStyle
       case MEDIUM => mediumStyle
-      case TIME_FILTER => timeFilterStyle
+      case TIMING => timingStyle
       case FILTER_TAG => tagFilterStyle
     }
   }
@@ -27,7 +27,7 @@ object GlobalStyles {
   val playlistStyle = "playlist-style"
   val mediumStyle = "medium-style"
   val tagFilterStyle = "tag-filter-style"
-  val timeFilterStyle = "time-filter-style"
+  val timingStyle = "timing-style"
 
 
   def levelTypeStyle(levelType: LevelType): String =
@@ -36,12 +36,14 @@ object GlobalStyles {
       case COMP => compStyle
       case CONF => confStyle
       case FILTER => filterStyle
+      case TIME => timeStyle
     }
 
   val templStyle = "templ-style"
   val compStyle = "comp-style"
   val confStyle = "conf-style"
   val filterStyle = "filter-style"
+  val timeStyle = "time-style"
 
   def siteLevelDiv(levelType: LevelType): String = Seq(
     css.levelTypeStyle(levelType)

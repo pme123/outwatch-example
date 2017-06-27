@@ -5,7 +5,7 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 /**
   * Created by pascal.mengelt on 26.06.2017.
   */
-class SiteConfTraitTest
+class SiteConfInfoTraitTest
   extends FlatSpec
     with Matchers
     with BeforeAndAfter {
@@ -48,26 +48,26 @@ class SiteConfTraitTest
 
 object TestResources {
   val siteIdent = "site"
-  private val tagConf = FilterTagConf(siteIdent, "filter-conf1", "DE")
-  private val tagConf2 = FilterTagConf(siteIdent, "filter-conf1", "FR")
+  private val tagConf = FilterTagConf(SiteEntityInfo(siteIdent, "DE"), "DE")
+  private val tagConf2 = FilterTagConf(SiteEntityInfo(siteIdent, "FR"), "FR")
 
 
-  val layoutTempl = LayoutTempl.singleLayout(SiteTempl(siteIdent, "layout 1"), ScreenRegion())
+  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(SiteEntityInfo(siteIdent, "layout 1"), ScreenRegion())
   val layoutComp = LayoutComp(SiteComp(siteIdent, layoutTempl))
   val layoutConf = LayoutConf(layoutComp, tagConf)
   val regionConf = RegionConf(layoutComp, tagConf)
   val regionConfOtherFilter = RegionConf(layoutComp, tagConf2)
 
-  val playistTempl = PlaylistTempl(SiteTempl(siteIdent, "playist 1"))
+  val playistTempl = PlaylistTempl(SiteEntityInfo(siteIdent, "playist 1"))
   val playistComp = PlaylistComp(SiteComp(siteIdent, playistTempl))
   val playistConf = PlaylistConf(playistComp, tagConf)
 
-  val mediumTempl = MediumTempl(SiteTempl(siteIdent, "medium 1"))
+  val mediumTempl = MediumTempl(SiteEntityInfo(siteIdent, "medium 1"))
   val mediumComp = MediumComp(SiteComp(siteIdent, mediumTempl))
   val mediumConf = MediumConf(mediumComp, tagConf)
   val mediumConfNoFilter = MediumConf(siteIdent, mediumComp)
 
-  val playerTempl = PlayerTempl(SiteTempl(siteIdent, "player 1"))
+  val playerTempl = PlayerTempl(SiteEntityInfo(siteIdent, "player 1"))
   val playerComp = PlayerComp(SiteComp(siteIdent, playerTempl))
   val playerConf = PlayerConf(playerComp, tagConf)
   val playerConfNoFilter = PlayerConf(playerComp)

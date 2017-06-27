@@ -8,24 +8,19 @@ import scala.language.postfixOps
   */
 trait SiteEntityTrait {
 
-  def siteIdent: SiteIdent
+  def siteInfo: SiteEntityInfoTrait
 
   def siteType: SiteType
 
   def levelType: LevelType
 
-  def label: String = s"${siteType.label} ${levelType.label}"
-
-  def ident: SiteEntityIdent
-
-  def title: String
-
-  def maybeTitle: Option[String]
-
-  def descr: String
-
-  def maybeDescr: Option[String]
-
+  lazy val siteIdent: SiteIdent = siteInfo.siteIdent
+  lazy val label: String = s"${siteType.label} ${levelType.label}"
+  lazy val ident: SiteEntityIdent = siteInfo.ident
+  lazy val title: String = siteInfo.title
+  lazy val maybeTitle: Option[String] = siteInfo.maybeTitle
+  lazy val descr: String = siteInfo.descr
+  lazy val maybeDescr: Option[String] = siteInfo.maybeDescr
   lazy val typeDefinition: String = s"$levelType-$siteType"
 
   def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait = this
@@ -35,6 +30,34 @@ trait SiteEntityTrait {
 }
 
 object SiteEntityTrait {
+}
+
+trait SiteEntityInfoTrait {
+  def siteIdent: String
+
+  def ident: String
+
+  def title: String
+
+  def descr: String
+
+  def maybeTitle: Option[String]
+
+  def maybeDescr: Option[String]
+
+}
+
+case class SiteEntityInfo(siteIdent: String, ident: String, title: String, descr: String = "-")
+  extends SiteEntityInfoTrait {
+
+  def maybeTitle: Option[String] = Some(title)
+
+  def maybeDescr: Option[String] = Some(descr)
+
+}
+
+object SiteEntityInfo {
+  def apply(siteIdent: String, title: String): SiteEntityInfo = SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), title)
 }
 
 object SiteIdent {
@@ -86,6 +109,10 @@ trait MediumTrait extends SiteEntityTrait {
   val siteType = MEDIUM
 }
 
+trait TimeTrait extends SiteEntityTrait {
+  val siteType = TIMING
+}
+
 sealed trait SiteType {
   def name: String
 
@@ -103,14 +130,14 @@ object SiteType {
     case REGION.name => REGION
     case PLAYLIST.name => PLAYLIST
     case MEDIUM.name => MEDIUM
-    case TIME_FILTER.name => TIME_FILTER
+    case TIMING.name => TIMING
     case FILTER_TAG.name => FILTER_TAG
   }
 
   def createFromGroup(groupFrom: String): SiteType =
     SiteType.createFrom(groupFrom.dropWhile(_ != '-').drop(1))
 
-  def all = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM, TIME_FILTER, FILTER_TAG)
+  def all = Seq(PLAYER, LAYOUT, REGION, PLAYLIST, MEDIUM, TIMING, FILTER_TAG)
 }
 
 case object PLAYER extends SiteType {
@@ -146,9 +173,9 @@ case object MEDIUM extends SiteType {
   val logo = "medium"
 }
 
-case object TIME_FILTER extends SiteType {
-  val name = "time-filter"
-  val label = "Time Filter"
+case object TIMING extends SiteType {
+  val name = "timing"
+  val label = "Timing"
   val logo = "clock-o"
 }
 
@@ -170,6 +197,7 @@ object LevelType {
     case COMP.name => COMP
     case CONF.name => CONF
     case FILTER.name => FILTER
+    case TIME.name => TIME
   }
 
   def createFromGroup(groupFrom: String): LevelType =
@@ -196,6 +224,11 @@ case object CONF extends LevelType {
 case object FILTER extends LevelType {
   val name = "filter"
   val label = "Filter"
+}
+
+case object TIME extends LevelType {
+  val name = "time"
+  val label = "Time"
 }
 
 

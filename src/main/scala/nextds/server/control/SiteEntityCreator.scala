@@ -35,7 +35,7 @@ object SiteTemplCreator {
 
   private def siteTempl(label: String) = for {i <- 0 to entityCount} yield {
     val ident = siteIdent
-    SiteTempl(ident, Site.nextIdent(ident)
+    SiteEntityInfo(ident, Site.nextIdent(ident)
       , oneOf(s"$label 2.3", s"$i.0 $label", s"${label.take(2)}-AZ-$i")
       , oneOf(s"Special Configs for this $label $i", s"No description for $label $i available"))
   }
@@ -108,11 +108,11 @@ object SiteConfCreator {
 
   val entityCount = 20
 
-  private def siteConf(comp: SiteCompTrait): Seq[SiteConf[SiteCompTrait]] = for {i <- 0 to entityCount} yield {
+  private def siteConf(comp: SiteCompTrait): Seq[SiteConfInfo[SiteCompTrait]] = for {i <- 0 to entityCount} yield {
     val ident = siteIdent
     val siteType = comp.siteType
     val label = siteType.label
-    SiteConf(ident, Site.nextIdent(ident)
+    SiteConfInfo(ident, Site.nextIdent(ident)
       , comp
       , oneOf(None, None, Some(s"$label 2.3"), Some(s"$i.0 $label"), Some(s"${label.take(2)}-CONF-$i"))
       , oneOf(None, Some(s"Special Config for this $label $i"))
@@ -121,22 +121,22 @@ object SiteConfCreator {
   }
 
   private val mediumConfs = siteConf(comp(MEDIUM))
-    .map(_.asInstanceOf[SiteConf[MediumComp]])
+    .map(_.asInstanceOf[SiteConfInfo[MediumComp]])
     .map(MediumConf(_))
   private val playlistConfs = siteConf(comp(PLAYLIST))
-    .map(_.asInstanceOf[SiteConf[PlaylistComp]])
+    .map(_.asInstanceOf[SiteConfInfo[PlaylistComp]])
     .map(PlaylistConf(_, Set(oneOfSeq(mediumConfs), oneOfSeq(mediumConfs), oneOfSeq(mediumConfs)).toSeq))
 
   private def screenRegion = oneOf(None, None, Some(ScreenRegion(12, 24)))
 
   private val regionConfs = siteConf(comp(LAYOUT))
-    .map(_.asInstanceOf[SiteConf[LayoutComp]])
+    .map(_.asInstanceOf[SiteConfInfo[LayoutComp]])
     .map(RegionConf(_, screenRegion, Seq(oneOfSeq(playlistConfs))))
   private val layoutConfs = siteConf(comp(LAYOUT))
-    .map(_.asInstanceOf[SiteConf[LayoutComp]])
+    .map(_.asInstanceOf[SiteConfInfo[LayoutComp]])
     .map(LayoutConf(_, screenRegion, Seq(oneOfSeq(regionConfs))))
   private val playerConfs = siteConf(comp(PLAYER))
-    .map(_.asInstanceOf[SiteConf[PlayerComp]])
+    .map(_.asInstanceOf[SiteConfInfo[PlayerComp]])
     .map(c => PlayerConf(c, Seq(oneOfSeq(layoutConfs))))
 
 

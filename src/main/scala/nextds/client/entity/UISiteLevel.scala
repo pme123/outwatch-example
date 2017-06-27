@@ -99,7 +99,7 @@ case class UIFilterLevel(
   def replaceAllEntries(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait =
     copy(siteEntities = siteEntities)
 
-  def allSiteTypes: Seq[SiteType] = Seq(FILTER_TAG, TIME_FILTER)
+  def allSiteTypes: Seq[SiteType] = Seq(FILTER_TAG, TIMING)
 
   protected def filter(siteEntities: Map[SiteType, Seq[UISiteEntity]]): UISiteLevelTrait =
     copy(siteEntities = siteEntities)
@@ -112,7 +112,7 @@ object UIFilterLevel {
       Map(
         FILTER_TAG -> SiteEntityBoundary.entitiesFor(FILTER, FILTER_TAG)
           .map(uiEntity)
-        , TIME_FILTER -> SiteEntityBoundary.entitiesFor(FILTER, TIME_FILTER)
+        , TIMING -> SiteEntityBoundary.entitiesFor(FILTER, TIMING)
           .map(uiEntity)
       ))
 }

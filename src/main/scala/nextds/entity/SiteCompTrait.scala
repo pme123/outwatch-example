@@ -6,26 +6,24 @@ package nextds.entity
 trait SiteCompTrait
   extends SiteEntityTrait {
 
-  def siteComp: SiteComp[_ <: SiteTemplTrait]
+  def siteInfo: SiteComp[_ <: SiteTemplTrait]
 
-  lazy val siteIdent: String = siteComp.siteIdent
-  lazy val ident: String = siteComp.ident
-
-  def templ: SiteTemplTrait = siteComp.templ
+  def templ: SiteTemplTrait = siteInfo.templ
 
   lazy val levelType: LevelType = COMP
-  lazy val title: String = siteComp.titleOpt.getOrElse(templ.title)
-  lazy val descr: String = siteComp.descrOpt.getOrElse(templ.descr)
-  lazy val maybeTitle: Option[String] = siteComp.titleOpt
-  lazy val maybeDescr: Option[String] = siteComp.descrOpt
 
 }
 
 case class SiteComp[T <: SiteTemplTrait](siteIdent: SiteIdent
                                          , ident: SiteEntityIdent
                                          , templ: T
-                                         , titleOpt: Option[String] = None
-                                         , descrOpt: Option[String] = None)
+                                         , maybeTitle: Option[String] = None
+                                         , maybeDescr: Option[String] = None)
+  extends SiteEntityInfoTrait {
+  lazy val title: String = maybeTitle.getOrElse(templ.title)
+  lazy val descr: String = maybeDescr.getOrElse(templ.descr)
+
+}
 
 object SiteComp {
   def apply[T <: SiteTemplTrait](templ: T): SiteComp[T] = SiteComp(templ.siteIdent, Site.nextIdent(templ.siteIdent), templ)
@@ -37,7 +35,7 @@ object SiteComp {
 
 }
 
-case class PlayerComp(siteComp: SiteComp[PlayerTempl]
+case class PlayerComp(siteInfo: SiteComp[PlayerTempl]
                       , status: PlayerStatus = PlayerStatus.NOT_CONNECTED
                       , maybeLocation: Option[PlayerLocation] = None)
   extends SiteCompTrait
@@ -79,11 +77,11 @@ object PlayerStatus {
 
 case class PlayerLocation(lat: Double, lng: Double)
 
-case class LayoutComp(siteComp: SiteComp[LayoutTempl]
+case class LayoutComp(siteInfo: SiteComp[LayoutTempl]
                       , screenRegionOpt: Option[ScreenRegion] = None)
   extends SiteCompTrait
     with LayoutTrait {
-  lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteComp.templ.screenRegion)
+  lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteInfo.templ.screenRegion)
   lazy val maybeScreenRegion: Option[ScreenRegion] = screenRegionOpt
 
 }
@@ -109,7 +107,7 @@ object LayoutComp {
 
 }
 
-case class PlaylistComp(siteComp: SiteComp[PlaylistTempl])
+case class PlaylistComp(siteInfo: SiteComp[PlaylistTempl])
   extends SiteCompTrait
     with PlaylistTrait
 
@@ -120,7 +118,7 @@ object PlaylistComp {
 
 }
 
-case class MediumComp(siteComp: SiteComp[MediumTempl])
+case class MediumComp(siteInfo: SiteComp[MediumTempl])
   extends SiteCompTrait
     with MediumTrait
 

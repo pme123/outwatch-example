@@ -93,25 +93,17 @@ case class Tag(siteIdent: String
 
 }
 
-case class FilterTagConf(siteIdent: String
-                         , ident: String
+case class FilterTagConf(siteInfo: SiteEntityInfo
                          , condition: String
-                         , filterTags: Seq[FilterTag] = Nil
-                         , descr: String = "-") extends SiteFilterTrait {
+                         , filterTags: Seq[FilterTag] = Nil) extends SiteFilterTrait {
 
   def siteType: SiteType = FILTER_TAG
-
-  def title: String = condition
-
-  def maybeTitle: Option[String] = Some(title)
-
-  def maybeDescr: Option[String] = Some(descr)
 
 }
 
 object FilterTagConf {
   def apply(siteIdent: String, condition: String, filterTags: Seq[FilterTag]): FilterTagConf =
-    FilterTagConf(siteIdent, Site.nextIdent(siteIdent), condition, filterTags)
+    FilterTagConf(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), condition), condition, filterTags)
 
 }
 
