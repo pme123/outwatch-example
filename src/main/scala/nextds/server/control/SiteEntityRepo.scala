@@ -1,6 +1,6 @@
 package nextds.server.control
 
-import nextds.entity._
+import nextds.entity.{PlaylistConf, _}
 
 // not in use - see SiteEntityCreator
 object SitesRepo {
@@ -15,6 +15,7 @@ object SitesRepo {
     }).map(_.asInstanceOf[T])
 
 }
+
 object SiteTemplRepo {
 
   import nextds.entity.ScreenRegion._
@@ -29,7 +30,7 @@ object SiteTemplRepo {
   val mediumTempl3 = MediumTempl(SiteTempl(defaultSiteIdent, "AF"))
   val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
     PLAYER -> Seq(playerTempl
-      , PlayerTempl(SiteTempl(defaultSiteIdent, Site.nextIdent(defaultSiteIdent),"Windows Player 2.3", "Special Configs for this Player type"))
+      , PlayerTempl(SiteTempl(defaultSiteIdent, Site.nextIdent(defaultSiteIdent), "Windows Player 2.3", "Special Configs for this Player type"))
     ), LAYOUT -> Seq(layoutTempl
       , LayoutTempl.singleLayout(defaultSiteIdent, "Basic Wide-Screen", ultraHD4K)
     ), REGION -> Seq(
@@ -77,19 +78,25 @@ object SiteCompRepo {
 object SiteConfRepo {
 
   import SiteCompRepo._
+  import FilterTagCreator.filterTagConf
 
   val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
 
   private val mediumConfs = Seq(
     MediumConf(SiteConf(mediumComp))
-    , MediumConf(SiteConf( mediumComp2))
-    , MediumConf(SiteConf( mediumComp3))
+    , MediumConf(SiteConf(mediumComp2))
+    , MediumConf(SiteConf(mediumComp3))
+    , MediumConf(SiteConf(mediumComp, "Medium for DE", filterTagConf("DE")))
+    , MediumConf(SiteConf(mediumComp, "Medium for EN", filterTagConf("DE")))
+    , MediumConf(SiteConf(mediumComp, "Medium for IT", filterTagConf("DE")))
+    , MediumConf(SiteConf(mediumComp, "Medium for EN OR DE", filterTagConf("EN OR DE")))
   )
   private val playlistConfs = Seq(
-    PlaylistConf(SiteConf( playlistComp), siteConfRefs = mediumConfs)
+    PlaylistConf(SiteConf(playlistComp), siteConfRefs = mediumConfs.take(4))
+     , PlaylistConf(SiteConf(playlistComp, "Playlist for EN OR DE"), siteConfRefs = mediumConfs.drop(2))
   )
   private val regionConfs = Seq(
-    RegionConf(SiteConf( layoutComp), siteConfRefs = playlistConfs)
+    RegionConf(SiteConf(layoutComp), siteConfRefs = playlistConfs)
   )
   private val layoutConfs = Seq(
     LayoutConf(defaultSiteIdent, layoutComp, regionConfs = regionConfs)
@@ -109,6 +116,4 @@ object SiteConfRepo {
     , MEDIUM -> mediumConfs
 
   )
-
 }
-

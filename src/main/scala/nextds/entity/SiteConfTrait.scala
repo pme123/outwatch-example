@@ -76,6 +76,13 @@ object SiteConf {
 
   def apply[T <: SiteCompTrait](comp: T, title: String): SiteConf[T] = SiteConf(comp.siteIdent, Site.nextIdent(comp.siteIdent), comp, Some(title))
 
+  def apply[T <: SiteCompTrait](comp: T, title: String, filterTagConf: FilterTagConf): SiteConf[T] =
+    SiteConf(comp.siteIdent
+      , Site.nextIdent(comp.siteIdent)
+      , comp
+      , Some(title)
+      , filterTagConf = Some(filterTagConf))
+
 }
 
 
@@ -93,7 +100,7 @@ case class PlayerConf(siteConf: SiteConf[PlayerComp]
 
   // all links to the right - LAYOUT > REGION > PLAYLIST > MEDIUM
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksRight(siteConfs,filtersToAdhere, LAYOUT)
+    filterLinksRight(siteConfs, filtersToAdhere, LAYOUT)
 }
 
 object PlayerConf {
@@ -126,11 +133,11 @@ case class LayoutConf(siteConf: SiteConf[LayoutComp]
 
   // all links to the left - PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksLeft(siteConfs,filtersToAdhere, PLAYER)
+    filterLinksLeft(siteConfs, filtersToAdhere, PLAYER)
 
   // all links to the right - REGION > PLAYLIST > MEDIUM
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksRight(siteConfs,filtersToAdhere, REGION)
+    filterLinksRight(siteConfs, filtersToAdhere, REGION)
 
 }
 
@@ -176,11 +183,11 @@ case class RegionConf(siteConf: SiteConf[LayoutComp]
 
   // all links to the left - LAYOUT > PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksLeft(siteConfs,filtersToAdhere, LAYOUT)
+    filterLinksLeft(siteConfs, filtersToAdhere, LAYOUT)
 
   // all links to the right - PLAYLIST > MEDIUM
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksRight(siteConfs,filtersToAdhere, PLAYLIST)
+    filterLinksRight(siteConfs, filtersToAdhere, PLAYLIST)
 }
 
 object RegionConf {
@@ -222,11 +229,11 @@ case class PlaylistConf(siteConf: SiteConf[PlaylistComp]
 
   // all links to the left - REGION > LAYOUT > PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksLeft(siteConfs,filtersToAdhere, REGION)
+    filterLinksLeft(siteConfs, filtersToAdhere, REGION)
 
   // all links to the right - MEDIUM
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksRight(siteConfs,filtersToAdhere, MEDIUM)
+    filterLinksRight(siteConfs, filtersToAdhere, MEDIUM)
 
 }
 
@@ -250,7 +257,7 @@ case class MediumConf(siteConf: SiteConf[MediumComp])
 
   // all links to the left - PLAYLIST > REGION > LAYOUT > PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
-    filterLinksLeft(siteConfs,filtersToAdhere, PLAYLIST)
+    filterLinksLeft(siteConfs, filtersToAdhere, PLAYLIST)
 
   // all links to the right - nothing
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =

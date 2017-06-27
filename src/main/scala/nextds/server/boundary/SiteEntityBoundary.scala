@@ -13,7 +13,7 @@ object SiteEntityBoundary {
   def siteIdent(): SiteIdent = allSites()(1)
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
-    SitesRepo.entitiesFor(levelType, siteType) ++ SitesCreator.entitiesFor(levelType, siteType)
+    SitesRepo.entitiesFor(levelType, siteType)// ++ SitesCreator.entitiesFor(levelType, siteType)
 
   def createFrom(siteEntityTrait: SiteEntityTrait, siteIdent: String, isForRegion: Boolean = false): SiteEntityTrait = siteEntityTrait.levelType match {
     case TEMPL =>
