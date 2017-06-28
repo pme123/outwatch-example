@@ -15,7 +15,7 @@ trait SiteEntityTrait {
   def levelType: LevelType
 
   lazy val siteIdent: SiteIdent = siteInfo.siteIdent
-  lazy val label: String = s"${siteType.label} ${levelType.label}"
+  def label: String = s"${siteType.label} ${levelType.label}"
   lazy val ident: SiteEntityIdent = siteInfo.ident
   lazy val title: String = siteInfo.title
   lazy val maybeTitle: Option[String] = siteInfo.maybeTitle
@@ -112,6 +112,8 @@ trait MediumTrait extends SiteEntityTrait {
 trait TimeTrait extends SiteEntityTrait {
   val siteType = TIMING
   val levelType: LevelType = TIME
+  override lazy val label: String = s"${siteType.label}"
+
 
 }
 

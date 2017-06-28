@@ -5,44 +5,19 @@ import outwatch.dom._
 /**
   * Created by pascal.mengelt on 29.05.2017.
   */
-object UIElements {
 
-  object Style {
-
-    val labelCol: String = "label-col"
-    val valueCol: String = "value-col"
-    val valueInputCol: String = "value-input-col"
-    val numberInputCol: String = "number-input-col"
-    val entityInputCol: String = "entity-input-col"
-
-  }
-
-  def editValue(label: String, input: VNode): VNode = {
-    tr(
-      td(className := Style.labelCol
-        , label)
-      , td(
-        className := Style.valueCol
-        , input
-      , "hello")
-    )
-  }
-
-}
 
 trait UIElements {
 
   import UIElements.Style
 
   protected def siteEntityRef(uISiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
-    editValue(uISiteEntity.label, div(className := Style.entityInputCol
-      , tpe := "text"
-      , uISiteEntity.ident
-      , Attribute("data-toggle", "tooltip")
-      , Attribute("title", uISiteEntity.title)
-      , disabled := true
-      , click(Edit(uISiteEntity)) --> store
-    ))
+    editValue(uISiteEntity.label
+      , div(div(className := Style.entityInputCol
+        , uISiteEntity.ident
+        , click(Edit(uISiteEntity)) --> store)
+        , small(uISiteEntity.title)
+      ))
   }
 
   protected def inputText(label: String
@@ -77,7 +52,31 @@ trait UIElements {
     )
   }
 
-  protected def editValue(label: String, input: VNode): VNode = UIElements.editValue(label,input)
+  protected def editValue(label: String, input: VNode): VNode = UIElements.editValue(label, input)
 
+
+}
+
+object UIElements {
+
+  object Style {
+
+    val labelCol: String = "label-col"
+    val valueCol: String = "value-col"
+    val valueInputCol: String = "value-input-col"
+    val numberInputCol: String = "number-input-col"
+    val entityInputCol: String = "entity-input-col"
+
+  }
+
+  def editValue(label: String, input: VNode): VNode = {
+    tr(
+      td(className := Style.labelCol
+        , label)
+      , td(
+        className := Style.valueCol
+        , input)
+    )
+  }
 
 }
