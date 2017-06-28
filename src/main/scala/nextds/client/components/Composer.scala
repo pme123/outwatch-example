@@ -16,7 +16,9 @@ object Composer {
       .map { st =>
         val model = st.siteModel
         model.allLevels
-          .map(m => LevelComponent(m.levelType)) :+ FilterTagComponent(showAll = true)
+          .map(m => LevelComponent(m.levelType)) :+
+          SimpleLevelComponent(FILTER, FILTER_TAG,showAll = true) :+
+          SimpleLevelComponent(TIME, TIMING,showAll = true)
       }
 
     div(className := bss.grid.row + " full-height"
