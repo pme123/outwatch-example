@@ -36,10 +36,10 @@ case class NextDS() {
 
   private val menu: VNode =
     ul(className := "nav nav-tabs"
-      , menuLink(COMPOSER)
-      , menuLink(LINKED_VIEWER)
-      , menuLink(PLAYER_MONITOR)
-      , menuLink(EXAMPLES)
+      , COMPOSER.menuLink
+      , LINKED_VIEWER.menuLink
+      , PLAYER_MONITOR.menuLink
+      , EXAMPLES.menuLink
     )
 
 
@@ -52,10 +52,10 @@ case class NextDS() {
     div(className := "full-height"
       , menu
       , div(className := "tab-content tab-contents"
-        , pageTab(COMPOSER)
-        , pageTab(LINKED_VIEWER)
-        , pageTab(PLAYER_MONITOR)
-        , pageTab(EXAMPLES)
+        , COMPOSER.pageTab
+        , LINKED_VIEWER.pageTab
+        , PLAYER_MONITOR.pageTab
+        , EXAMPLES.pageTab
       ), ModalEntitySelecter()
       , loadingSpinner
     )
@@ -70,6 +70,21 @@ sealed trait Pages {
   def active = ""
 
   def page(implicit store: ReduxStore[State, Action]): VNode
+
+  def menuLink(implicit store: ReduxStore[State, Action]): VNode = {
+    li(className := active
+      , a(Attribute("data-toggle", "tab"), href := s"#$pageId"
+        , label
+        , click(ChangePage(this)) --> store
+      ))
+  }
+
+  def pageTab(implicit store: ReduxStore[State, Action]): VNode = {
+    div(id := pageId
+      , className := s"tab-pane fade full-height in $active"
+      , page
+    )
+  }
 
 }
 
@@ -105,20 +120,7 @@ object Pages {
     def page(implicit store: ReduxStore[State, Action]): VNode = SortExample()
   }
 
-  def menuLink(pages: Pages)(implicit store: ReduxStore[State, Action]): VNode = {
-    li(className := pages.active
-      , a(Attribute("data-toggle", "tab"), href := s"#${pages.pageId}"
-        , pages.label
-        , click(ChangePage(pages)) --> store
-      ))
-  }
 
-  def pageTab(pages: Pages)(implicit store: ReduxStore[State, Action]): VNode = {
-    div(id := pages.pageId
-      , className := s"tab-pane fade full-height in ${pages.active}"
-      , pages.page
-    )
-  }
 }
 
 
