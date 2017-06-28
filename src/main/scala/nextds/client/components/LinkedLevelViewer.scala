@@ -1,5 +1,6 @@
 package nextds.client.components
 
+import nextds.client.Pages
 import nextds.client.entity.{Action, ReduxStore, State}
 import nextds.entity._
 import outwatch.dom._
@@ -18,7 +19,7 @@ object LinkedLevelViewer {
           val model = st.siteModel
           model.entities(levelType, siteType)
             .filterNot(_.isFiltered)
-            .filter(e => model.linkedEntities.contains(e.siteEntity))
+            .filter(e => model.withLinks.contains(e.siteEntity))
             .take(model.maxEntries)
             .map(EntityCard.apply)
         }
@@ -32,13 +33,17 @@ object LinkedLevelViewer {
     }
 
     val siteLevel = {
-      store.map(
-        _.siteModel.level(levelType)
-          .allSiteTypes
-          .filterNot(siteType => levelType != CONF && siteType == REGION)
-          .map(siteType =>
-            entityListComponent(siteType))
-      )
+      store.map { st =>
+        if (st.activePage == Pages.LINKED_VIEWER) {
+          st.siteModel.level(levelType)
+            .allSiteTypes
+            .filterNot(siteType => levelType != CONF && siteType == REGION)
+            .map(siteType =>
+              entityListComponent(siteType))
+        } else {
+          Seq(div("other page"))
+        }
+      }
     }
 
     div(className := css.siteLevelDiv(levelType)

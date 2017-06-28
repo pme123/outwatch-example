@@ -13,7 +13,7 @@ case class UISiteModel(
                         , uiTimingConfs: UITimingConfs = UITimingConfs()
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
-                        , linkedEntities: Set[SiteEntityTrait] = Set()
+                        , selectedSET: Option[UISiteEntity] = None
                       ) {
 
   def replaceLevel(entities: UpdateEntities): UISiteModel =
@@ -71,12 +71,13 @@ case class UISiteModel(
     }
   }
 
-  def withLinks(uiSiteEntity: UISiteEntity): UISiteModel =
-    this
-  /*  copy(linkedEntities =
-      uiSiteEntity.siteEntity.filterLinks(uiSiteEntity.withLinked(this))
-    )
-*/
+  lazy val withLinks: Set[SiteEntityTrait] =
+    selectedSET.map { set =>
+      println(s"withLinks: $set")
+      set.siteEntity.filterLinks(set.withLinked(this))
+    }.getOrElse(Set())
+
+
   def simpleLevel(siteType: SiteType): Seq[UISiteEntity] = siteType match {
     case FILTER_TAG => filterTags.filterTagConfs
     case TIMING => uiTimingConfs.timingConfs

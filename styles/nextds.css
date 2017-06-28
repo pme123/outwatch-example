@@ -19,6 +19,26 @@ ul {
     height: 100%;
 }
 
+.hide-elem {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.show-elem {
+    display: block;
+
+}
+
+.loading-spinner {
+    font-size: 200px;
+    opacity: .5;
+    position: fixed;
+    left: calc(50% - 100px);
+    top: calc(50% - 100px);
+
+}
+
 .player-style {
     background-color: rgba(139, 0, 0, .1);
     border-color: rgba(139, 0, 0, .2);

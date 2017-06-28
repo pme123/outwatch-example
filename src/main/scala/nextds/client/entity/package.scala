@@ -2,7 +2,9 @@ package nextds.client
 
 import nextds.client.components.{BootstrapStyles, GlobalStyles}
 import nextds.entity._
+import outwatch.Sink
 import outwatch.dom._
+import rxscalajs.Observable
 
 import scala.language.implicitConversions
 
@@ -58,4 +60,5 @@ package object entity {
 
   }
 
+  val loadingSpinnerEvents: Observable[Boolean] with Sink[Boolean] = createBoolHandler()
 }

@@ -3,6 +3,7 @@ package nextds.client
 import nextds.client.components._
 import nextds.client.entity._
 import outwatch.dom.{Attribute, _}
+import rxscalajs.Observable
 
 import scala.scalajs.js
 
@@ -15,6 +16,9 @@ object NextDSApp extends js.JSApp {
     val nextDS = NextDS()
     OutWatch.render("#app", nextDS.root)
     nextDS.addSorting()
+
+    loadingSpinnerEvents <-- Observable.create(obs => obs.next(true))
+
   }
 }
 
@@ -28,19 +32,32 @@ case class NextDS() {
 
   }
 
-  val menu: VNode =
+  private val menu: VNode =
     ul(className := "nav nav-tabs"
-      , li(a(Attribute("data-toggle", "tab"), href := "#composer"
-        , "Composer")
+      , li(className := "active"
+        , a(Attribute("data-toggle", "tab"), href := "#composer"
+          , "Composer"
+          , click(ChangePage(Pages.COMPOSER)) --> store
+        )
       ), li(a(Attribute("data-toggle", "tab"), href := "#linkedViewer"
-        , "Linked Viewer")
-      ), li(className := "active"
-        , a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
-          , "Player Monitor")
+        , "Linked Viewer"
+        , click(ChangePage(Pages.LINKED_VIEWER)) --> store
+      )
+      ), li(a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
+        , "Player Monitor"
+        , click(ChangePage(Pages.PLAYER_MONITOR)) --> store
+      )
       ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
-        , "Sort Example")
+        , "Sort Example"
+        , click(ChangePage(Pages.EXAMPLES)) --> store
+      )
       )
     )
+
+  val loadingSpinner: VNode = div(
+    hidden <-- loadingSpinnerEvents
+    , Icon.loadingIcon
+  )
 
   val root: VNode =
     div(className := "full-height"
@@ -63,6 +80,24 @@ case class NextDS() {
           , SortExample()
         )
       ), ModalEntitySelecter()
+      , loadingSpinner
     )
 }
+
+sealed trait Pages {
+
+}
+
+object Pages {
+
+  case object COMPOSER extends Pages
+
+  case object LINKED_VIEWER extends Pages
+
+  case object PLAYER_MONITOR extends Pages
+
+  case object EXAMPLES extends Pages
+
+}
+
 

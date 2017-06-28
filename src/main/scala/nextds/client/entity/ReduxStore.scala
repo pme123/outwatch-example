@@ -1,5 +1,6 @@
 package nextds.client.entity
 
+import nextds.client.Pages
 import nextds.entity._
 import nextds.server.boundary.SiteEntityBoundary
 import org.scalajs.dom.DragEvent
@@ -38,13 +39,16 @@ object ReduxStore {
 
 
   def reducer(previousState: State, action: Action): State = {
-    println(s"reducer: $action")
-    stateReducer(previousState, action)
+    println(s"reducer: ${action.getClass}")
+    loadingSpinnerEvents <-- Observable.create(obs => obs.next(false))
+    val st = stateReducer(previousState, action)
       .copy(
         draggedSET = draggedSETReducer(previousState.draggedSET, action)
         , linkTo = linkToReducer(previousState.linkTo, action)
+        , activePage = activePageReducer(previousState.activePage, action)
       )
-
+    loadingSpinnerEvents <-- Observable.create(obs => obs.next(true))
+    st
   }
 
   private def stateReducer(previousState: State, action: Action): State = action match {
@@ -118,8 +122,8 @@ object ReduxStore {
     case f: UIFilters =>
       previousState.withFilter(f)
     case Edit(uiSiteEntity) =>
-      previousState.withLinks(uiSiteEntity)
-
+      // previousState.withLinks(uiSiteEntity)
+      previousState.copy(selectedSET = Some(uiSiteEntity))
     case _ => previousState
   }
 
@@ -131,6 +135,11 @@ object ReduxStore {
       createFrom(previousState, siteEntityTrait, isRegion)
     case _ => previousState
 
+  }
+
+  private def activePageReducer(previousState: Pages, action: Action): Pages = action match {
+    case ChangePage(newPage) => newPage
+    case _ => previousState
   }
 
   private def draggedSETReducer(previousState: Option[UISiteEntity], action: Action): Option[UISiteEntity] = action match {
@@ -201,7 +210,6 @@ object ReduxStore {
     case _ => previousState
   }
 
-
   private def createFrom(previousState: UISiteModel, newSET: UISiteEntity, isRegion: Boolean) = {
     val newSets = previousState.entities(newSET.levelType, newSET.siteType) :+ newSET
     previousState.replaceLevel(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
@@ -233,6 +241,8 @@ case object DoLinking extends Action
 
 case class DragAction(siteEntityTrait: SiteEntityTrait, event: DragEventType.Value, dragEvent: DragEvent) extends Action
 
+case class ChangePage(newPage: Pages) extends Action
+
 object DragEventType extends Enumeration {
   val start, enter, over, drop, end = Value
 }
@@ -249,7 +259,8 @@ case class UIFilters(ident: Option[String] = None
 case class State(siteModel: UISiteModel
                  , selectedSET: Option[UISiteEntity] = None
                  , draggedSET: Option[UISiteEntity] = None
-                 , linkTo: Option[LinkTo] = None) {
+                 , linkTo: Option[LinkTo] = None
+                 , activePage: Pages = Pages.COMPOSER) {
 
   def updateEntities(entities: UpdateEntities): State =
     copy(siteModel = siteModel.replaceLevel(entities))
