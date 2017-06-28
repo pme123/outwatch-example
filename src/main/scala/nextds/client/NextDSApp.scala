@@ -24,6 +24,8 @@ object NextDSApp extends js.JSApp {
 
 case class NextDS() {
 
+  import Pages._
+
   implicit val store: ReduxStore[State, Action] = ReduxStore()
 
 
@@ -34,25 +36,12 @@ case class NextDS() {
 
   private val menu: VNode =
     ul(className := "nav nav-tabs"
-      , li(className := "active"
-        , a(Attribute("data-toggle", "tab"), href := "#composer"
-          , "Composer"
-          , click(ChangePage(Pages.COMPOSER)) --> store
-        )
-      ), li(a(Attribute("data-toggle", "tab"), href := "#linkedViewer"
-        , "Linked Viewer"
-        , click(ChangePage(Pages.LINKED_VIEWER)) --> store
-      )
-      ), li(a(Attribute("data-toggle", "tab"), href := "#playerMonitor"
-        , "Player Monitor"
-        , click(ChangePage(Pages.PLAYER_MONITOR)) --> store
-      )
-      ), li(a(Attribute("data-toggle", "tab"), href := "#sortExample"
-        , "Sort Example"
-        , click(ChangePage(Pages.EXAMPLES)) --> store
-      )
-      )
+      , menuLink(COMPOSER)
+      , menuLink(LINKED_VIEWER)
+      , menuLink(PLAYER_MONITOR)
+      , menuLink(EXAMPLES)
     )
+
 
   val loadingSpinner: VNode = div(
     hidden <-- loadingSpinnerEvents
@@ -63,22 +52,10 @@ case class NextDS() {
     div(className := "full-height"
       , menu
       , div(className := "tab-content tab-contents"
-        , div(id := "composer"
-          , className := "tab-pane fade full-height in active"
-          , Composer()
-        ),
-        div(id := "playerMonitor"
-          , className := "tab-pane fade in full-height"
-          , PlayerMonitor()
-        ),
-        div(id := "linkedViewer"
-          , className := "tab-pane fade full-height"
-          , LinkedViewer()
-        ),
-        div(id := "sortExample"
-          , className := "tab-pane fade  full-height"
-          , SortExample()
-        )
+        , pageTab(COMPOSER)
+        , pageTab(LINKED_VIEWER)
+        , pageTab(PLAYER_MONITOR)
+        , pageTab(EXAMPLES)
       ), ModalEntitySelecter()
       , loadingSpinner
     )
@@ -86,18 +63,62 @@ case class NextDS() {
 
 sealed trait Pages {
 
+  def pageId: String
+
+  def label: String
+
+  def active = ""
+
+  def page(implicit store: ReduxStore[State, Action]): VNode
+
 }
 
 object Pages {
 
-  case object COMPOSER extends Pages
+  case object COMPOSER extends Pages {
+    val pageId: String = "composer"
+    val label: String = "Composer"
+    override val active = "active"
 
-  case object LINKED_VIEWER extends Pages
+    def page(implicit store: ReduxStore[State, Action]): VNode = Composer()
+  }
 
-  case object PLAYER_MONITOR extends Pages
+  case object LINKED_VIEWER extends Pages {
+    val pageId: String = "linkedViewer"
+    val label: String = "Linked Viewer"
 
-  case object EXAMPLES extends Pages
+    def page(implicit store: ReduxStore[State, Action]): VNode = LinkedViewer()
 
+  }
+
+  case object PLAYER_MONITOR extends Pages {
+    val pageId: String = "playerMonitor"
+    val label: String = "Player Monitor"
+
+    def page(implicit store: ReduxStore[State, Action]): VNode = PlayerMonitor()
+  }
+
+  case object EXAMPLES extends Pages {
+    val pageId: String = "examples"
+    val label: String = "Examples"
+
+    def page(implicit store: ReduxStore[State, Action]): VNode = SortExample()
+  }
+
+  def menuLink(pages: Pages)(implicit store: ReduxStore[State, Action]): VNode = {
+    li(className := pages.active
+      , a(Attribute("data-toggle", "tab"), href := s"#${pages.pageId}"
+        , pages.label
+        , click(ChangePage(pages)) --> store
+      ))
+  }
+
+  def pageTab(pages: Pages)(implicit store: ReduxStore[State, Action]): VNode = {
+    div(id := pages.pageId
+      , className := s"tab-pane fade full-height in ${pages.active}"
+      , pages.page
+    )
+  }
 }
 
 
