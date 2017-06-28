@@ -24,7 +24,7 @@ trait SiteConfTrait
   }
 
   lazy val toFilterCond: Seq[FilterCond] = {
-    filterTagConf.map(c => FilterCond(c.condition).get).toSeq
+    filterTagConf.map(ftc => ftc.filterCond).toSeq
   }
 
   // all links to the left - e.g. REGION > LAYOUT > PLAYER
@@ -37,7 +37,7 @@ trait SiteConfTrait
     siteConfs.filter(set => set.siteType == rightSiteType)
       .filter { lc =>
         lc.filterTagConf.forall(ftc =>
-          filtersToAdhere.forall(fc => fc.adheresFilter(FilterCond(ftc.condition).get)))
+          filtersToAdhere.forall(fc => fc.adheresFilter(ftc.filterCond)))
       }.flatMap(lc =>
       lc.filterLinksRight(siteConfs, filtersToAdhere ++ lc.toFilterCond)) + this
 
@@ -45,7 +45,7 @@ trait SiteConfTrait
     siteConfs.filter(set => set.siteType == rightSiteType)
       .filter { lc =>
         lc.filterTagConf.forall(ftc =>
-          filtersToAdhere.forall(fc => fc.adheresFilter(FilterCond(ftc.condition).get)))
+          filtersToAdhere.forall(fc => fc.adheresFilter(ftc.filterCond)))
       }.flatMap(lc =>
       lc.filterLinksLeft(siteConfs, filtersToAdhere ++ lc.toFilterCond)) + this
 
