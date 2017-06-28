@@ -8,7 +8,7 @@ import nextds.server.control.{SitesCreator, SitesRepo}
   */
 object SiteEntityBoundary {
 
-  def allSites(): Seq[SiteIdent] = SitesRepo.allSites ++ SitesCreator.allSites
+  def allSites(): Seq[SiteIdent] = SitesRepo.allSites //++ SitesCreator.allSites
 
   def siteIdent(): SiteIdent = allSites()(1)
 

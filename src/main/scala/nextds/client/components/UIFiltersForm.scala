@@ -61,7 +61,7 @@ object UIFiltersForm {
                 , className := "form-control"
                 , blur { (ie: InputEvent) =>
                   val strValue = ie.target.value
-                  UIFilters(maxEnties = Some(if (strValue.isEmpty) defaultMaxEntries else strValue.toInt))
+                  UIFilters(maxEntities = Some(if (strValue.isEmpty) defaultMaxEntries else strValue.toInt))
                 } --> store
               ))
             )

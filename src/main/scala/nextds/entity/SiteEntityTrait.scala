@@ -111,6 +111,8 @@ trait MediumTrait extends SiteEntityTrait {
 
 trait TimeTrait extends SiteEntityTrait {
   val siteType = TIMING
+  val levelType: LevelType = TIME
+
 }
 
 sealed trait SiteType {

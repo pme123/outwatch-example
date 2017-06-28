@@ -32,6 +32,9 @@ package object entity {
     case e: PlaylistConf => UIPlaylistConf(e)
     case e: MediumConf => UIMediumConf(e)
     case e: FilterTagConf => UIFilterTagConf(e)
+    case e: TimingComp => UITimingComp(e)
+    case e: TimingConf => UITimingConf(e)
+    case other => throw new UnsupportedOperationException(s"Not supported $other")
   }
 
   val specialWord = Seq("(", ")", "AND", "OR")

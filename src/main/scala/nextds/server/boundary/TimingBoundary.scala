@@ -9,9 +9,6 @@ import nextds.server.control.{FilterTagCreator, TimingCreator}
   */
 object TimingBoundary {
 
-
-  def timingComps(): Seq[TimingComp] = TimingCreator.timingComps
-
   def timingConfs(): Seq[TimingConf] = TimingCreator.timingConfs
 
 

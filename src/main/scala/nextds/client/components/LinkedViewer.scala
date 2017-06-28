@@ -1,7 +1,7 @@
 package nextds.client.components
 
 import nextds.client.entity.{Action, ReduxStore, State}
-import nextds.entity.{COMP, CONF, TEMPL}
+import nextds.entity._
 import outwatch.dom._
 
 /**
@@ -19,12 +19,14 @@ object LinkedViewer {
           , LinkedLevelViewer(TEMPL)
           , LinkedLevelViewer(COMP)
           , LinkedLevelViewer(CONF)
-          , FilterTagComponent()
+          , SimpleLevelComponent(FILTER, FILTER_TAG)
+          , SimpleLevelComponent(TIME, TIMING)
 
         ))
       , div(
         UIFiltersForm()
         , EntityDetailView()
       )
-    )  }
+    )
+  }
 }

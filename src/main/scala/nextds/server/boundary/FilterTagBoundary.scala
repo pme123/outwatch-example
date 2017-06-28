@@ -12,11 +12,11 @@ import scala.util.Try
 object FilterTagBoundary {
 
 
-  def filterTags(): FilterTags = FilterTagCreator.createFilterTags
+  def filterTags(): FilterTags = FilterTagCreator.filterTags
 
   def filterTags(fc: FilterCond): Validated[NonEmptyList[String], NonEmptyList[FilterTag]] = FilterTagCreator.filterTags(fc)
 
-  def filterTagConfs(): Seq[FilterTagConf] = FilterTagCreator.createFilterTagConfs
+  def filterTagConfs(): Seq[FilterTagConf] = FilterTagCreator.filterTagConfs
 
 
 }

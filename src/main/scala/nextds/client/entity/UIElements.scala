@@ -23,7 +23,8 @@ object UIElements {
         , label)
       , td(
         className := Style.valueCol
-        , input)
+        , input
+      , "hello")
     )
   }
 

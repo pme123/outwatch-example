@@ -3,8 +3,6 @@ package nextds.client.entity
 import nextds.entity._
 import outwatch.dom._
 
-import scala.util.Try
-
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
@@ -18,9 +16,14 @@ trait UISiteConf
     siteEntity.siteConfRefs
       .map(uiEntity)
       .map(_.asInstanceOf[UISiteConf])
+
   lazy val filterTagConf: Option[UIFilterTagConf] =
     siteEntity.filterTagConf
       .map(uiEntity(_).asInstanceOf[UIFilterTagConf])
+
+  lazy val timingConf: Option[UITimingConf] =
+    siteEntity.timingConf
+      .map(uiEntity(_).asInstanceOf[UITimingConf])
 
   def parameterEdit(siteEntityRefs: Seq[UISiteEntity])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     super.parameterEdit() ++ Seq(
@@ -29,7 +32,7 @@ trait UISiteConf
   }
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
-    parameterEdit(siteConfRefs ++ filterTagConf.toSeq)
+    parameterEdit(siteConfRefs ++ filterTagConf.toSeq ++ timingConf.toSeq)
 
 
   override val hideMenuCreateFrom = true
@@ -38,12 +41,12 @@ trait UISiteConf
 
   // all links to the level COMP
   def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    val siteT = if(siteType==REGION) LAYOUT else siteType
+    val siteT = if (siteType == REGION) LAYOUT else siteType
     uiModel.level(COMP).entities(siteT)
       .filter(_.ident == siteEntity.comp.ident)
       .flatMap(_.withLinkedUp(uiModel))
-      .toSet ++ withLinkedConf(uiModel.level(CONF)) ++
-      withLinkedConfUp(uiModel.level(CONF)) + siteEntity
+      .toSet ++ withLinkedConfRight(uiModel.level(CONF)) ++
+      withLinkedConfLeft(uiModel.level(CONF)) + siteEntity
   }
 
   // all links to the level Filter
@@ -51,24 +54,28 @@ trait UISiteConf
     filterTagConf
       .toSeq
       .flatMap(f => f.withLinkedDown(uiModel))
-      .toSet ++ withLinkedConf(uiModel.level(CONF)) ++
-      withLinkedConfUp(uiModel.level(CONF)) + siteEntity
+      .toSet ++
+      timingConf
+        .toSeq
+        .flatMap(t => t.withLinkedDown(uiModel)) ++
+      withLinkedConfRight(uiModel.level(CONF)) ++
+      withLinkedConfLeft(uiModel.level(CONF)) + siteEntity
   }
 
 
   // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
-  def withLinkedConf(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
-    siteConfRefs.flatMap(e => e.withLinkedConf(siteLevel)).toSet + siteEntity
+  def withLinkedConfRight(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
+    siteConfRefs.flatMap(e => e.withLinkedConfRight(siteLevel)).toSet + siteEntity
   }
 
   // all links to the left - e.g. REGION > LAYOUT > PLAYER
-  def withLinkedConfUp(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
+  def withLinkedConfLeft(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
     def inner(leftType: SiteType): Set[SiteEntityTrait] =
       (for {
         el <- siteLevel.entities(leftType).map(_.asInstanceOf[UISiteConf])
         er <- el.siteConfRefs
         if er.ident == ident
-      } yield el.withLinkedConfUp(siteLevel) + el.siteEntity)
+      } yield el.withLinkedConfLeft(siteLevel) + el.siteEntity)
         .flatten.toSet
 
     siteType match {

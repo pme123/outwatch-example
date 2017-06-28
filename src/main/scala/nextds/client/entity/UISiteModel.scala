@@ -10,6 +10,7 @@ import nextds.entity.{LevelType, _}
 case class UISiteModel(
                         siteLevels: Map[LevelType, UISiteLevelTrait]
                         , filterTags: UIFilterTags = UIFilterTags()
+                        , uiTimingConfs: UITimingConfs = UITimingConfs()
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
                         , linkedEntities: Set[SiteEntityTrait] = Set()
@@ -43,8 +44,8 @@ case class UISiteModel(
     copy(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
 
   def withFilter(f: UIFilters): UISiteModel = {
-    (f.maxEnties match {
-      case opt@Some(me) if opt != uiFilters.maxEnties =>
+    (f.maxEntities match {
+      case opt@Some(me) if opt != uiFilters.maxEntities =>
         Some(copy(maxEntries = me))
       case other => None
     }).getOrElse {
@@ -59,20 +60,28 @@ case class UISiteModel(
           uiFilters.copy(levels = opt)
         case UIFilters(_, _, _, _, opt@Some(_), _) if opt != uiFilters.siteTypes =>
           uiFilters.copy(siteTypes = opt)
-        case UIFilters(_, _, _, _, _, opt@Some(_)) if opt != uiFilters.maxEnties =>
-          uiFilters.copy(maxEnties = opt)
+        case UIFilters(_, _, _, _, _, opt@Some(_)) if opt != uiFilters.maxEntities =>
+          uiFilters.copy(maxEntities = opt)
         case _ => uiFilters
       }
       copy(siteLevels = siteLevels.map {
         case (k, v) => k -> v.appendFilter(newFilter)
-      }, uiFilters = newFilter,filterTags= filterTags.appendFilter(newFilter))
+      }, uiFilters = newFilter, filterTags = filterTags.appendFilter(newFilter)
+        , uiTimingConfs = uiTimingConfs.appendFilter(newFilter))
     }
   }
 
   def withLinks(uiSiteEntity: UISiteEntity): UISiteModel =
-    copy(linkedEntities =
-        uiSiteEntity.siteEntity.filterLinks(uiSiteEntity.withLinked(this))
+    this
+  /*  copy(linkedEntities =
+      uiSiteEntity.siteEntity.filterLinks(uiSiteEntity.withLinked(this))
     )
+*/
+  def simpleLevel(siteType: SiteType): Seq[UISiteEntity] = siteType match {
+    case FILTER_TAG => filterTags.filterTagConfs
+    case TIMING => uiTimingConfs.timingConfs
+    case other => throw new UnsupportedOperationException(s"No support simple level for: $siteType")
+  }
 
 }
 

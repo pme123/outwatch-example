@@ -66,7 +66,7 @@ object GlobalStyles {
 
   def siteEntitiesDiv(levelType:LevelType, siteType:SiteType): String =
     (levelType, siteType) match {
-      case (CONF, REGION | PLAYLIST | LAYOUT) => bss.grid.col2
+      case (CONF | TIME, REGION | PLAYLIST | LAYOUT | TIMING) => bss.grid.col2
       case (_, PLAYLIST) => bss.grid.col2
       case (_,LAYOUT) => bss.grid.col4
       case (_, _) => bss.grid.col3

@@ -11,6 +11,7 @@ trait SiteConfTrait
   def siteConfRefs: Seq[_ <: SiteConfTrait]
 
   lazy val filterTagConf: Option[FilterTagConf] = siteInfo.filterTagConf
+  lazy val timingConf: Option[TimingConf] = siteInfo.timingConf
 
   def comp: SiteCompTrait = siteInfo.comp
 
@@ -56,10 +57,11 @@ case class SiteConfInfo[T <: SiteCompTrait](siteIdent: String
                                             , comp: T
                                             , maybeTitle: Option[String] = None
                                             , maybeDescr: Option[String] = None
-                                            , filterTagConf: Option[FilterTagConf] = None)
-extends SiteEntityInfoTrait {
-lazy val title: String = maybeTitle.getOrElse(comp.title)
-lazy val descr: String = maybeDescr.getOrElse(comp.descr)
+                                            , filterTagConf: Option[FilterTagConf] = None
+                                            , timingConf: Option[TimingConf] = None)
+  extends SiteEntityInfoTrait {
+  lazy val title: String = maybeTitle.getOrElse(comp.title)
+  lazy val descr: String = maybeDescr.getOrElse(comp.descr)
 
 }
 
@@ -70,7 +72,8 @@ object SiteConfInfo {
     SiteConfInfo(comp.siteIdent, Site.nextIdent(comp.siteIdent), comp
       , filterTagConf = Some(filterTagConf))
 
-  def apply[T <: SiteCompTrait](comp: T, title: String): SiteConfInfo[T] = SiteConfInfo(comp.siteIdent, Site.nextIdent(comp.siteIdent), comp, Some(title))
+  def apply[T <: SiteCompTrait](comp: T, title: String): SiteConfInfo[T] =
+    SiteConfInfo(comp.siteIdent, Site.nextIdent(comp.siteIdent), comp, Some(title))
 
   def apply[T <: SiteCompTrait](comp: T, title: String, filterTagConf: FilterTagConf): SiteConfInfo[T] =
     SiteConfInfo(comp.siteIdent
@@ -78,6 +81,13 @@ object SiteConfInfo {
       , comp
       , Some(title)
       , filterTagConf = Some(filterTagConf))
+
+  def apply[T <: SiteCompTrait](comp: T, title: String, timingConf: TimingConf): SiteConfInfo[T] =
+    SiteConfInfo(comp.siteIdent
+      , Site.nextIdent(comp.siteIdent)
+      , comp
+      , Some(title)
+      , timingConf = Some(timingConf))
 
 }
 

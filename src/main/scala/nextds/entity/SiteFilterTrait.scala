@@ -195,7 +195,7 @@ case class FilterTags(filterTags: Seq[FilterTag]) {
 
 
   def filterTags(tag: String): Seq[FilterTag] =
-    filterTags.flatMap(ft => ft.filterTags(tag: String))
+    filterTags.flatMap(ft => ft.filterTags(tag))
 
   def filterTag(tag: String): FilterTag =
     filterTags(tag).head

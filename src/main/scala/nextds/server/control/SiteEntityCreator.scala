@@ -105,6 +105,7 @@ object SiteConfCreator {
   import SiteCompCreator._
   import SitesCreator._
   import FilterTagCreator._
+  import TimingCreator._
 
   val entityCount = 20
 
@@ -116,7 +117,8 @@ object SiteConfCreator {
       , comp
       , oneOf(None, None, Some(s"$label 2.3"), Some(s"$i.0 $label"), Some(s"${label.take(2)}-CONF-$i"))
       , oneOf(None, Some(s"Special Config for this $label $i"))
-      , oneOf(None, Some(oneOfSeq(createFilterTagConfs)))
+      , oneOf(None, Some(oneOfSeq(filterTagConfs)))
+      , oneOf(None, Some(oneOfSeq(timingConfs)))
     )
   }
 

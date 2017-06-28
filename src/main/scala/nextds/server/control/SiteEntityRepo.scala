@@ -4,7 +4,15 @@ import nextds.entity.{PlaylistConf, _}
 
 // not in use - see SiteEntityCreator
 object SitesRepo {
-  def allSites(): Seq[SiteIdent] = Seq("PUBLIC", "MGAA")
+
+  val publicSite = "PUBLIC"
+  val mgaaSite = "MGAA"
+  val filtSite = "FILT"
+  val timerSite = "TIMER"
+
+  def allSites: Seq[SiteIdent] = {
+    Seq(publicSite, mgaaSite, filtSite, timerSite)
+  }
 
   def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
     (levelType match {
@@ -19,21 +27,20 @@ object SitesRepo {
 
 object SiteTemplRepo {
 
+  import SitesRepo._
   import nextds.entity.ScreenRegion._
 
-  val defaultSiteIdent: SiteIdent = SitesRepo.allSites().head
-
-  val playerTempl = PlayerTempl(defaultSiteIdent, "Web Player 2.0")
-  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(defaultSiteIdent, "Wide-Screen: Single Layout", fullHD)
-  val playlistTempl = PlaylistTempl(SiteEntityInfo(defaultSiteIdent, "Basic Playlist"))
-  val mediumTempl = MediumTempl(SiteEntityInfo(defaultSiteIdent, "Video"))
-  val mediumTempl2 = MediumTempl(SiteEntityInfo(defaultSiteIdent, "Image"))
-  val mediumTempl3 = MediumTempl(SiteEntityInfo(defaultSiteIdent, "AF"))
+  val playerTempl = PlayerTempl(publicSite, "Web Player 2.0")
+  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(publicSite, "Wide-Screen: Single Layout", fullHD)
+  val playlistTempl = PlaylistTempl(SiteEntityInfo(publicSite, "Basic Playlist"))
+  val mediumTempl = MediumTempl(SiteEntityInfo(publicSite, "Video"))
+  val mediumTempl2 = MediumTempl(SiteEntityInfo(publicSite, "Image"))
+  val mediumTempl3 = MediumTempl(SiteEntityInfo(publicSite, "AF"))
   val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
     PLAYER -> Seq(playerTempl
-      , PlayerTempl(SiteEntityInfo(defaultSiteIdent, Site.nextIdent(defaultSiteIdent), "Windows Player 2.3", "Special Configs for this Player type"))
+      , PlayerTempl(SiteEntityInfo(publicSite, Site.nextIdent(publicSite), "Windows Player 2.3", "Special Configs for this Player type"))
     ), LAYOUT -> Seq(layoutTempl
-      , LayoutTempl.singleLayout(defaultSiteIdent, "Basic Wide-Screen", ultraHD4K)
+      , LayoutTempl.singleLayout(publicSite, "Basic Wide-Screen", ultraHD4K)
     ), REGION -> Seq(
     ), PLAYLIST -> Seq(
       playlistTempl
@@ -48,19 +55,18 @@ object SiteTemplRepo {
 
 object SiteCompRepo {
 
+  import SitesRepo._
   import SiteTemplRepo._
 
-  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
-
-  val playerComp = PlayerComp(defaultSiteIdent, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
-  val playerComp2 = PlayerComp(defaultSiteIdent, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
-  val playerComp3 = PlayerComp(defaultSiteIdent, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
-  val layoutComp = LayoutComp(defaultSiteIdent, layoutTempl)
-  val layoutComp2 = LayoutComp(SiteComp(defaultSiteIdent, layoutTempl, "Special configuration Layout."))
-  val playlistComp = PlaylistComp(SiteComp(defaultSiteIdent, playlistTempl))
-  val mediumComp = MediumComp(SiteComp(defaultSiteIdent, mediumTempl, "Supervideo.mp4"))
-  val mediumComp2 = MediumComp(SiteComp(defaultSiteIdent, mediumTempl2, "TheVideo.mp4"))
-  val mediumComp3 = MediumComp(SiteComp(defaultSiteIdent, mediumTempl3, "rabbitRuns.mp4"))
+  val playerComp = PlayerComp(mgaaSite, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
+  val playerComp2 = PlayerComp(mgaaSite, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
+  val playerComp3 = PlayerComp(mgaaSite, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
+  val layoutComp = LayoutComp(mgaaSite, layoutTempl)
+  val layoutComp2 = LayoutComp(SiteComp(mgaaSite, layoutTempl, "Special configuration Layout."))
+  val playlistComp = PlaylistComp(SiteComp(mgaaSite, playlistTempl))
+  val mediumComp = MediumComp(SiteComp(mgaaSite, mediumTempl, "Supervideo.mp4"))
+  val mediumComp2 = MediumComp(SiteComp(filtSite, mediumTempl2, "TheVideo.mp4"))
+  val mediumComp3 = MediumComp(SiteComp(timerSite, mediumTempl3, "rabbitRuns.mp4"))
   val allComps: Map[SiteType, Seq[SiteCompTrait]] = Map(
     PLAYER -> Seq(
       playerComp, playerComp2, playerComp3
@@ -70,7 +76,7 @@ object SiteCompRepo {
     ), PLAYLIST -> Seq(
       playlistComp
     ), MEDIUM -> Seq(
-      mediumComp, mediumComp3, mediumComp3
+      mediumComp, mediumComp2, mediumComp3
     )
 
   )
@@ -78,21 +84,27 @@ object SiteCompRepo {
 
 object SiteConfRepo {
 
+  import SitesRepo._
   import SiteCompRepo._
   import FilterTagCreator.filterTagConf
-
-  val defaultSiteIdent: SiteIdent = SitesRepo.allSites()(1)
+  import TimingCreator.timingConf
 
   private val mediumConfs = Seq(
     MediumConf(SiteConfInfo(mediumComp))
     , MediumConf(SiteConfInfo(mediumComp2))
     , MediumConf(SiteConfInfo(mediumComp3))
-    , MediumConf(SiteConfInfo(mediumComp, "Medium for DE", filterTagConf("DE")))
-    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN", filterTagConf("EN")))
-    , MediumConf(SiteConfInfo(mediumComp, "Medium for IT", filterTagConf("IT")))
-    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN OR DE", filterTagConf("EN OR DE")))
-    , MediumConf(SiteConfInfo(mediumComp, "Medium for EN AND DE", filterTagConf("EN AND DE")))
+    , MediumConf(SiteConfInfo(mediumComp2, "Medium for DE", filterTagConf("DE")))
+    , MediumConf(SiteConfInfo(mediumComp2, "Medium for EN", filterTagConf("EN")))
+    , MediumConf(SiteConfInfo(mediumComp2, "Medium for IT", filterTagConf("IT")))
+    , MediumConf(SiteConfInfo(mediumComp2, "Medium for EN OR DE", filterTagConf("EN OR DE")))
+    , MediumConf(SiteConfInfo(mediumComp2, "Medium for EN AND DE", filterTagConf("EN AND DE")))
+    , MediumConf(SiteConfInfo(mediumComp3, "Medium for Weekends", timingConf("Weekends")))
+    , MediumConf(SiteConfInfo(mediumComp3, "Medium for Weekdays", timingConf("Weekdays")))
+    , MediumConf(SiteConfInfo(mediumComp3, "Medium for Monday and Friday", timingConf("Monday and Friday")))
+    , MediumConf(SiteConfInfo(mediumComp3, "Medium for Opening Hours", timingConf("Opening Hours")))
+    , MediumConf(SiteConfInfo(mediumComp3, "Medium for Christmas Week", timingConf("Christmas Week")))
   )
+
   private val playlistConfs = Seq(
     PlaylistConf(SiteConfInfo(playlistComp), siteConfRefs = mediumConfs.take(4))
     , PlaylistConf(SiteConfInfo(playlistComp, "Playlist for EN", filterTagConf("EN")), siteConfRefs = mediumConfs)
@@ -106,16 +118,16 @@ object SiteConfRepo {
     , RegionConf(SiteConfInfo(layoutComp, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs)
   )
   private val layoutConfs = Seq(
-    LayoutConf(defaultSiteIdent, layoutComp, regionConfs = regionConfs)
+    LayoutConf(mgaaSite, layoutComp, regionConfs = regionConfs)
     , LayoutConf(SiteConfInfo(layoutComp2, "Extrem special configuration Layout."), siteConfRefs = regionConfs)
     , LayoutConf(SiteConfInfo(layoutComp, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs)
     , LayoutConf(SiteConfInfo(layoutComp, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs)
     , LayoutConf(SiteConfInfo(layoutComp, "Layout for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = regionConfs)
   )
   private val playerConfs = Seq(
-    PlayerConf(defaultSiteIdent, playerComp, layoutConfs)
-    , PlayerConf(defaultSiteIdent, playerComp2, layoutConfs)
-    , PlayerConf(defaultSiteIdent, playerComp3, layoutConfs)
+    PlayerConf(mgaaSite, playerComp, layoutConfs)
+    , PlayerConf(mgaaSite, playerComp2, layoutConfs)
+    , PlayerConf(mgaaSite, playerComp3, layoutConfs)
     , PlayerConf(SiteConfInfo(playerComp, "Player for EN", filterTagConf("EN")), siteConfRefs = layoutConfs)
     , PlayerConf(SiteConfInfo(playerComp, "Player for DE", filterTagConf("DE")), siteConfRefs = layoutConfs)
     , PlayerConf(SiteConfInfo(playerComp, "Player for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = layoutConfs)
