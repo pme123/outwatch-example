@@ -1,8 +1,12 @@
 package nextds.entity
 
+import cats.data.Validated.{Invalid, Valid, invalid, valid}
+import cats.data.{NonEmptyList => NEL}
+import cats.implicits._
 import fastparse.WhitespaceApi
+import nextds.server.boundary.FilterTagBoundary
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 
 /**
@@ -95,6 +99,7 @@ case class Tag(siteIdent: String
 
 case class FilterTagConf(siteInfo: SiteEntityInfo
                          , condition: String
+                         , filterCond: FilterCond
                          , filterTags: Seq[FilterTag] = Nil) extends SiteFilterTrait {
 
   def siteType: SiteType = FILTER_TAG
@@ -102,8 +107,15 @@ case class FilterTagConf(siteInfo: SiteEntityInfo
 }
 
 object FilterTagConf {
-  def apply(siteIdent: String, condition: String, filterTags: Seq[FilterTag]): FilterTagConf =
-    FilterTagConf(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), condition), condition, filterTags)
+  def apply(siteIdent: String, condition: String
+            , allFilterTags: FilterTags): FilterTagConf = {
+    (for {
+      filterCond <- FilterCond(condition)
+      filterTags <- filterCond.resolveFilterTags(FilterTagBoundary.filterTags())
+    } yield FilterTagConf(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), condition), condition, filterCond, filterTags))
+      .get
+
+  }
 
 }
 
@@ -112,6 +124,20 @@ sealed trait FilterCond {
 
   // tested for basic cases
   def adheresFilter(elemFilter: FilterCond): Boolean
+
+  def resolveFilterTags(allFilterTags: FilterTags): Try[List[FilterTag]] =
+    filterTags
+      .map(ft => allFilterTags.filterTagOpt(ft) match {
+        case None => invalid[NEL[String], NEL[FilterTag]](NEL.of(s"No Filter Tag found for $ft"))
+        case Some(tag: FilterTag) => valid[NEL[String], NEL[FilterTag]](NEL.of(tag))
+      }
+      ).reduceLeft(_ combine _) match {
+      case Valid(fTags) =>
+        Success(fTags.toList)
+      case Invalid(errors) =>
+        Failure(new IllegalArgumentException(errors.toList mkString "\n"))
+
+    }
 
 }
 
@@ -123,8 +149,8 @@ object FilterCond {
     NoTrace(CharIn(Seq(' ', '\n', '\t', '\r')).rep)
   }
 
-  import fastparse.noApi._
   import White._
+  import fastparse.noApi._
 
   def eval(tree: (FilterCond, Seq[(String, FilterCond)])): FilterCond = {
     val (base, ops) = tree
@@ -156,13 +182,13 @@ object FilterCond {
     def filterTags: Seq[String] = left.filterTags ++ right.filterTags
 
     def adheresFilter(elemFilter: FilterCond): Boolean = (this, elemFilter) match {
-      case (FilterCalc(l,r,OR),FilterElem(_)) => l.adheresFilter(elemFilter) || r.adheresFilter(elemFilter)
-      case (FilterCalc(l,r,AND),FilterElem(_)) => l.adheresFilter(elemFilter) && r.adheresFilter(elemFilter)
-      case (FilterCalc(l,r,AND),FilterCalc(el,er,_)) =>
+      case (FilterCalc(l, r, OR), FilterElem(_)) => l.adheresFilter(elemFilter) || r.adheresFilter(elemFilter)
+      case (FilterCalc(l, r, AND), FilterElem(_)) => l.adheresFilter(elemFilter) && r.adheresFilter(elemFilter)
+      case (FilterCalc(l, r, AND), FilterCalc(el, er, _)) =>
         (l.adheresFilter(el) || l.adheresFilter(er)) && (r.adheresFilter(el) || r.adheresFilter(er))
-      case (FilterCalc(l,r,OR),FilterCalc(el,er,OR)) =>
+      case (FilterCalc(l, r, OR), FilterCalc(el, er, OR)) =>
         (l.adheresFilter(el) || l.adheresFilter(er)) || (r.adheresFilter(el) || r.adheresFilter(er))
-      case (FilterCalc(l,r,OR),FilterCalc(el,er,AND)) =>
+      case (FilterCalc(l, r, OR), FilterCalc(el, er, AND)) =>
         (l.adheresFilter(el) && l.adheresFilter(er)) || (r.adheresFilter(el) && r.adheresFilter(er))
     }
   }
@@ -171,9 +197,9 @@ object FilterCond {
     def filterTags: Seq[String] = Seq(tag)
 
     def adheresFilter(elemFilter: FilterCond): Boolean = elemFilter match {
-      case FilterElem(fTag) =>        tag == fTag
-      case FilterCalc(l,r,OR) => this.adheresFilter(l) || this.adheresFilter(r)
-      case FilterCalc(l,r,AND) => this.adheresFilter(l) && this.adheresFilter(r)
+      case FilterElem(fTag) => tag == fTag
+      case FilterCalc(l, r, OR) => this.adheresFilter(l) || this.adheresFilter(r)
+      case FilterCalc(l, r, AND) => this.adheresFilter(l) && this.adheresFilter(r)
 
 
     }

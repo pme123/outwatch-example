@@ -13,7 +13,8 @@ trait UIElements {
 
   protected def siteEntityRef(uISiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     editValue(uISiteEntity.label
-      , div(div(className := Style.entityInputCol
+      , div(className:= css.siteTypeStyle(uISiteEntity.siteType)
+        , div(className := Style.entityInputCol
         , uISiteEntity.ident
         , click(Edit(uISiteEntity)) --> store)
         , small(uISiteEntity.title)

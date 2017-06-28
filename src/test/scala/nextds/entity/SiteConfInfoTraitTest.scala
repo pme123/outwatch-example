@@ -48,8 +48,8 @@ class SiteConfInfoTraitTest
 
 object TestResources {
   val siteIdent = "site"
-  private val tagConf = FilterTagConf(SiteEntityInfo(siteIdent, "DE"), "DE")
-  private val tagConf2 = FilterTagConf(SiteEntityInfo(siteIdent, "FR"), "FR")
+  private val tagConf = FilterTagConf(siteIdent, "DE", FilterTags(Seq()))
+  private val tagConf2 = FilterTagConf(siteIdent, "FR", FilterTags(Seq()))
 
 
   val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(SiteEntityInfo(siteIdent, "layout 1"), ScreenRegion())

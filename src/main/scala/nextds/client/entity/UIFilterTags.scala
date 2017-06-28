@@ -1,6 +1,5 @@
 package nextds.client.entity
 
-import cats.data.Validated.{Invalid, Valid}
 import nextds.client.components._
 import nextds.entity._
 import nextds.server.boundary.FilterTagBoundary
@@ -43,17 +42,12 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
 
   private val filterCond = conditionEvents
     .map(c => FilterCond(c)
-      .map(FilterTagBoundary.filterTags)
-      .flatMap {
-        case Valid(fTags) =>
-          Success(fTags.toList)
-        case Invalid(errors) =>
-          Failure(new IllegalArgumentException(errors.toList mkString "\n"))
-      }.map { fTags =>
-      if (differentFilterTags(fTags))
-        println("has different FiterTags!")
-      fTags
-    })
+      .flatMap(_.resolveFilterTags(FilterTagBoundary.filterTags()))
+      .map { fTags =>
+        if (differentFilterTags(fTags))
+          println("has different FiterTags!")
+        fTags
+      })
 
   private val condGroupClasses = filterCond
     .map {

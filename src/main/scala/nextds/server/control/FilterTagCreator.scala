@@ -20,32 +20,21 @@ object FilterTagCreator {
 
   lazy val filterTagConfs =
     Seq(
-      FilterTagConf(filtSite, "DE AND (MGA OR CPF)", Seq("DE", "MGA", "CPF").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "(EN AND ORP) OR NJR", Seq("EN", "ORP", "NJR").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "EN OR DE", Seq("EN", "DE").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "EN AND DE", Seq("EN", "DE").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "(IT OR EN) AND DE", Seq("EN", "DE", "IT").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "EN", Seq("EN").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "DE", Seq("DE").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "FR", Seq("FR").map(filterTags.filterTag))
-      , FilterTagConf(filtSite, "IT", Seq("IT").map(filterTags.filterTag))
+      FilterTagConf(filtSite, "DE AND (MGA OR CPF)", filterTags)
+      , FilterTagConf(filtSite, "(EN AND ORP) OR NJR", filterTags)
+      , FilterTagConf(filtSite, "EN OR DE", filterTags)
+      , FilterTagConf(filtSite, "EN AND DE", filterTags)
+      , FilterTagConf(filtSite, "(IT OR EN) AND DE", filterTags)
+      , FilterTagConf(filtSite, "EN", filterTags)
+      , FilterTagConf(filtSite, "DE", filterTags)
+      , FilterTagConf(filtSite, "FR", filterTags)
+      , FilterTagConf(filtSite, "IT", filterTags)
     )
 
   def filterTagConf(condition:String): FilterTagConf =
     filterTagConfs.find(_.condition == condition).get
 
-  import cats.data._
-  import cats.implicits._
-  import Validated.{valid, invalid}
-  import cats.data.{NonEmptyList=>NEL}
 
-  def filterTags(fc: FilterCond): Validated[NEL[String], NEL[FilterTag]] =
-    fc.filterTags
-      .map(ft => filterTags.filterTagOpt(ft) match {
-        case None => invalid[NEL[String], NEL[FilterTag]](NEL.of(s"No Filter Tag found for $ft"))
-        case Some(tag:FilterTag) => valid[NEL[String], NEL[FilterTag]](NEL.of(tag))
-      }
-      ).reduceLeft(_ combine _)
 
 
 
