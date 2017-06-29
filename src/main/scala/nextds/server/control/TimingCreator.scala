@@ -37,4 +37,8 @@ object TimingCreator {
 
   def timingConf(title: String): TimingConf =
     timingConfs.find(_.title == title).get
+
+  lazy val siteLevel: SiteLevel = SiteLevel(TIME, Map(
+    TIMING -> SiteEntities(TIME, TIMING, timingConfs)
+  ))
 }

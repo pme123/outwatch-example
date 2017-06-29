@@ -3,16 +3,11 @@ package nextds.client.components
 import nextds.client.entity._
 import outwatch.dom._
 import outwatch.dom.helpers.InputEvent
-import rxscalajs.Observer
-
-import scala.scalajs.js
 
 /**
   * Created by pascal.mengelt on 15.06.2017.
   */
 object ModalEntitySelecter {
-
-
 
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
@@ -24,12 +19,13 @@ object ModalEntitySelecter {
 
         val selectLinkTo: VNode = select(id := "linkTo"
           , className := "form-control"
-          , change((ev:InputEvent) => LinkTo(ui, Some(ev.target.value))) --> store
+          , change((ev: InputEvent) => LinkTo(ui, Some(ev.target.value))) --> store
           , children <-- store
             .map(s => s.siteModel)
             .map(sm =>
               ui.linkToType.map(t =>
-                sm.entities(entity.levelType, t)
+                sm.uiSiteEntities(entity.levelType, t)
+                  .uiSiteEntities
                   .map(e =>
                     option(e.siteEntity.ident)))
                 .getOrElse(Seq())
@@ -45,7 +41,7 @@ object ModalEntitySelecter {
             , div(className := "form-group"
               , label(
                 "Link to:")
-                , selectLinkTo))
+              , selectLinkTo))
           , div(className := "modal-footer"
             , button(`type` := "button", className := "btn btn-default", data.dismiss := "modal"
               , click(DoLinking) --> store

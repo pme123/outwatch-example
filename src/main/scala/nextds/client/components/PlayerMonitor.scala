@@ -37,7 +37,8 @@ object PlayerMonitor {
 
 
     val players: Observable[Seq[UIPlayerComp]] =
-      store.map(_.siteModel.entities(COMP, PLAYER)
+      store.map(_.siteModel.uiSiteEntities(COMP, PLAYER)
+        .uiSiteEntities
         .asInstanceOf[Seq[UIPlayerComp]]
       )
     val selectPlayer = store.map(_.selectedSET)
@@ -72,7 +73,7 @@ object PlayerMonitor {
           selectPlayer.subscribe(set => set match {
             case Some(selPl: UIPlayerComp) if selPl.ident == pl.ident =>
               window1.open(gmap, marker)
-            case _=> window1.close()
+            case _ => window1.close()
           })
           google.maps.event.addListener(marker, "click", () => {
             window1.open(gmap, marker)

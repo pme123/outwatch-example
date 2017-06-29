@@ -22,8 +22,8 @@ object SitesRepo {
       case FILTER | TIME => SiteEntities(levelType, siteType, Nil)
     }
 
-  lazy val siteModel: SiteModel =
-    SiteModel(
+  lazy val siteLevels: Seq[SiteLevel] =
+    Seq(
       SiteTemplRepo.siteLevel
       , SiteCompRepo.siteLevel
       , SiteConfRepo.siteLevel

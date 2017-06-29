@@ -1,7 +1,7 @@
 package nextds.client.components
 
 import nextds.client.Pages
-import nextds.client.entity.{Action, ReduxStore, State, UIFilterTagConf, UISiteEntity, UISiteModel}
+import nextds.client.entity.{Action, ReduxStore, State, UIFilterTagConf, UISiteEntity}
 import nextds.entity._
 import outwatch.dom._
 
@@ -14,17 +14,19 @@ object SimpleLevelComponent {
 
     val entities =
       store.map { st =>
-        val model = st.siteModel
-        model.simpleLevel(siteType)
+        val uiModel = st.siteModel
+        val uiLevel = uiModel.uiSiteLevels(levelType)
+        uiLevel.uiSiteEntities(siteType)
+          .uiSiteEntities
           .filterNot(_.isFiltered)
           .filter(e => showAll || checkLinks(st, e))
-          .take(model.maxEntries)
+          .take(uiModel.maxEntries)
           .map {
             case f: UIFilterTagConf => FilterTagCard(f)
             case uiE =>
               div(className := bss.grid.col2
-              , EntityCard(uiE)
-            )
+                , EntityCard(uiE)
+              )
           }
       }
 
@@ -37,7 +39,7 @@ object SimpleLevelComponent {
 
   // as siteModel.withLinks should only be called if necessary (expensive)
   private def checkLinks(state: State, uiEntity: UISiteEntity) = {
-    if(state.activePage ==Pages.LINKED_VIEWER)
+    if (state.activePage == Pages.LINKED_VIEWER)
       state.siteModel.withLinks.contains(uiEntity.siteEntity)
     else
       true

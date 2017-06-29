@@ -16,7 +16,8 @@ object LevelComponent {
       val entities =
         store.map { st =>
           val model = st.siteModel
-          model.entities(levelType, siteType)
+          model.uiSiteEntities(levelType, siteType)
+            .uiSiteEntities
             .filterNot(_.isFiltered)
             .take(model.maxEntries)
             .map(EntityCard.apply)
@@ -32,7 +33,7 @@ object LevelComponent {
 
     val siteLevel = {
       store.map(
-        _.siteModel.level(levelType)
+        _.siteModel.uiLevel(levelType)
           .allSiteTypes
           .filterNot(siteType => levelType != CONF && siteType == REGION)
           .map(siteType =>

@@ -67,7 +67,7 @@ object ReduxStore {
             ident <- linkTo.toIdent
           } yield previousState.siteModel.entity(linkTo.fromEntity.levelType, siteType, ident))
             .orElse(linkTo.fromEntity.linkToType
-              .flatMap(st => previousState.siteModel.entities(linkTo.fromEntity.levelType, st).headOption)
+              .flatMap(st => previousState.siteModel.uiSiteEntities(linkTo.fromEntity.levelType, st).uiSiteEntities.headOption)
             )
             .map(_.siteEntity.addLink(linkTo.fromEntity.siteEntity))
             .map(uiEntity)
@@ -111,14 +111,6 @@ object ReduxStore {
   }
 
   private def siteModelReducer(previousState: UISiteModel, action: Action): UISiteModel = action match {
-    case RefreshEntities(levelType, siteType) =>
-      // send the request to the server
-      val entities = SiteEntityBoundary.entitiesFor(levelType, siteType)
-        .map(uiEntity)
-      previousState.replaceLevel(UpdateEntities(levelType, siteType, entities))
-    case ue: UpdateEntities =>
-      previousState.replaceLevel(ue)
-
     case f: UIFilters =>
       previousState.withFilter(f)
     case Edit(uiSiteEntity) =>
@@ -211,8 +203,7 @@ object ReduxStore {
   }
 
   private def createFrom(previousState: UISiteModel, newSET: UISiteEntity, isRegion: Boolean) = {
-    val newSets = previousState.entities(newSET.levelType, newSET.siteType) :+ newSET
-    previousState.replaceLevel(UpdateEntities(newSET.levelType, newSET.siteType, newSets))
+    previousState.replaceEntity(newSET)
   }
 
   private def createFrom(previousState: Option[UISiteEntity], siteEntityTrait: SiteEntityTrait, isRegion: Boolean) = {
@@ -226,10 +217,6 @@ object ReduxStore {
 }
 
 sealed trait Action
-
-case class RefreshEntities(levelType: LevelType, siteType: SiteType) extends Action
-
-case class UpdateEntities(levelType: LevelType, siteType: SiteType, entities: Seq[UISiteEntity]) extends Action
 
 case class Edit(uiSiteEntity: UISiteEntity) extends Action
 
@@ -262,12 +249,10 @@ case class State(siteModel: UISiteModel
                  , linkTo: Option[LinkTo] = None
                  , activePage: Pages = Pages.COMPOSER) {
 
-  def updateEntities(entities: UpdateEntities): State =
-    copy(siteModel = siteModel.replaceLevel(entities))
 }
 
 object State {
-  def apply(): State = State(UISiteModel())
+  def apply(): State = State(UISiteModel(SiteEntityBoundary.siteModel()))
 }
 
 

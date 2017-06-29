@@ -40,15 +40,15 @@ trait UISiteConf
   override def hideMenuCreateRegion = false
 
   // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
-  def withLinkedConfRight(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
+  def withLinkedConfRight(siteLevel: UISiteLevel): Set[SiteEntityTrait] = {
     siteConfRefs.flatMap(e => e.withLinkedConfRight(siteLevel)).toSet + siteEntity
   }
 
   // all links to the left - e.g. REGION > LAYOUT > PLAYER
-  def withLinkedConfLeft(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
+  def withLinkedConfLeft(siteLevel: UISiteLevel): Set[SiteEntityTrait] = {
     def inner(leftType: SiteType): Set[SiteEntityTrait] =
       (for {
-        el <- siteLevel.entities(leftType).map(_.asInstanceOf[UISiteConf])
+        el <- siteLevel.uiSiteEntities(leftType).uiSiteEntities.map(_.asInstanceOf[UISiteConf])
         er <- el.siteConfRefs
         if er.ident == ident
       } yield el.withLinkedConfLeft(siteLevel) + el.siteEntity)

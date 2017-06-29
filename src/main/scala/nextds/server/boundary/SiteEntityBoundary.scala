@@ -12,7 +12,7 @@ object SiteEntityBoundary {
 
   def siteIdent(): SiteIdent = allSites()(1)
 
-  def siteModel(): SiteModel = SitesRepo.siteModel
+  def siteModel(): SiteModel = SiteModel(SitesRepo.siteLevels :+ FilterTagCreator.siteLevel :+ TimingCreator.siteLevel: _*)
 
   def entitiesFor(levelType: LevelType, siteType: SiteType): Seq[SiteEntityTrait] =
     SitesRepo.entitiesFor(levelType, siteType).entities ++ SitesCreator.entitiesFor(levelType, siteType).entities

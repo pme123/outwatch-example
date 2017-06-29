@@ -17,7 +17,8 @@ object LinkedLevelViewer {
       val entities =
         store.map { st =>
           val model = st.siteModel
-          model.entities(levelType, siteType)
+          model.uiSiteEntities(levelType, siteType)
+            .uiSiteEntities
             .filterNot(_.isFiltered)
             .filter(e => model.withLinks.contains(e.siteEntity))
             .take(model.maxEntries)
@@ -35,7 +36,7 @@ object LinkedLevelViewer {
     val siteLevel = {
       store.map { st =>
         if (st.activePage == Pages.LINKED_VIEWER) {
-          st.siteModel.level(levelType)
+          st.siteModel.uiLevel(levelType)
             .allSiteTypes
             .filterNot(siteType => levelType != CONF && siteType == REGION)
             .map(siteType =>

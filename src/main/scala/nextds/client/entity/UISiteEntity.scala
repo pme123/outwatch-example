@@ -3,6 +3,33 @@ package nextds.client.entity
 import nextds.entity._
 import outwatch.dom._
 
+
+case class UISiteEntities(
+                           siteEntities: SiteEntities[_ <: SiteEntityTrait]
+                           , uiSiteEntities: Seq[UISiteEntity]
+                         ) {
+
+  def entity(indexFrom: Int): UISiteEntity =
+    uiSiteEntities(indexFrom)
+
+  def entity(ident: String): UISiteEntity =
+    uiSiteEntities
+      .find(_.siteEntity.ident == ident)
+      .getOrElse(throw new IllegalArgumentException(s"There is no SiteEntity with ident: $ident"))
+
+  def appendFilter(filters: UIFilters): UISiteEntities = {
+    copy(uiSiteEntities = uiSiteEntities.map(_.appendFilter(filters)))
+  }
+
+  def replaceEntity(set: UISiteEntity): UISiteEntities =
+    copy(uiSiteEntities = uiSiteEntities.filter(_.ident != set.ident) :+ set)
+
+}
+
+object UISiteEntities {
+
+}
+
 /**
   * Created by pascal.mengelt on 28.05.2017.
   */
@@ -39,7 +66,7 @@ trait UISiteEntity
     )
   }
 
-  def inputDescription = {
+  def inputDescription: VNode = {
     inputTextarea("Description", siteEntity.descr, siteEntity.maybeDescr)
   }
 
@@ -107,7 +134,7 @@ trait UISiteEntity
   }
 
   protected def filter(isFiltered: Boolean): UISiteEntity
-  
+
 }
 
 trait UIPlayer extends UISiteEntity {

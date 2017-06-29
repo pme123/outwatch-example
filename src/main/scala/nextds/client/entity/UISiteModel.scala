@@ -8,40 +8,37 @@ import nextds.entity.{LevelType, _}
 
 
 case class UISiteModel(
-                        siteLevels: Map[LevelType, UISiteLevelTrait]
-                        , filterTags: UIFilterTags = UIFilterTags()
-                        , uiTimingConfs: UITimingConfs = UITimingConfs()
+                        siteModel: SiteModel
+                        , uiSiteLevels: Map[LevelType, UISiteLevel]
                         , uiFilters: UIFilters = UIFilters()
                         , maxEntries: Int = defaultMaxEntries
                         , selectedSET: Option[UISiteEntity] = None
                       ) {
 
-  def replaceLevel(entities: UpdateEntities): UISiteModel =
-    replaceLevel(level(entities.levelType).replaceEntries(entities))
+  def replaceLevel(entities: SiteEntities[_ <: SiteEntityTrait]): UISiteModel = {
+    val model = siteModel.replaceLevel(entities)
+    copy(siteModel = model, uiSiteLevels = UISiteModel.uiSiteLevels(model))
+  }
 
-  def replaceLevel(siteLevel: UISiteLevelTrait): UISiteModel =
-    copy(
-      siteLevels.updated(siteLevel.levelType, siteLevel)
-    )
 
-  def level(levelType: LevelType): UISiteLevelTrait =
-    siteLevels(levelType)
+  def uiLevel(levelType: LevelType): UISiteLevel =
+    uiSiteLevels(levelType)
 
-  def allLevels: Seq[UISiteLevelTrait] = siteLevels.values.toSeq
+  def allLevels: Seq[UISiteLevel] = uiSiteLevels.values.toSeq
 
-  def entities(levelType: LevelType, siteType: SiteType): Seq[UISiteEntity] =
-    level(levelType).entities(siteType)
+  def uiSiteEntities(levelType: LevelType, siteType: SiteType): UISiteEntities =
+    uiLevel(levelType).uiSiteEntities(siteType)
 
   def entity(groupFrom: String, indexFrom: Int): UISiteEntity =
-    level(LevelType.createFromGroup(groupFrom))
+    uiLevel(LevelType.createFromGroup(groupFrom))
       .entity(SiteType.createFromGroup(groupFrom), indexFrom)
 
   def entity(levelType: LevelType, siteType: SiteType, ident: String): UISiteEntity =
-    level(levelType)
+    uiLevel(levelType)
       .entity(siteType, ident)
 
   def replaceEntity(set: UISiteEntity): UISiteModel =
-    copy(siteLevels.updated(set.levelType, siteLevels(set.levelType).replaceEntity(set)))
+  copy(uiSiteLevels = uiSiteLevels.updated(set.levelType, uiSiteLevels(set.levelType).replaceEntity(set)))
 
   def withFilter(f: UIFilters): UISiteModel = {
     (f.maxEntities match {
@@ -64,34 +61,30 @@ case class UISiteModel(
           uiFilters.copy(maxEntities = opt)
         case _ => uiFilters
       }
-      copy(siteLevels = siteLevels.map {
+      copy(uiSiteLevels = uiSiteLevels.map {
         case (k, v) => k -> v.appendFilter(newFilter)
-      }, uiFilters = newFilter, filterTags = filterTags.appendFilter(newFilter)
-        , uiTimingConfs = uiTimingConfs.appendFilter(newFilter))
+      }, uiFilters = newFilter)
     }
   }
 
   lazy val withLinks: Set[SiteEntityTrait] =
     selectedSET.map { set =>
       println(s"withLinks: $set")
-     // set.siteEntity.filterLinks(set.siteEntity.withLinked(this))
+      // set.siteEntity.filterLinks(set.siteEntity.withLinked(this))
       Set[SiteEntityTrait]()
     }.getOrElse(Set())
-
-
-  def simpleLevel(siteType: SiteType): Seq[UISiteEntity] = siteType match {
-    case FILTER_TAG => filterTags.filterTagConfs
-    case TIMING => uiTimingConfs.timingConfs
-    case other => throw new UnsupportedOperationException(s"No support simple level for: $siteType")
-  }
 
 }
 
 object UISiteModel {
-  def apply(): UISiteModel =
-    UISiteModel(Map(
-      TEMPL -> UISiteLevel(TEMPL)
-      , COMP -> UISiteLevel(COMP)
-      , CONF -> UISiteLevel(CONF)
-    ))
+  def apply(siteModel: SiteModel): UISiteModel =
+    UISiteModel(
+      siteModel
+      , uiSiteLevels(siteModel)
+    )
+
+  def uiSiteLevels(siteModel: SiteModel): Map[LevelType, UISiteLevel] = {
+    for ((levelType, siteLevel) <- siteModel.siteLevels)
+      yield levelType -> UISiteLevel(siteLevel)
+  }
 }

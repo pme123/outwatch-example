@@ -18,7 +18,7 @@ object FilterTagCreator {
           .addChildren("MGA", "ORP", "CPF", "NJR", "AJR", "BJR")
       ))
 
-  lazy val filterTagConfs =
+  lazy val filterTagConfs: Seq[FilterTagConf] =
     Seq(
       FilterTagConf(filtSite, "DE AND (MGA OR CPF)", filterTags)
       , FilterTagConf(filtSite, "(EN AND ORP) OR NJR", filterTags)
@@ -31,11 +31,13 @@ object FilterTagCreator {
       , FilterTagConf(filtSite, "IT", filterTags)
     )
 
-  def filterTagConf(condition:String): FilterTagConf =
+  def filterTagConf(condition: String): FilterTagConf =
     filterTagConfs.find(_.condition == condition).get
 
 
-
+  lazy val siteLevel: SiteLevel = SiteLevel(FILTER, Map(
+    FILTER_TAG -> SiteEntities(FILTER, FILTER_TAG, filterTagConfs)
+  ))
 
 
 }
