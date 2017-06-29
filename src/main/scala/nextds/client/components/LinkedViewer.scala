@@ -16,9 +16,9 @@ object LinkedViewer {
     div(className := bss.grid.row + " full-height"
       , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
-          , LinkedLevelViewer(TEMPL)
-          , LinkedLevelViewer(COMP)
-          , LinkedLevelViewer(CONF)
+          , LevelComponent(TEMPL)
+          , LevelComponent(COMP)
+          , LevelComponent(CONF)
           , SimpleLevelComponent(FILTER, FILTER_TAG)
           , SimpleLevelComponent(TIME, TIMING)
 

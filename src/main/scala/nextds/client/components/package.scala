@@ -1,5 +1,6 @@
 package nextds.client
 
+import nextds.client.entity.{State, UISiteEntity}
 import org.scalajs.dom.Element
 import org.scalajs.dom.raw.HTMLSelectElement
 import outwatch.Sink
@@ -22,8 +23,16 @@ package object components {
       .toList
   }
 
-  val initTooltipSink = Sink.create[Element] { e =>
+  val initTooltipSink: Sink[Element] = Sink.create[Element] { e =>
     import Bootstrap._
     jQuery(e).tooltip()
+  }
+
+  // as siteModel.withLinks should only be called if necessary (expensive)
+  def checkLinks(state: State, uiEntity: UISiteEntity): Boolean = {
+    if (state.activePage == Pages.LINKED_VIEWER)
+      state.siteModel.withLinks.contains(uiEntity.siteEntity)
+    else
+      true
   }
 }

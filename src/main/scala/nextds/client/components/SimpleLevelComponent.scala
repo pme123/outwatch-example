@@ -37,12 +37,5 @@ object SimpleLevelComponent {
       ))
   }
 
-  // as siteModel.withLinks should only be called if necessary (expensive)
-  private def checkLinks(state: State, uiEntity: UISiteEntity) = {
-    if (state.activePage == Pages.LINKED_VIEWER)
-      state.siteModel.withLinks.contains(uiEntity.siteEntity)
-    else
-      true
-  }
 }
 

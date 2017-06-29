@@ -9,7 +9,7 @@ import outwatch.dom._
   */
 object LevelComponent {
 
-  def apply(levelType: LevelType)(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(levelType: LevelType, showAll: Boolean = false)(implicit store: ReduxStore[State, Action]): VNode = {
 
     def entityListComponent(levelType: LevelType, siteType: SiteType): VNode = {
 
@@ -18,6 +18,7 @@ object LevelComponent {
           val model = st.siteModel
           model.uiSiteEntities(levelType, siteType)
             .uiSiteEntities
+            .filter(e => showAll || checkLinks(st, e))
             .filterNot(_.isFiltered)
             .take(model.maxEntries)
             .map(EntityCard.apply)

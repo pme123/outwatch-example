@@ -21,7 +21,7 @@ object Composer {
             m.levelType match {
               case TIME => SimpleLevelComponent(m.levelType, TIMING, showAll = true)
               case FILTER => SimpleLevelComponent(m.levelType, FILTER_TAG, showAll = true)
-              case _ => LevelComponent(m.levelType)
+              case _ => LevelComponent(m.levelType, showAll = true)
             }
           }
       }
