@@ -8,6 +8,20 @@ trait SiteTemplTrait
   def siteInfo: SiteEntityInfo
 
   lazy val levelType: LevelType = TEMPL
+
+  // no upper levels
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    Set(this)
+  }
+
+  // all links to the level COMP
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    siteModel.entities(COMP, siteType)
+      .filter(_.asInstanceOf[SiteCompTrait].templ.ident == ident)
+      .flatMap(_.withLinkedDown(siteModel))
+      .toSet + this
+  }
+
 }
 
 object SiteTemplTrait {
@@ -43,6 +57,7 @@ object LayoutTempl {
                    , screenRegion: ScreenRegion): LayoutTempl =
     LayoutTempl(SiteEntityInfo(siteIdent, Site.nextIdent(siteIdent), title)
       , screenRegion)
+
   def singleLayout(templContent: SiteEntityInfo
                    , screenRegion: ScreenRegion): LayoutTempl =
     LayoutTempl(templContent

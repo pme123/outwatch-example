@@ -74,7 +74,8 @@ case class UISiteModel(
   lazy val withLinks: Set[SiteEntityTrait] =
     selectedSET.map { set =>
       println(s"withLinks: $set")
-      set.siteEntity.filterLinks(set.withLinked(this))
+     // set.siteEntity.filterLinks(set.siteEntity.withLinked(this))
+      Set[SiteEntityTrait]()
     }.getOrElse(Set())
 
 

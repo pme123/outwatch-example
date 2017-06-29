@@ -107,16 +107,7 @@ trait UISiteEntity
   }
 
   protected def filter(isFiltered: Boolean): UISiteEntity
-
-  def withLinked(uiModel: UISiteModel): Set[SiteEntityTrait] =
-    withLinkedDown(uiModel) ++ withLinkedUp(uiModel)
-
-  // all links to the level up FILTER > CONF > COMP > TEMPL
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait]
-
-  // all links to the level down TEMPL < COMP > CONF > FILTER
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait]
-
+  
 }
 
 trait UIPlayer extends UISiteEntity {

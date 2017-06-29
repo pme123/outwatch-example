@@ -16,14 +16,20 @@ object SitesCreator {
 
   def oneOfSeq[T](xs: Seq[T]): T = oneOf(xs: _*)
 
-  def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
-    (levelType match {
+  lazy val siteModel: SiteModel = SiteModel(
+    SiteTemplCreator.siteLevel
+    , SiteTemplCreator.siteLevel
+    , SiteTemplCreator.siteLevel
+  )
+
+  def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): SiteEntities[_ <: SiteEntityTrait] =
+    levelType match {
       case TEMPL => SiteTemplCreator.allTempls(siteType)
       case COMP => SiteCompCreator.allComps(siteType)
       case CONF => SiteConfCreator.allConfs(siteType)
       case other => //TODO
         throw new IllegalArgumentException(s"Unsupported Level Type: $other")
-    }).map(_.asInstanceOf[T])
+    }
 
 }
 
@@ -40,15 +46,18 @@ object SiteTemplCreator {
       , oneOf(s"Special Configs for this $label $i", s"No description for $label $i available"))
   }
 
-  val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
-    PLAYER -> siteTempl("Player").map(PlayerTempl.apply)
-    , LAYOUT -> siteTempl("Layout").map(LayoutTempl(_, oneOf(ultraHD4K, fullHD)))
-    , REGION -> Nil
-    , PLAYLIST -> siteTempl("Playlist").map(PlaylistTempl.apply)
-    , MEDIUM -> siteTempl("Medium").map(MediumTempl.apply)
-  )
+  val allTempls: Map[SiteType, SiteEntities[SiteTemplTrait]] = Map(
+    PLAYER -> SiteEntities(TEMPL, PLAYER, siteTempl("Player").map(PlayerTempl.apply)
+    ), LAYOUT -> SiteEntities(TEMPL, LAYOUT, siteTempl("Layout").map(LayoutTempl(_, oneOf(ultraHD4K, fullHD)))
+    ), REGION -> SiteEntities(TEMPL, REGION, Seq(
+    )), PLAYLIST -> SiteEntities(TEMPL, PLAYLIST, siteTempl("Playlist").map(PlaylistTempl.apply)
+    ), MEDIUM -> SiteEntities(TEMPL, MEDIUM, siteTempl("Medium").map(MediumTempl.apply)
+    ))
 
-  def templ(siteType: SiteType): SiteTemplTrait = oneOfSeq(allTempls(siteType))
+  def templ(siteType: SiteType): SiteTemplTrait = oneOfSeq(allTempls(siteType).entities)
+
+  lazy val siteLevel = SiteLevel(TEMPL, allTempls)
+
 }
 
 object SiteCompCreator {
@@ -80,31 +89,33 @@ object SiteCompCreator {
 
   private def playerStatus: PlayerStatus = oneOf(PlayerStatus.STOPPED, PlayerStatus.NOT_CONNECTED, PlayerStatus.RUNNING)
 
-  val allComps: Map[SiteType, Seq[SiteCompTrait]] = Map(
-    PLAYER -> siteComp(templ(PLAYER))
+  val allComps: Map[SiteType, SiteEntities[SiteCompTrait]] = Map(
+    PLAYER -> SiteEntities(COMP, PLAYER, siteComp(templ(PLAYER))
       .map(_.asInstanceOf[SiteComp[PlayerTempl]])
       .map(PlayerComp(_, playerStatus, location))
-    , LAYOUT -> siteComp(templ(LAYOUT))
+    ), LAYOUT -> SiteEntities(COMP, LAYOUT, siteComp(templ(LAYOUT))
       .map(_.asInstanceOf[SiteComp[LayoutTempl]])
       .map(LayoutComp(_, oneOf(None, Some(ScreenRegion(fromTop = 40, width = 333, height = 222)))))
-    , REGION -> Nil
-    , PLAYLIST -> siteComp(templ(PLAYLIST))
+    ), REGION -> SiteEntities(COMP, REGION, Seq(
+    )), PLAYLIST -> SiteEntities(COMP, PLAYLIST, siteComp(templ(PLAYLIST))
       .map(_.asInstanceOf[SiteComp[PlaylistTempl]])
       .map(PlaylistComp(_))
-    , MEDIUM -> siteComp(templ(MEDIUM))
+    ), MEDIUM -> SiteEntities(COMP, MEDIUM, siteComp(templ(MEDIUM))
       .map(_.asInstanceOf[SiteComp[MediumTempl]])
       .map(MediumComp(_))
-  )
+    ))
 
-  def comp(siteType: SiteType): SiteCompTrait = oneOfSeq(allComps(siteType))
+  def comp(siteType: SiteType): SiteCompTrait = oneOfSeq(allComps(siteType).entities)
+
+  lazy val siteLevel = SiteLevel(COMP, allComps)
 
 }
 
 object SiteConfCreator {
 
+  import FilterTagCreator._
   import SiteCompCreator._
   import SitesCreator._
-  import FilterTagCreator._
   import TimingCreator._
 
   val entityCount = 20
@@ -122,33 +133,40 @@ object SiteConfCreator {
     )
   }
 
-  private val mediumConfs = siteConf(comp(MEDIUM))
+  private val mediumConfs = SiteEntities(CONF, PLAYER, siteConf(comp(MEDIUM))
     .map(_.asInstanceOf[SiteConfInfo[MediumComp]])
-    .map(MediumConf(_))
-  private val playlistConfs = siteConf(comp(PLAYLIST))
+    .map(MediumConf(_)))
+  private val playlistConfs = SiteEntities(CONF, PLAYER, siteConf(comp(PLAYLIST))
     .map(_.asInstanceOf[SiteConfInfo[PlaylistComp]])
-    .map(PlaylistConf(_, Set(oneOfSeq(mediumConfs), oneOfSeq(mediumConfs), oneOfSeq(mediumConfs)).toSeq))
+    .map(PlaylistConf(_, Set(oneOfSeq(mediumConfs.entities), oneOfSeq(mediumConfs.entities), oneOfSeq(mediumConfs.entities)).toSeq))
+  )
 
   private def screenRegion = oneOf(None, None, Some(ScreenRegion(12, 24)))
 
-  private val regionConfs = siteConf(comp(LAYOUT))
+  private val regionConfs = SiteEntities(CONF, PLAYER, siteConf(comp(LAYOUT))
     .map(_.asInstanceOf[SiteConfInfo[LayoutComp]])
-    .map(RegionConf(_, screenRegion, Seq(oneOfSeq(playlistConfs))))
-  private val layoutConfs = siteConf(comp(LAYOUT))
+    .map(RegionConf(_, screenRegion, Seq(oneOfSeq(playlistConfs.entities))))
+  )
+  private val layoutConfs = SiteEntities(CONF, PLAYER, siteConf(comp(LAYOUT))
     .map(_.asInstanceOf[SiteConfInfo[LayoutComp]])
-    .map(LayoutConf(_, screenRegion, Seq(oneOfSeq(regionConfs))))
-  private val playerConfs = siteConf(comp(PLAYER))
+    .map(LayoutConf(_, screenRegion, Seq(oneOfSeq(regionConfs.entities))))
+  )
+  private val playerConfs = SiteEntities(CONF, PLAYER, siteConf(comp(PLAYER))
     .map(_.asInstanceOf[SiteConfInfo[PlayerComp]])
-    .map(c => PlayerConf(c, Seq(oneOfSeq(layoutConfs))))
+    .map(c => PlayerConf(c, Seq(oneOfSeq(layoutConfs.entities))))
+  )
 
 
-  val allConfs: Map[SiteType, Seq[SiteConfTrait]] = Map(
+  val allConfs: Map[SiteType, SiteEntities[_ <: SiteConfTrait]] = Map(
     PLAYER -> playerConfs
     , LAYOUT -> layoutConfs
     , REGION -> regionConfs
     , PLAYLIST -> playlistConfs
     , MEDIUM -> mediumConfs
   )
+
+  lazy val siteLevel = SiteLevel(CONF, allConfs)
+
 
 }
 

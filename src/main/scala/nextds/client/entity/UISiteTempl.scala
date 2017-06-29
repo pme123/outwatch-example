@@ -11,18 +11,6 @@ trait UISiteTempl
 
   override val menuItemCreateFrom = s"create ${siteType.label} ${COMP.label}"
 
-  // no upper levels
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    Set(siteEntity)
-  }
-
-  // all links to the level COMP
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    uiModel.level(COMP).entities(siteType)
-      .filter(_.asInstanceOf[UISiteComp].siteEntity.templ.ident == ident)
-      .flatMap(_.withLinkedDown(uiModel))
-      .toSet + siteEntity
-  }
 }
 
 object UISiteTempl {

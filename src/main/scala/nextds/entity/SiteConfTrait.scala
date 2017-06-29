@@ -27,6 +27,57 @@ trait SiteConfTrait
     filterTagConf.map(ftc => ftc.filterCond).toSeq
   }
 
+  // all links to the level COMP
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    val siteT = if (siteType == REGION) LAYOUT else siteType
+    siteModel.entities(COMP, siteT)
+      .filter(_.ident == comp.ident)
+      .flatMap(_.withLinkedUp(siteModel))
+      .toSet ++
+      withLinkedConfRight(siteModel.level(CONF))/* ++
+      withLinkedConfLeft(siteModel.level(CONF)) */
+  }
+
+  // all links to the level Filter
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    filterTagConf
+      .toSeq
+      .flatMap(f => f.withLinkedDown(siteModel))
+      .toSet ++
+      timingConf
+        .toSeq
+        .flatMap(t => t.withLinkedDown(siteModel))  ++
+      withLinkedConfRight(siteModel.level(CONF)) /*++
+      withLinkedConfLeft(siteModel.level(CONF))*/
+  }
+
+
+  // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
+  def withLinkedConfRight(siteLevel: SiteLevel): Set[SiteEntityTrait] = {
+    siteConfRefs.flatMap(e => e.withLinkedConfRight(siteLevel)).toSet + this
+  }
+
+  // all links to the left - e.g. REGION > LAYOUT > PLAYER
+  def withLinkedConfLeft(siteLevel: SiteLevel): Set[SiteEntityTrait] = {
+    def inner(leftType: SiteType): Set[SiteEntityTrait] =
+      (for {
+        set <- siteLevel.entities(leftType).entities.map(_.asInstanceOf[SiteConfTrait])
+        er <- set.siteConfRefs
+        if er.ident == ident
+      } yield set.withLinkedConfLeft(siteLevel) + set)
+        .flatten.toSet
+
+    siteType match {
+      case LAYOUT => inner(PLAYER)
+      case REGION => inner(LAYOUT)
+      case PLAYLIST => inner(REGION)
+      case MEDIUM => inner(PLAYLIST)
+      case _ => Set()
+
+    }
+  }
+
+
   // all links to the left - e.g. REGION > LAYOUT > PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait]
 

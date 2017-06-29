@@ -125,17 +125,4 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
 
   protected def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
-  // all links to the level CONF
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    uiModel.level(CONF).siteEntities.values.flatten
-      .filter(_.asInstanceOf[UISiteConf].filterTagConf.exists(_.ident == ident))
-      .flatMap(_.withLinkedUp(uiModel))
-      .toSet + siteEntity
-  }
-
-  // no levels below
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    Set(siteEntity)
-  }
-
 }

@@ -12,6 +12,23 @@ trait SiteCompTrait
 
   lazy val levelType: LevelType = COMP
 
+  // all links to the level TEMPL
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    siteModel.entities(TEMPL, siteType)
+      .filter(_.ident == templ.ident)
+      .flatMap(_.withLinkedUp(siteModel))
+      .toSet + this
+  }
+
+  // all links to the level CONF
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    siteModel.entities(CONF, siteType)
+      .filter(_.asInstanceOf[SiteConfTrait].comp.ident == ident)
+      .flatMap(_.withLinkedDown(siteModel))
+      .toSet + this
+  }
+
+
 }
 
 case class SiteComp[T <: SiteTemplTrait](siteIdent: SiteIdent
@@ -27,11 +44,13 @@ case class SiteComp[T <: SiteTemplTrait](siteIdent: SiteIdent
 
 object SiteComp {
   def apply[T <: SiteTemplTrait](templ: T): SiteComp[T] = SiteComp(templ.siteIdent, Site.nextIdent(templ.siteIdent), templ)
+
   def apply[T <: SiteTemplTrait](siteIdent: String
-                                 ,templ: T
-                                 , title:String): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ, Some(title))
+                                 , templ: T
+                                 , title: String): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ, Some(title))
+
   def apply[T <: SiteTemplTrait](siteIdent: String
-                                 ,templ: T): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ)
+                                 , templ: T): SiteComp[T] = SiteComp(siteIdent, Site.nextIdent(siteIdent), templ)
 
 }
 

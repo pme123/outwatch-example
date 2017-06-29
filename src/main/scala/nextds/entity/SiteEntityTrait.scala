@@ -15,7 +15,9 @@ trait SiteEntityTrait {
   def levelType: LevelType
 
   lazy val siteIdent: SiteIdent = siteInfo.siteIdent
+
   def label: String = s"${siteType.label} ${levelType.label}"
+
   lazy val ident: SiteEntityIdent = siteInfo.ident
   lazy val title: String = siteInfo.title
   lazy val maybeTitle: Option[String] = siteInfo.maybeTitle
@@ -24,6 +26,18 @@ trait SiteEntityTrait {
   lazy val typeDefinition: String = s"$levelType-$siteType"
 
   def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait = this
+
+  def withLinks(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    println(s"withLinks: $this")
+    withLinkedDown(siteModel) ++ withLinkedUp(siteModel)
+  }
+
+
+  // all links to the level up FILTER > CONF > COMP > TEMPL
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait]
+
+  // all links to the level down TEMPL < COMP > CONF > FILTER
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait]
 
   def filterLinks(siteEntities: Set[SiteEntityTrait]): Set[SiteEntityTrait] = siteEntities
 
@@ -114,6 +128,20 @@ trait TimeTrait extends SiteEntityTrait {
   val levelType: LevelType = TIME
   override lazy val label: String = s"${siteType.label}"
 
+
+  // all links to the level CONF
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    siteModel.level(CONF).siteEntities.values
+      .flatMap(se => se.entities)
+      .filter(_.asInstanceOf[SiteConfTrait].timingConf.exists(_.ident == ident))
+      .flatMap(_.withLinkedUp(siteModel))
+      .toSet + this
+  }
+
+  // no levels below
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    Set(this)
+  }
 
 }
 
@@ -207,7 +235,7 @@ object LevelType {
   def createFromGroup(groupFrom: String): LevelType =
     createFrom(groupFrom.takeWhile(_ != '-'))
 
-  def all = Seq(TEMPL, COMP, CONF, FILTER)
+  def all: Seq[LevelType] = Seq(TEMPL, COMP, CONF, FILTER, TIME)
 }
 
 case object TEMPL extends LevelType {

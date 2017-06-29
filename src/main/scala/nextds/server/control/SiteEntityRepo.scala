@@ -1,6 +1,6 @@
 package nextds.server.control
 
-import nextds.entity.{PlaylistConf, _}
+import nextds.entity.{COMP, CONF, PlaylistConf, TEMPL, _}
 
 // not in use - see SiteEntityCreator
 object SitesRepo {
@@ -14,14 +14,20 @@ object SitesRepo {
     Seq(publicSite, mgaaSite, filtSite, timerSite)
   }
 
-  def entitiesFor[T <: SiteEntityTrait](levelType: LevelType, siteType: SiteType): Seq[T] =
-    (levelType match {
+  def entitiesFor(levelType: LevelType, siteType: SiteType): SiteEntities[_ <: SiteEntityTrait] =
+    levelType match {
       case TEMPL => SiteTemplRepo.allTempls(siteType)
       case COMP => SiteCompRepo.allComps(siteType)
       case CONF => SiteConfRepo.allConfs(siteType)
-      case FILTER => Seq()
-      case TIME => Seq()
-    }).map(_.asInstanceOf[T])
+      case FILTER | TIME => SiteEntities(levelType, siteType, Nil)
+    }
+
+  lazy val siteModel: SiteModel =
+    SiteModel(
+      SiteTemplRepo.siteLevel
+      , SiteCompRepo.siteLevel
+      , SiteConfRepo.siteLevel
+    )
 
 }
 
@@ -36,21 +42,23 @@ object SiteTemplRepo {
   val mediumTempl = MediumTempl(SiteEntityInfo(publicSite, "Video"))
   val mediumTempl2 = MediumTempl(SiteEntityInfo(publicSite, "Image"))
   val mediumTempl3 = MediumTempl(SiteEntityInfo(publicSite, "AF"))
-  val allTempls: Map[SiteType, Seq[SiteTemplTrait]] = Map(
-    PLAYER -> Seq(playerTempl
+  val allTempls: Map[SiteType, SiteEntities[_ <: SiteEntityTrait]] = Map(
+    PLAYER -> SiteEntities(TEMPL, PLAYER, Seq(playerTempl
       , PlayerTempl(SiteEntityInfo(publicSite, Site.nextIdent(publicSite), "Windows Player 2.3", "Special Configs for this Player type"))
-    ), LAYOUT -> Seq(layoutTempl
+    )), LAYOUT -> SiteEntities(TEMPL, LAYOUT, Seq(layoutTempl
       , LayoutTempl.singleLayout(publicSite, "Basic Wide-Screen", ultraHD4K)
-    ), REGION -> Seq(
-    ), PLAYLIST -> Seq(
+    )), REGION -> SiteEntities(TEMPL, REGION, Seq(
+    )), PLAYLIST -> SiteEntities(TEMPL, PLAYLIST, Seq(
       playlistTempl
-    ), MEDIUM -> Seq(
+    )), MEDIUM -> SiteEntities(TEMPL, MEDIUM, Seq(
       mediumTempl
       , mediumTempl2
       , mediumTempl3
-    )
-
+    ))
   )
+
+  lazy val siteLevel = SiteLevel(TEMPL, allTempls)
+
 }
 
 object SiteCompRepo {
@@ -70,19 +78,20 @@ object SiteCompRepo {
   val mediumComp = MediumComp(SiteComp(mgaaSite, mediumTempl, "Supervideo.mp4"))
   val mediumComp2 = MediumComp(SiteComp(filtSite, mediumTempl2, "TheVideo.mp4"))
   val mediumComp3 = MediumComp(SiteComp(timerSite, mediumTempl3, "rabbitRuns.mp4"))
-  val allComps: Map[SiteType, Seq[SiteCompTrait]] = Map(
-    PLAYER -> Seq(
+  val allComps: Map[SiteType, SiteEntities[_ <: SiteEntityTrait]] = Map(
+    PLAYER -> SiteEntities(COMP, PLAYER, Seq(
       playerComp, playerComp2, playerComp3
-    ), LAYOUT -> Seq(
+    )), LAYOUT -> SiteEntities(COMP, LAYOUT, Seq(
       layoutComp, layoutComp2, layoutComp3
-    ), REGION -> Seq(
-    ), PLAYLIST -> Seq(
+    )), REGION -> SiteEntities(COMP, REGION, Seq(
+    )), PLAYLIST -> SiteEntities(COMP, PLAYLIST, Seq(
       playlistComp
-    ), MEDIUM -> Seq(
+    )), MEDIUM -> SiteEntities(COMP, MEDIUM, Seq(
       mediumComp, mediumComp2, mediumComp3
-    )
-
+    ))
   )
+  lazy val siteLevel = SiteLevel(COMP, allComps)
+
 }
 
 object SiteConfRepo {
@@ -92,7 +101,7 @@ object SiteConfRepo {
   import FilterTagCreator.filterTagConf
   import TimingCreator.timingConf
 
-  private val mediumConfs = Seq(
+  private val mediumConfs = SiteEntities[MediumConf](CONF, MEDIUM, Seq(
     MediumConf(SiteConfInfo(mediumComp))
     , MediumConf(SiteConfInfo(mediumComp2))
     , MediumConf(SiteConfInfo(mediumComp3))
@@ -106,54 +115,54 @@ object SiteConfRepo {
     , MediumConf(SiteConfInfo(mediumComp3, "Medium for Monday and Friday", timingConf("Monday and Friday")))
     , MediumConf(SiteConfInfo(mediumComp3, "Medium for Opening Hours", timingConf("Opening Hours")))
     , MediumConf(SiteConfInfo(mediumComp3, "Medium for Christmas Week", timingConf("Christmas Week")))
-  )
+  ))
 
-  private val playlistConfs = Seq(
-    PlaylistConf(SiteConfInfo(playlistComp), siteConfRefs = mediumConfs.take(4))
-    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for EN", filterTagConf("EN")), siteConfRefs = mediumConfs)
-    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = mediumConfs)
-    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for (IT OR EN) AND DE", filterTagConf("(IT OR EN) AND DE")), siteConfRefs = mediumConfs)
-    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Weekends", timingConf("Weekends")), siteConfRefs = mediumConfs.drop(6))
-    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Weekdays", timingConf("Weekdays")), siteConfRefs = mediumConfs.drop(6))
-    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = mediumConfs.drop(6))
-    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Christmas Week", timingConf("Christmas Week")), siteConfRefs = mediumConfs.drop(6))
-  )
-  private val regionConfs = Seq(
-    RegionConf(SiteConfInfo(layoutComp), siteConfRefs = playlistConfs.take(4))
-    , RegionConf(SiteConfInfo(layoutComp2, "Region for EN", filterTagConf("EN")), siteConfRefs = playlistConfs.take(4))
-    , RegionConf(SiteConfInfo(layoutComp2, "Region for DE", filterTagConf("DE")), siteConfRefs = playlistConfs.take(4))
-    , RegionConf(SiteConfInfo(layoutComp2, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs.take(4))
-    , RegionConf(SiteConfInfo(layoutComp3, "Region for Weekends", timingConf("Weekends")), siteConfRefs = playlistConfs.drop(4))
-    , RegionConf(SiteConfInfo(layoutComp3, "Region for Weekdays", timingConf("Weekdays")), siteConfRefs = playlistConfs.drop(4))
-    , RegionConf(SiteConfInfo(layoutComp3, "Region for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = playlistConfs.drop(4))
-    , RegionConf(SiteConfInfo(layoutComp3, "Region for Christmas Week", timingConf("Christmas Week")), siteConfRefs = playlistConfs.drop(4))
-  )
-  private val layoutConfs = Seq(
-    LayoutConf(mgaaSite, layoutComp, regionConfs = regionConfs)
-    , LayoutConf(SiteConfInfo(layoutComp, "Extrem special configuration Layout."), siteConfRefs = regionConfs.take(4))
-    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs.take(4))
-    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs.take(4))
-    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = regionConfs.take(4))
-    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Weekends", timingConf("Weekends")), siteConfRefs = regionConfs.drop(4))
-    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Weekdays", timingConf("Weekdays")), siteConfRefs = regionConfs.drop(4))
-    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = regionConfs.drop(4))
-    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Christmas Week", timingConf("Christmas Week")), siteConfRefs = regionConfs.drop(4))
+  private val playlistConfs = SiteEntities[PlaylistConf](CONF, PLAYLIST, Seq(
+    PlaylistConf(SiteConfInfo(playlistComp), siteConfRefs = mediumConfs.entities.take(4))
+    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for EN", filterTagConf("EN")), siteConfRefs = mediumConfs.entities)
+    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = mediumConfs.entities)
+    , PlaylistConf(SiteConfInfo(playlistComp2, "Playlist for (IT OR EN) AND DE", filterTagConf("(IT OR EN) AND DE")), siteConfRefs = mediumConfs.entities)
+    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Weekends", timingConf("Weekends")), siteConfRefs = mediumConfs.entities.drop(6))
+    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Weekdays", timingConf("Weekdays")), siteConfRefs = mediumConfs.entities.drop(6))
+    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = mediumConfs.entities.drop(6))
+    , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Christmas Week", timingConf("Christmas Week")), siteConfRefs = mediumConfs.entities.drop(6))
+  ))
+  private val regionConfs = SiteEntities[RegionConf](CONF, REGION, Seq(
+    RegionConf(SiteConfInfo(layoutComp), siteConfRefs = playlistConfs.entities.take(4))
+    , RegionConf(SiteConfInfo(layoutComp2, "Region for EN", filterTagConf("EN")), siteConfRefs = playlistConfs.entities.take(4))
+    , RegionConf(SiteConfInfo(layoutComp2, "Region for DE", filterTagConf("DE")), siteConfRefs = playlistConfs.entities.take(4))
+    , RegionConf(SiteConfInfo(layoutComp2, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs.entities.take(4))
+    , RegionConf(SiteConfInfo(layoutComp3, "Region for Weekends", timingConf("Weekends")), siteConfRefs = playlistConfs.entities.drop(4))
+    , RegionConf(SiteConfInfo(layoutComp3, "Region for Weekdays", timingConf("Weekdays")), siteConfRefs = playlistConfs.entities.drop(4))
+    , RegionConf(SiteConfInfo(layoutComp3, "Region for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = playlistConfs.entities.drop(4))
+    , RegionConf(SiteConfInfo(layoutComp3, "Region for Christmas Week", timingConf("Christmas Week")), siteConfRefs = playlistConfs.entities.drop(4))
+  ))
+  private val layoutConfs = SiteEntities[LayoutConf](CONF, LAYOUT, Seq(
+    LayoutConf(mgaaSite, layoutComp, regionConfs = regionConfs.entities)
+    , LayoutConf(SiteConfInfo(layoutComp, "Extrem special configuration Layout."), siteConfRefs = regionConfs.entities.take(4))
+    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs.entities.take(4))
+    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs.entities.take(4))
+    , LayoutConf(SiteConfInfo(layoutComp2, "Layout for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = regionConfs.entities.take(4))
+    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Weekends", timingConf("Weekends")), siteConfRefs = regionConfs.entities.drop(4))
+    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Weekdays", timingConf("Weekdays")), siteConfRefs = regionConfs.entities.drop(4))
+    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = regionConfs.entities.drop(4))
+    , LayoutConf(SiteConfInfo(layoutComp3, "Layout for Christmas Week", timingConf("Christmas Week")), siteConfRefs = regionConfs.entities.drop(4))
 
-  )
-  private val playerConfs = Seq(
-    PlayerConf(mgaaSite, playerComp, layoutConfs)
-    , PlayerConf(mgaaSite, playerComp, layoutConfs)
-    , PlayerConf(mgaaSite, playerComp, layoutConfs)
-    , PlayerConf(SiteConfInfo(playerComp2, "Player for EN", filterTagConf("EN")), siteConfRefs = layoutConfs.take(4))
-    , PlayerConf(SiteConfInfo(playerComp2, "Player for DE", filterTagConf("DE")), siteConfRefs = layoutConfs.take(4))
-    , PlayerConf(SiteConfInfo(playerComp2, "Player for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = layoutConfs.take(4))
-    , PlayerConf(SiteConfInfo(playerComp3, "Player for Weekends", timingConf("Weekends")), siteConfRefs = layoutConfs.drop(4))
-    , PlayerConf(SiteConfInfo(playerComp3, "Player for Weekdays", timingConf("Weekdays")), siteConfRefs = layoutConfs.drop(4))
-    , PlayerConf(SiteConfInfo(playerComp3, "Player for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = layoutConfs.drop(4))
-    , PlayerConf(SiteConfInfo(playerComp3, "Player for Christmas Week", timingConf("Christmas Week")), siteConfRefs = layoutConfs.drop(4))
-  )
+  ))
+  private val playerConfs = SiteEntities[PlayerConf](CONF, PLAYER, Seq(
+    PlayerConf(mgaaSite, playerComp, layoutConfs.entities)
+    , PlayerConf(mgaaSite, playerComp, layoutConfs.entities)
+    , PlayerConf(mgaaSite, playerComp, layoutConfs.entities)
+    , PlayerConf(SiteConfInfo(playerComp2, "Player for EN", filterTagConf("EN")), siteConfRefs = layoutConfs.entities.take(4))
+    , PlayerConf(SiteConfInfo(playerComp2, "Player for DE", filterTagConf("DE")), siteConfRefs = layoutConfs.entities.take(4))
+    , PlayerConf(SiteConfInfo(playerComp2, "Player for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = layoutConfs.entities.take(4))
+    , PlayerConf(SiteConfInfo(playerComp3, "Player for Weekends", timingConf("Weekends")), siteConfRefs = layoutConfs.entities.drop(4))
+    , PlayerConf(SiteConfInfo(playerComp3, "Player for Weekdays", timingConf("Weekdays")), siteConfRefs = layoutConfs.entities.drop(4))
+    , PlayerConf(SiteConfInfo(playerComp3, "Player for Monday and Friday", timingConf("Monday and Friday")), siteConfRefs = layoutConfs.entities.drop(4))
+    , PlayerConf(SiteConfInfo(playerComp3, "Player for Christmas Week", timingConf("Christmas Week")), siteConfRefs = layoutConfs.entities.drop(4))
+  ))
 
-  val allConfs: Map[SiteType, Seq[SiteConfTrait]] = Map(
+  val allConfs: Map[SiteType, SiteEntities[_ <: SiteEntityTrait]] = Map(
     PLAYER -> playerConfs
     , LAYOUT -> layoutConfs
     , PLAYLIST -> playlistConfs
@@ -161,4 +170,7 @@ object SiteConfRepo {
     , MEDIUM -> mediumConfs
 
   )
+
+  lazy val siteLevel = SiteLevel(CONF, allConfs)
+
 }

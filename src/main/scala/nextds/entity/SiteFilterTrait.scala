@@ -15,6 +15,19 @@ import scala.util.{Failure, Success, Try}
 trait SiteFilterTrait extends SiteEntityTrait {
   lazy val levelType: LevelType = FILTER
 
+
+  // all links to the level CONF
+  def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    siteModel.level(CONF).siteEntities.values.flatMap(_.entities)
+      .filter(_.asInstanceOf[SiteConfTrait].filterTagConf.exists(_.ident == ident))
+      .flatMap(_.withLinkedUp(siteModel))
+      .toSet + this
+  }
+
+  // no levels below
+  def withLinkedDown(siteModel: SiteModel): Set[SiteEntityTrait] = {
+    Set(this)
+  }
 }
 
 /**

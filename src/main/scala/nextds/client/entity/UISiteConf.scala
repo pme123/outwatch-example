@@ -39,30 +39,6 @@ trait UISiteConf
 
   override def hideMenuCreateRegion = false
 
-  // all links to the level COMP
-  def withLinkedUp(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    val siteT = if (siteType == REGION) LAYOUT else siteType
-    uiModel.level(COMP).entities(siteT)
-      .filter(_.ident == siteEntity.comp.ident)
-      .flatMap(_.withLinkedUp(uiModel))
-      .toSet ++ withLinkedConfRight(uiModel.level(CONF)) ++
-      withLinkedConfLeft(uiModel.level(CONF)) + siteEntity
-  }
-
-  // all links to the level Filter
-  def withLinkedDown(uiModel: UISiteModel): Set[SiteEntityTrait] = {
-    filterTagConf
-      .toSeq
-      .flatMap(f => f.withLinkedDown(uiModel))
-      .toSet ++
-      timingConf
-        .toSeq
-        .flatMap(t => t.withLinkedDown(uiModel)) ++
-      withLinkedConfRight(uiModel.level(CONF)) ++
-      withLinkedConfLeft(uiModel.level(CONF)) + siteEntity
-  }
-
-
   // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
   def withLinkedConfRight(siteLevel: UISiteLevelTrait): Set[SiteEntityTrait] = {
     siteConfRefs.flatMap(e => e.withLinkedConfRight(siteLevel)).toSet + siteEntity
