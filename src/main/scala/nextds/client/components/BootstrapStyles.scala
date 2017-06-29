@@ -72,11 +72,10 @@ def commonStyle(base: String): (Bootstrap.CommonStyle.Value) => String = (common
   }
 
   object dropdown {
+    val id = "dropdown"
     val inputGroup = "input-group-btn"
     val button = "btn dropdown-toggle"
-    val dataToggle = Attribute("data-toggle", "dropdown")
-    def haspopup(value: Boolean) = Attribute("aria-haspopup", s"$value")
-    def expanded(value: Boolean) = Attribute("aria-expanded", s"$value")
+    val dataToggle = Attribute("data-toggle", id)
     val icon: Icon = Icon.ellipsisH
     val menu = "dropdown-menu"
   }

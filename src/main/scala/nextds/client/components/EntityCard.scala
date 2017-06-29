@@ -56,13 +56,11 @@ object EntityCard {
         , dd.button
       ) mkString " "
 
-      div(className := dd.inputGroup
+      div(className := dd.id
         , button(tpe := "button"
           , className := stylesButton
           , dd.dataToggle
-          , dd.haspopup(true)
-          , dd.expanded(false)
-          , dd.icon)
+            , dd.icon)
         , uiEntity.createMenu()
       )
     }
