@@ -1,6 +1,7 @@
 package nextds.client
 
 import nextds.client.components._
+import nextds.client.entity.bss
 import nextds.client.entity._
 import outwatch.dom.{Attribute, _}
 import rxscalajs.Observable
@@ -35,13 +36,25 @@ case class NextDS() {
   }
 
   private val menu: VNode =
-    ul(className := "nav nav-tabs"
+    ul(className := "main-menu nav nav-tabs"
       , COMPOSER.menuLink
       , LINKED_VIEWER.menuLink
       , PLAYER_MONITOR.menuLink
       , EXAMPLES.menuLink
     )
 
+  val filterLink: VNode = div(className := "filter-checkbox"
+    , label(className := "checkbox-inline"
+      , input(id := "filterLinks"
+        , tpe := "checkbox"
+        , className := "checkbox"
+        , bss.tooltip.toggle
+        , bss.tooltip.placement.bottom
+        , bss.tooltip.title("Filter Links on the Link Viewers (CONF level)")
+        , insert --> initTooltipSink
+      ), "Filter Links"
+    )
+  )
 
   val loadingSpinner: VNode = div(
     hidden <-- loadingSpinnerEvents
@@ -50,7 +63,8 @@ case class NextDS() {
 
   val root: VNode =
     div(className := "full-height"
-      , menu
+      , div(menu
+        , filterLink)
       , div(className := "tab-content tab-contents"
         , COMPOSER.pageTab
         , LINKED_VIEWER.pageTab
@@ -76,7 +90,8 @@ sealed trait Pages {
       , a(Attribute("data-toggle", "tab"), href := s"#$pageId"
         , label
         , click(ChangePage(this)) --> store
-      ))
+      )
+    )
   }
 
   def pageTab(implicit store: ReduxStore[State, Action]): VNode = {
@@ -103,6 +118,7 @@ object Pages {
     val label: String = "Linked Viewer"
 
     def page(implicit store: ReduxStore[State, Action]): VNode = LinkedViewer()
+
 
   }
 

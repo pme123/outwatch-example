@@ -12,9 +12,10 @@ ul {
     list-style: none;
 }
 
-.tab-contents{
+.tab-contents {
     height: calc(100% - 60px);
 }
+
 .full-height {
     height: 100%;
 }
@@ -37,6 +38,16 @@ ul {
     left: calc(50% - 100px);
     top: calc(50% - 100px);
 
+}
+
+.main-menu {
+    width: 80%;
+    float: left;
+}
+
+.filter-checkbox {
+    padding: 4px;
+    float: right;
 }
 
 .player-style {
@@ -167,7 +178,8 @@ ul {
     float: left;
     font-size: small;
 }
-.site-entity-title p{
+
+.site-entity-title p {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -225,10 +237,12 @@ width(40 . % %)
     background-color: rgba(216, 216, 216, .1);
     border-color: rgba(216, 216, 216, .4);
 }
+
 .filter-view-header {
     background-color: rgba(216, 216, 216, .2);
     border-color: rgba(216, 216, 216, .6);
 }
+
 .cond-error-message {
     word-break: break-all;
     word-wrap: break-word;
@@ -237,7 +251,7 @@ width(40 . % %)
 /* player monitor */
 .monitor-map {
     height: 100%;
-    opacity:0.7;
+    opacity: 0.7;
 }
 
 /* drop example */

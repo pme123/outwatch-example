@@ -87,8 +87,8 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
           className := "form-control"
           , siteEntity.condition
           , insert --> initTooltipSink
-          , Attribute("data-toggle", "tooltip")
-          , Attribute("data-html", "true")
+          , bss.tooltip.toggle
+          , bss.tooltip.html
           , Attribute("title",
             """<div class="tooltip-style"><p>Use a logical condition of your Filter Tags with AND OR. Use brackets for ordering.</p>
             <p>Examples: '<b>DE AND (FR OR EN)</b>' or short '<b>DE & (FR | EN)</b>'</>
@@ -118,8 +118,9 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
           editValue(siteType.label, div(
             tpe := "text"
             , ft.path
-            , Attribute("data-toggle", "tooltip")
-            , Attribute("title", ft.path)
+            , bss.tooltip.toggle
+            , bss.tooltip.title(ft.path)
+            , insert --> initTooltipSink
             , disabled := true
           )))
 

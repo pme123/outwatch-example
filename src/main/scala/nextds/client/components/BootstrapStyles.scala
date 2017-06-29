@@ -7,9 +7,9 @@ import outwatch.dom.Attribute
 
 object BootstrapStyles {
 
-def commonStyle(base: String): (Bootstrap.CommonStyle.Value) => String = (commonStyle: CommonStyle.Value) =>
- s"$base $base-$commonStyle"
-  
+  def commonStyle(base: String): (Bootstrap.CommonStyle.Value) => String = (commonStyle: CommonStyle.Value) =>
+    s"$base $base-$commonStyle"
+
   val buttonOpt: (Bootstrap.CommonStyle.Value) => String = commonStyle("btn")
 
   val button: String = buttonOpt(default)
@@ -79,4 +79,20 @@ def commonStyle(base: String): (Bootstrap.CommonStyle.Value) => String = (common
     val icon: Icon = Icon.ellipsisH
     val menu = "dropdown-menu"
   }
+
+  object tooltip {
+    def title(txt: String) = Attribute("title", txt)
+
+    val toggle = Attribute("data-toggle", "tooltip")
+
+    val html = Attribute("data-html", "true")
+
+    object placement {
+      val top = Attribute("data-placement", "top")
+      val bottom = Attribute("data-placement", "bottom")
+      val left = Attribute("data-placement", "left")
+      val right = Attribute("data-placement", "right")
+    }
+  }
+
 }
