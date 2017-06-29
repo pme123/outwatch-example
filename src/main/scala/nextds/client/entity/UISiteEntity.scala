@@ -87,13 +87,13 @@ trait UISiteEntity
       )
       // element for add Config
       , li(className := stylesMenuItem
+        , hidden := hideMenuLink
         , button(`type` := "button"
           , data.toggle := "modal"
           , data.target := "#modalDialog"
           , click(LinkTo(this)) --> store
           , menuItemLink
         )
-        , hidden := hideMenuLink
       )
       , li(role := "separator"
         , className := "divider")

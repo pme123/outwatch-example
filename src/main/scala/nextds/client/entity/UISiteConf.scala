@@ -37,8 +37,6 @@ trait UISiteConf
 
   override val hideMenuCreateFrom = true
 
-  override def hideMenuCreateRegion = false
-
   // all links to the right - e.g. REGION > PLAYLIST > MEDIUM
   def withLinkedConfRight(siteLevel: UISiteLevel): Set[SiteEntityTrait] = {
     siteConfRefs.flatMap(e => e.withLinkedConfRight(siteLevel)).toSet + siteEntity

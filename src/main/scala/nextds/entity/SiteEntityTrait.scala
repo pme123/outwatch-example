@@ -218,9 +218,13 @@ case object FILTER_TAG extends SiteType {
 }
 
 sealed trait LevelType {
+
   def name: String
 
   def label: String
+
+  def order: Int
+
 }
 
 object LevelType {
@@ -241,26 +245,31 @@ object LevelType {
 case object TEMPL extends LevelType {
   val name = "templ"
   val label = "Template"
+  val order = 0
 }
 
 case object COMP extends LevelType {
   val name = "comp"
   val label = "Component"
+  val order = 1
 }
 
 case object CONF extends LevelType {
   val name = "conf"
   val label = "Configuration"
+  val order = 2
 }
 
 case object FILTER extends LevelType {
   val name = "filter"
   val label = "Filter"
+  val order = 3
 }
 
 case object TIME extends LevelType {
   val name = "time"
   val label = "Time"
+  val order = 4
 }
 
 

@@ -16,6 +16,7 @@ object Composer {
       .map { st =>
         val model = st.siteModel
         model.allLevels
+            .sortBy(_.levelType.order)
           .map { m =>
             m.levelType match {
               case TIME => SimpleLevelComponent(m.levelType, TIMING, showAll = true)
