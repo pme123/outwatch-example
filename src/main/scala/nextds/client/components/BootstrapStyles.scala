@@ -61,6 +61,7 @@ object BootstrapStyles {
     val col2 = "col-md-2"
     val col3 = "col-md-3"
     val col4 = "col-md-4"
+    val col5 = "col-md-5"
     val col9 = "col-md-9"
     val col10 = "col-md-10"
     val col12 = "col-md-12"

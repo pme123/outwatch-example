@@ -231,6 +231,12 @@ width(40 . % %)
     margin: 5px;
 }
 
+/* detail-vewer */
+
+.detail-viewer {
+    padding: 5px;
+}
+
 /* filter view */
 .filter-view {
     margin-top: 5px;

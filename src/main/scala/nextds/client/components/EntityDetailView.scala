@@ -44,9 +44,9 @@ object EntityDetailView {
     )
   }
 
-  def apply()(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(styleClasses: String)(implicit store: ReduxStore[State, Action]): VNode = {
     val setStream = store.map(_.selectedSET)
-    div(className := bss.grid.col3
+    div(className := styleClasses
       , hidden <-- setStream.map(_.isEmpty)
       , child <-- setStream
         .map(_.map(entityProps)

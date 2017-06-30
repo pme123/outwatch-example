@@ -34,7 +34,7 @@ object Composer {
         ))
       , div(
         UIFiltersForm()
-        , EntityDetailView()
+        , EntityDetailView(bss.grid.col3)
       )
     )
 

@@ -27,7 +27,7 @@ object LinkedViewer {
         ))
       , div(
         UIFiltersForm()
-        , EntityDetailView()
+        , EntityDetailView(bss.grid.col3)
       )
     )
   }

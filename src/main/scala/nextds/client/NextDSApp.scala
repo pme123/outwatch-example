@@ -53,6 +53,7 @@ case class NextDS() {
   private val menu: VNode =
     ul(className := "main-menu nav nav-tabs"
       , COMPOSER.menuLink
+      , DETAIL_VIEWER.menuLink
       , LINKED_VIEWER.menuLink
       , PLAYER_MONITOR.menuLink
       , EXAMPLES.menuLink
@@ -69,6 +70,7 @@ case class NextDS() {
       , menu
       , div(className := "tab-content tab-contents"
         , COMPOSER.pageTab
+        , DETAIL_VIEWER.pageTab
         , LINKED_VIEWER.pageTab
         , PLAYER_MONITOR.pageTab
         , EXAMPLES.pageTab
@@ -115,13 +117,18 @@ object Pages {
     def page(implicit store: ReduxStore[State, Action]): VNode = Composer()
   }
 
+  case object DETAIL_VIEWER extends Pages {
+    val pageId: String = "detailViewer"
+    val label: String = "Detail Viewer"
+
+    def page(implicit store: ReduxStore[State, Action]): VNode = DetailViewer()
+  }
+
   case object LINKED_VIEWER extends Pages {
     val pageId: String = "linkedViewer"
     val label: String = "Linked Viewer"
 
     def page(implicit store: ReduxStore[State, Action]): VNode = LinkedViewer()
-
-
   }
 
   case object PLAYER_MONITOR extends Pages {
