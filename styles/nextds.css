@@ -41,13 +41,13 @@ ul {
 }
 
 .main-menu {
-    width: 80%;
-    float: left;
+    width: 100%;
 }
 
 .filter-checkbox {
-    padding: 4px;
-    float: right;
+    padding-top: 9px;
+    padding-right: 10px;
+    float: right !important;
 }
 
 .player-style {

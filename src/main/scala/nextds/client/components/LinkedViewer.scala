@@ -2,7 +2,9 @@ package nextds.client.components
 
 import nextds.client.entity.{Action, ReduxStore, State}
 import nextds.entity._
+import outwatch.Sink
 import outwatch.dom._
+import rxscalajs.Observable
 
 /**
   * Created by pascal.mengelt on 22.06.2017.

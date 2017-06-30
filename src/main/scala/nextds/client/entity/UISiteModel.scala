@@ -69,13 +69,13 @@ case class UISiteModel(
 
   lazy val withLinks: Set[SiteEntityTrait] =
     selectedSET.map { set =>
-      println(s"withLinks: $set")
+      println(s"withLinks")
       set.siteEntity.withLinks(siteModel)
     }.getOrElse(Set())
 
   lazy val filterLinks: Set[SiteEntityTrait] =
     selectedSET.map { set =>
-      println(s"withLinks: $set")
+      println(s"filterLinks")
       set.siteEntity.filterLinks(withLinks)
     }.getOrElse(Set())
 

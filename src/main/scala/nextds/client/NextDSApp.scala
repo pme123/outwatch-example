@@ -35,26 +35,29 @@ case class NextDS() {
 
   }
 
+  private val filterLink: VNode = li(className := "filter-checkbox"
+    , div(hidden <-- store.map(st => st.activePage != Pages.LINKED_VIEWER)
+      , label(className := "checkbox-inline"
+        , input(id := "filterLinks"
+          , tpe := "checkbox"
+          , className := "checkbox"
+          , bss.tooltip.toggle
+          , bss.tooltip.placement.bottom
+          , bss.tooltip.title("Filter Links on the Link Viewers (CONF level)")
+          , insert --> initTooltipSink
+          , inputChecked --> filterLinksHandler
+        ), "Filter Links"
+      ))
+  )
+
   private val menu: VNode =
     ul(className := "main-menu nav nav-tabs"
       , COMPOSER.menuLink
       , LINKED_VIEWER.menuLink
       , PLAYER_MONITOR.menuLink
       , EXAMPLES.menuLink
+      , filterLink
     )
-
-  val filterLink: VNode = div(className := "filter-checkbox"
-    , label(className := "checkbox-inline"
-      , input(id := "filterLinks"
-        , tpe := "checkbox"
-        , className := "checkbox"
-        , bss.tooltip.toggle
-        , bss.tooltip.placement.bottom
-        , bss.tooltip.title("Filter Links on the Link Viewers (CONF level)")
-        , insert --> initTooltipSink
-      ), "Filter Links"
-    )
-  )
 
   val loadingSpinner: VNode = div(
     hidden <-- loadingSpinnerEvents
@@ -63,8 +66,7 @@ case class NextDS() {
 
   val root: VNode =
     div(className := "full-height"
-      , div(menu
-        , filterLink)
+      , menu
       , div(className := "tab-content tab-contents"
         , COMPOSER.pageTab
         , LINKED_VIEWER.pageTab

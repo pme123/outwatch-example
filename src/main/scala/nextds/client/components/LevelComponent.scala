@@ -14,15 +14,16 @@ object LevelComponent {
     def entityListComponent(levelType: LevelType, siteType: SiteType): VNode = {
 
       val entities =
-        store.map { st =>
-          val model = st.siteModel
-          model.uiSiteEntities(levelType, siteType)
-            .uiSiteEntities
-            .filter(e => showAll || checkLinks(st, e))
-            .filterNot(_.isFiltered)
-            .take(model.maxEntries)
-            .map(EntityCard.apply)
-        }
+        store
+          .combineLatestWith(filterLinksHandler) { (st, doFilter) =>
+            val model = st.siteModel
+            model.uiSiteEntities(levelType, siteType)
+              .uiSiteEntities
+              .filter(e => showAll || checkLinks(st, e, doFilter))
+              .filterNot(_.isFiltered)
+              .take(model.maxEntries)
+              .map(EntityCard.apply)
+          }
 
       div(className := css.siteEntitiesDiv(levelType, siteType)
         , ul(id := s"$levelType-$siteType"

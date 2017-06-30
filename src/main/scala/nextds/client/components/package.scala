@@ -4,7 +4,9 @@ import nextds.client.entity.{State, UISiteEntity}
 import org.scalajs.dom.Element
 import org.scalajs.dom.raw.HTMLSelectElement
 import outwatch.Sink
+import outwatch.dom.createBoolHandler
 import outwatch.dom.helpers.InputEvent
+import rxscalajs.Observable
 
 /**
   * Created by pascal.mengelt on 22.06.2017.
@@ -29,10 +31,17 @@ package object components {
   }
 
   // as siteModel.withLinks should only be called if necessary (expensive)
-  def checkLinks(state: State, uiEntity: UISiteEntity): Boolean = {
-    if (state.activePage == Pages.LINKED_VIEWER)
-      state.siteModel.withLinks.contains(uiEntity.siteEntity)
+  def checkLinks(state: State, uiEntity: UISiteEntity, doFilter: Boolean): Boolean = {
+    if (state.activePage == Pages.LINKED_VIEWER) {
+      if (doFilter)
+        state.siteModel.filterLinks.contains(uiEntity.siteEntity)
+      else
+        state.siteModel.withLinks.contains(uiEntity.siteEntity)
+    }
     else
       true
   }
+
+  val filterLinksHandler: Observable[Boolean] with Sink[Boolean] = createBoolHandler(false)
+
 }
