@@ -1,7 +1,6 @@
 package nextds.client.components
 
-import nextds.client.Pages
-import nextds.client.entity.{Action, ReduxStore, State, UIFilterTagConf, UISiteEntity}
+import nextds.client.entity.{Action, ReduxStore, State}
 import nextds.entity._
 import outwatch.dom._
 
@@ -11,25 +10,23 @@ import outwatch.dom._
 object SimpleLevelComponent {
 
   def apply(levelType: LevelType, siteType: SiteType, showAll: Boolean = false)(implicit store: ReduxStore[State, Action]): VNode = {
+    println(s"fromSimpleComponent: $levelType - $siteType")
 
     val entities =
       store
         .combineLatestWith(filterLinksHandler) { (st, doFilter) =>
-          val uiModel = st.siteModel
-          val uiLevel = uiModel.uiSiteLevels(levelType)
-          uiLevel.uiSiteEntities(siteType)
+          val model = st.siteModel
+          val selectedIdent = st.selectedSET.map(_.ident).getOrElse("-")
+          model.uiSiteEntities(levelType, siteType)
             .uiSiteEntities
-            .filterNot(_.isFiltered)
             .filter(e => showAll || checkLinks(st, e, doFilter))
-            .take(uiModel.maxEntries)
-            .map {
-              case f: UIFilterTagConf => FilterTagCard(f)
-              case uiE =>
-                div(className := bss.grid.col2
-                  , EntityCard(uiE)
-                )
-            }
+            .filterNot(_.isFiltered)
+            .take(model.maxEntries)
+            .map(e => div(className := bss.grid.col2
+              , EntityCard(e, selectedIdent))
+            )
         }
+
 
     div(className := css.siteLevelDiv(levelType)
       , div(className := css.siteLevelInnerDiv(levelType)

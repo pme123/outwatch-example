@@ -41,24 +41,48 @@ object ReduxStore {
   def reducer(previousState: State, action: Action): State = {
     println(s"reducer: ${action.getClass}")
     loadingSpinnerEvents <-- Observable.create(obs => obs.next(false))
-    val st = stateReducer(previousState, action)
-      .copy(
-        draggedSET = draggedSETReducer(previousState.draggedSET, action)
-        , linkTo = linkToReducer(previousState.linkTo, action)
-        , activePage = activePageReducer(previousState.activePage, action)
-      )
+
+    val selectedSET = selectedSETReducer(previousState, action)
+    val st = State(
+      siteModelReducer(previousState.siteModel, selectedSET, action)
+      , selectedSET
+      , draggedSETReducer(previousState.draggedSET, action)
+      , linkToReducer(previousState.linkTo, action)
+      , activePageReducer(previousState.activePage, action)
+    )
     loadingSpinnerEvents <-- Observable.create(obs => obs.next(true))
     st
   }
 
-  private def stateReducer(previousState: State, action: Action): State = action match {
+  private def siteModelReducer(previousState: UISiteModel, newSelectedSET: Option[UISiteEntity], action: Action): UISiteModel = action match {
+    case f: UIFilters =>
+      previousState.withFilter(f)
+    case Edit(uiSiteEntity) =>
+      previousState.copy(selectedSET = Some(uiSiteEntity))
+    case CreateFrom(_, isRegion) =>
+      createFrom(previousState, newSelectedSET.get, isRegion)
 
+    case _ => previousState
+  }
+
+  private def siteXModelReducer(previousState: UISiteModel, selectedSET: UISiteEntity, action: Action): UISiteModel = action match {
+    case f: UIFilters =>
+      previousState.withFilter(f)
+    case Edit(uiSiteEntity) =>
+      previousState.copy(selectedSET = Some(uiSiteEntity))
     case CreateFrom(siteEntityTrait, isRegion) =>
-      val selected = createFrom(previousState.selectedSET, siteEntityTrait, isRegion)
-      State(
-        createFrom(previousState.siteModel, selected.get, isRegion)
-        , selected
-      )
+      createFrom(previousState, selectedSET, isRegion)
+
+
+    case _ => previousState
+  }
+
+  private def selectedSETReducer(previousState: State, action: Action): Option[UISiteEntity] = action match {
+    case Edit(uiSiteEntity) =>
+      Some(uiSiteEntity)
+    case CreateFrom(siteEntityTrait, isRegion) =>
+      createFrom(previousState.selectedSET, siteEntityTrait, isRegion)
+
     case DoLinking =>
       previousState.linkTo
         .flatMap { linkTo =>
@@ -72,60 +96,10 @@ object ReduxStore {
             .map(_.siteEntity.addLink(linkTo.fromEntity.siteEntity))
             .map(uiEntity)
         }.map { selected =>
-        State(
-          previousState.siteModel.replaceEntity(selected)
-          , Some(selected)
-        )
-      }.getOrElse(previousState)
-    /*
-  case CreateFromDrag(groupFrom, groupTo, indexFrom, None) =>
-    val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
-    println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom")
-    createFrom(previousState
-      , uiSiteEntity.siteEntity
-      , SiteType.createFromGroup(groupTo).isRegion)
+        Some(selected)
+      }.getOrElse(previousState.selectedSET)
 
-  case CreateFromDrag(groupFrom, groupTo, indexFrom, Some(indexTo)) =>
-    val uiSiteEntity = previousState.entity(groupFrom, indexFrom)
-    println(s"REDUX: $groupFrom >> $groupTo :: $indexFrom :: $indexTo")
-    println(s"draggedEntity: ${uiSiteEntity.siteEntity.ident}")
-    val state = createFrom(previousState
-      , uiSiteEntity.siteEntity
-      , SiteType.createFromGroup(groupTo).isRegion)
-    /*  val newSET = state.get
-      println(s"newSET: $newSET")
-      val newSETs = state.entities(newSET.levelType, newSET.siteType)
-      // .filter(_.levelType == newSET.levelType)
-      println("__" + newSETs.map(l => l.levelType + "-"+ l.siteType + "\n"))
-      state.replaceLevel(
-        UpdateEntities(newSET.levelType, newSET.siteType
-          , newSETs)) */
-    state
-     */
-
-    case _ =>
-      previousState.copy(
-        siteModel = siteModelReducer(previousState.siteModel, action)
-        , selectedSET = selectedSETReducer(previousState.selectedSET, action)
-      )
-  }
-
-  private def siteModelReducer(previousState: UISiteModel, action: Action): UISiteModel = action match {
-    case f: UIFilters =>
-      previousState.withFilter(f)
-    case Edit(uiSiteEntity) =>
-      // previousState.withLinks(uiSiteEntity)
-      previousState.copy(selectedSET = Some(uiSiteEntity))
-    case _ => previousState
-  }
-
-  private def selectedSETReducer(previousState: Option[UISiteEntity], action: Action): Option[UISiteEntity] = action match {
-    case Edit(uiSiteEntity) =>
-      Some(uiSiteEntity)
-
-    case CreateFrom(siteEntityTrait, isRegion) =>
-      createFrom(previousState, siteEntityTrait, isRegion)
-    case _ => previousState
+    case _ => previousState.selectedSET
 
   }
 

@@ -2,7 +2,7 @@ package nextds.client.components
 
 import google.maps._
 import nextds.client.entity.{Action, ReduxStore, State, UIPlayerComp}
-import nextds.entity.{COMP, PLAYER, PlayerComp}
+import nextds.entity.{COMP, PLAYER, PlayerComp, SiteEntityIdent}
 import org.scalajs.dom._
 import outwatch.Sink
 import outwatch.dom._
@@ -36,11 +36,16 @@ object PlayerMonitor {
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
 
 
-    val players: Observable[Seq[UIPlayerComp]] =
-      store.map(_.siteModel.uiSiteEntities(COMP, PLAYER)
-        .uiSiteEntities
-        .asInstanceOf[Seq[UIPlayerComp]]
-      )
+    val players =
+      store.map { st =>
+        val selectedIdent = st.selectedSET.map(_.ident).getOrElse("-")
+        val players = st.siteModel.uiSiteEntities(COMP, PLAYER)
+          .uiSiteEntities
+          .asInstanceOf[Seq[UIPlayerComp]]
+
+        (players, selectedIdent)
+      }
+
     val selectPlayer = store.map(_.selectedSET)
 
     def initialize(elem: Element)() = js.Function {
@@ -51,7 +56,7 @@ object PlayerMonitor {
         streetViewControl = false,
         mapTypeControl = false)
       val gmap = new google.maps.Map(elem, opts)
-      players.subscribe(_.foreach { uie =>
+      players.subscribe(pls => pls._1.foreach { uie =>
         val pl = uie.siteEntity
         pl.maybeLocation.foreach { loc =>
           val marker = new Marker(MarkerOptions(
@@ -94,7 +99,7 @@ object PlayerMonitor {
       , div(
         className := bss.grid.col3
         , ul(className := css.siteEntitiesUL
-          , children <-- players.map(_.map(EntityCard.apply)))
+          , children <-- players.map(pls => pls._1.map(EntityCard(_, pls._2))))
       ))
   }
 }

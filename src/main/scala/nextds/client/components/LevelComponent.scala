@@ -12,17 +12,17 @@ object LevelComponent {
   def apply(levelType: LevelType, showAll: Boolean = false)(implicit store: ReduxStore[State, Action]): VNode = {
 
     def entityListComponent(levelType: LevelType, siteType: SiteType): VNode = {
-
       val entities =
         store
           .combineLatestWith(filterLinksHandler) { (st, doFilter) =>
             val model = st.siteModel
+            val selectedIdent = st.selectedSET.map(_.ident).getOrElse("-")
             model.uiSiteEntities(levelType, siteType)
               .uiSiteEntities
               .filter(e => showAll || checkLinks(st, e, doFilter))
               .filterNot(_.isFiltered)
               .take(model.maxEntries)
-              .map(EntityCard.apply)
+              .map(EntityCard(_, selectedIdent))
           }
 
       div(className := css.siteEntitiesDiv(levelType, siteType)

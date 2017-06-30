@@ -1,7 +1,7 @@
 package nextds.client.components
 
 import nextds.client.entity._
-import nextds.entity.SiteEntityTrait
+import nextds.entity.{SiteEntityIdent, SiteEntityTrait}
 import org.scalajs.dom.DragEvent
 import outwatch.dom._
 
@@ -10,17 +10,14 @@ import outwatch.dom._
   */
 object EntityCard {
 
-  def apply(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
+  def apply(uiEntity: UISiteEntity, selectedIdent:SiteEntityIdent)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
 
-    val selObs = store
-      .map(_.selectedSET
-        .exists(_.siteEntity.ident == entity.ident)
-      )
+    println(s"created: ${uiEntity.ident}")
 
     li(id := entity.ident
       , className := css.entityCardLI(entity.siteType)
-      , selected <-- selObs
+      , selected := (uiEntity.ident == selectedIdent)
       // , draggable := true
       , dragenter((e: DragEvent) => DragAction(entity, DragEventType.enter, e)) --> store
       // , dragover((e:DragEvent) => DragAction(entity, DragEventType.over, e)) --> store
@@ -44,9 +41,11 @@ object EntityCard {
       , css.siteTypeIcon(entity.siteType))
 
   def entityIdent(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode =
-    div(className := css.entityCardIdent
-      , click(Edit(uiEntity)) --> store
-      , uiEntity.ident)
+    {
+      div(className := css.entityCardIdent
+        , click(Edit(uiEntity)) --> store
+        , uiEntity.ident)
+    }
 
   def entityMenu(uiEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
     def entityDropdown(uiEntity: UISiteEntity): VNode = {
@@ -60,7 +59,7 @@ object EntityCard {
         , button(tpe := "button"
           , className := stylesButton
           , dd.dataToggle
-            , dd.icon)
+          , dd.icon)
         , uiEntity.createMenu()
       )
     }
