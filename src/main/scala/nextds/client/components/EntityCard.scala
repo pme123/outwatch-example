@@ -13,8 +13,6 @@ object EntityCard {
   def apply(uiEntity: UISiteEntity, selectedIdent:SiteEntityIdent)(implicit store: ReduxStore[State, Action]): VNode = {
     val entity = uiEntity.siteEntity
 
-    println(s"created: ${uiEntity.ident}")
-
     li(id := entity.ident
       , className := css.entityCardLI(entity.siteType)
       , selected := (uiEntity.ident == selectedIdent)

@@ -11,14 +11,15 @@ trait UIElements {
 
   import UIElements.Style
 
-  protected def siteEntityRef(uISiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
-    editValue(uISiteEntity.label
-      , div(className:= css.siteTypeStyle(uISiteEntity.siteType)
+  protected def siteEntityRef(uiSiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
+    println("uiSiteEntity.siteType: " + uiSiteEntity.siteType)
+    editValue(uiSiteEntity.label
+      , div(className := css.siteTypeStyle(uiSiteEntity.siteType)
         , div(className := Style.entityInputCol
-        , uISiteEntity.ident
-        , click(Edit(uISiteEntity)) --> store)
-        , small(uISiteEntity.title)
-      ))
+          , uiSiteEntity.ident
+          , click(Edit(uiSiteEntity)) --> store)
+        , small(uiSiteEntity.title)
+      ), css.levelTypeStyle(uiSiteEntity.levelType))
   }
 
   protected def inputText(label: String
@@ -53,7 +54,7 @@ trait UIElements {
     )
   }
 
-  protected def editValue(label: String, input: VNode): VNode = UIElements.editValue(label, input)
+  protected def editValue(label: String, input: VNode, styleClass: String = ""): VNode = UIElements.editValue(label, input, styleClass)
 
 
 }
@@ -70,9 +71,9 @@ object UIElements {
 
   }
 
-  def editValue(label: String, input: VNode): VNode = {
-    tr(
-      td(className := Style.labelCol
+  def editValue(label: String, input: VNode, styleClass: String = ""): VNode = {
+    tr(className := styleClass
+      , td(className := Style.labelCol
         , label)
       , td(
         className := Style.valueCol

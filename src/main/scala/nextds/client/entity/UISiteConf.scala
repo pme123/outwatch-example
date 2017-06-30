@@ -27,7 +27,7 @@ trait UISiteConf
 
   def parameterEdit(siteEntityRefs: Seq[UISiteEntity])(implicit store: ReduxStore[State, Action]): Seq[VNode] = {
     super.parameterEdit() ++ Seq(
-      siteEntityRef(this)) ++ siteEntityRefs
+      siteEntityRef(uiEntity(siteComp))) ++ siteEntityRefs
       .map(siteEntityRef)
   }
 
