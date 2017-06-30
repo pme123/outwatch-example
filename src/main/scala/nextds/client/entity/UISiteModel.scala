@@ -14,7 +14,7 @@ case class UISiteModel(
                         , maxEntries: Int = defaultMaxEntries
                         , selectedSET: Option[UISiteEntity] = None
                       ) {
-println("new UIModel")
+
   def replaceLevel(entities: SiteEntities[_ <: SiteEntityTrait]): UISiteModel = {
     val model = siteModel.replaceLevel(entities)
     copy(siteModel = model, uiSiteLevels = UISiteModel.uiSiteLevels(model))

@@ -10,7 +10,6 @@ import outwatch.dom._
 object SimpleLevelComponent {
 
   def apply(levelType: LevelType, siteType: SiteType, showAll: Boolean = false)(implicit store: ReduxStore[State, Action]): VNode = {
-    println(s"fromSimpleComponent: $levelType - $siteType")
 
     val entities =
       store
