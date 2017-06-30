@@ -27,11 +27,8 @@ trait SiteEntityTrait {
 
   def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait = this
 
-  def withLinks(siteModel: SiteModel): Set[SiteEntityTrait] = {
-    println(s"withLinks: $this")
+  def withLinks(siteModel: SiteModel): Set[SiteEntityTrait] =
     withLinkedDown(siteModel) ++ withLinkedUp(siteModel)
-  }
-
 
   // all links to the level up FILTER > CONF > COMP > TEMPL
   def withLinkedUp(siteModel: SiteModel): Set[SiteEntityTrait]
