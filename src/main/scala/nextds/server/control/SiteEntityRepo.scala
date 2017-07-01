@@ -70,7 +70,7 @@ object SiteCompRepo {
   val playerComp2 = PlayerComp(filtSite, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
   val playerComp3 = PlayerComp(timerSite, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
   val layoutComp = LayoutComp(mgaaSite, layoutTempl)
-  val layoutComp2 = LayoutComp(SiteComp(filtSite, layoutTempl, "Special configuration Layout."))
+  val layoutComp2 = LayoutComp(SiteComp(filtSite, layoutTempl, "Special configuration Layout."), Some(ScreenRegion(100, 100, 200, 200)))
   val layoutComp3 = LayoutComp(timerSite, layoutTempl)
   val playlistComp = PlaylistComp(SiteComp(mgaaSite, playlistTempl))
   val playlistComp2 = PlaylistComp(SiteComp(filtSite, playlistTempl))

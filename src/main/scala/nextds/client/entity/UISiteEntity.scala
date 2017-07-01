@@ -1,6 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
+import org.scalajs.dom.CanvasRenderingContext2D
 import outwatch.dom._
 
 
@@ -135,6 +136,11 @@ trait UISiteEntity
 
   protected def filter(isFiltered: Boolean): UISiteEntity
 
+  def drawPrieview(renderer: CanvasRenderingContext2D) {
+    // nothing by default
+  }
+
+
 }
 
 trait UIPlayer extends UISiteEntity {
@@ -162,6 +168,25 @@ trait UILayout extends UISiteEntity {
           , siteEntity.maybeScreenRegion.map(_.height))
       )
   }
+
+  override def drawPrieview(renderer: CanvasRenderingContext2D): Unit = {
+    val screenRegion = siteEntity.screenRegion
+    renderer.fillStyle = "gray"
+    renderer.font = "12px sans-serif"
+    renderer.textAlign = "center"
+    renderer.textBaseline = "middle"
+
+    val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
+    val center = (scaledRegion._3/2 + scaledRegion._1, scaledRegion._4/2 + scaledRegion._2)
+    val titleWidth = Math.max(renderer.measureText(title).width, scaledRegion._3)
+    println(s"titleWidth $titleWidth")
+    renderer.fillText(title, center._1, center._2 - 10, scaledRegion._3)
+    renderer.font = "8px"
+    renderer.fillText(screenRegion.print(), center._1, center._2 + 10, scaledRegion._3)
+    renderer.rect(scaledRegion._1, scaledRegion._2, scaledRegion._3, scaledRegion._4)
+    renderer.stroke()
+  }
+
 }
 
 // only for config

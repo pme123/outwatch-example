@@ -1,7 +1,8 @@
 package nextds.client.components
 
-import nextds.client.entity.{Action, ReduxStore, State}
-import org.scalajs.dom.{CanvasRenderingContext2D, Element, document, html}
+import nextds.client.entity.{Action, ReduxStore, State, UISiteEntity}
+import org.scalajs.dom
+import org.scalajs.dom._
 import outwatch.Sink
 import outwatch.dom._
 
@@ -13,11 +14,12 @@ object DetailViewer {
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
 
-    val updateCanvas = Sink.create[(Element, Element)] { case (old, current) =>
-      var htmlCanvas = document.createElement("canvas").asInstanceOf[html.Canvas]
-      current.appendChild(htmlCanvas)
-      current.setAttribute("width", "100%")
+    var selectedEntity: Option[UISiteEntity] = None
 
+    val updateCanvas = Sink.create[(Element, Element)] { case (old, current) =>
+      var htmlCanvas = current.asInstanceOf[html.Canvas]
+
+      println(s"selectedElem: ${selectedEntity} ${window.innerHeight}")
       //  val htmlCanvas = current.asInstanceOf[html.Canvas]
       val renderer = htmlCanvas.getContext("2d")
         .asInstanceOf[CanvasRenderingContext2D]
@@ -26,20 +28,26 @@ object DetailViewer {
 
       htmlCanvas.width = 1000
       htmlCanvas.height = 800
-      println(s"update canvas2: ${htmlCanvas.width} - ${htmlCanvas.height}")
+      println(s"update canvas2: ${htmlCanvas.parentElement.parentElement.clientWidth} - ${htmlCanvas.parentElement.parentElement.parentElement.clientWidth}")
 
-      renderer.fillStyle = "black"
+      renderer.fillStyle = "white"
       renderer.fillRect(0, 0, 1200, 1000)
+
+      selectedEntity.foreach{ set =>
+        set.drawPrieview(renderer)
+
+
+      }
     }
 
     div(className := bss.grid.row + " detail-viewer full-height"
       , EntityDetailView(bss.grid.col5)
       , child <-- store.map { st =>
-        st.selectedSET.map(set =>
+        selectedEntity = st.selectedSET
         div(className := bss.grid.col7 + " full-height full-width"
-          , id := "detailCanvas"
+          , canvas(id := "detailCanvas"
           , update --> updateCanvas
-        )).getOrElse("")
+        ))
       }
     )
 
