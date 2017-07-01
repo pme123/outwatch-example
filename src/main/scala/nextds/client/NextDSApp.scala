@@ -36,18 +36,19 @@ case class NextDS() {
   }
 
   private val filterLink: VNode = li(className := "filter-checkbox"
+    , bss.tooltip.toggle
+    , bss.tooltip.placement.left
+    , bss.tooltip.title("Filter Links on the Link Viewers (CONF level)")
+    , insert --> initTooltipSink
     , div(hidden <-- store.map(st => st.activePage != Pages.LINKED_VIEWER)
       , label(className := "checkbox-inline"
         , input(id := "filterLinks"
           , tpe := "checkbox"
           , className := "checkbox"
-          , bss.tooltip.toggle
-          , bss.tooltip.placement.bottom
-          , bss.tooltip.title("Filter Links on the Link Viewers (CONF level)")
-          , insert --> initTooltipSink
           , inputChecked --> filterLinksHandler
         ), "Filter Links"
-      ))
+      )
+    )
   )
 
   private val menu: VNode =

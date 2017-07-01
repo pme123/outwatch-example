@@ -1,6 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
+import outwatch.dom.VNode
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -49,7 +50,6 @@ case class UIMediumTempl(siteEntity: MediumTempl
   extends UISiteTempl
     with UIMedium {
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
-
 
 }
 

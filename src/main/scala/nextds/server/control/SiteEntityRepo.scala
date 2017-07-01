@@ -76,9 +76,9 @@ object SiteCompRepo {
   val playlistComp = PlaylistComp(SiteComp(mgaaSite, playlistTempl))
   val playlistComp2 = PlaylistComp(SiteComp(filtSite, playlistTempl))
   val playlistComp3 = PlaylistComp(SiteComp(timerSite, playlistTempl))
-  val mediumComp = MediumComp(SiteComp(mgaaSite, mediumTempl, "Supervideo.mp4"))
-  val mediumComp2 = MediumComp(SiteComp(filtSite, mediumTempl2, "TheVideo.mp4"))
-  val mediumComp3 = MediumComp(SiteComp(timerSite, mediumTempl3, "rabbitRuns.mp4"))
+  val mediumComp = MediumComp(mgaaSite, "SuperBOY.png", mediumTempl2)
+  val mediumComp2 = MediumComp(mgaaSite, "Meatballs.png", mediumTempl2)
+  val mediumComp3 = MediumComp(mgaaSite, "Fruits.png", mediumTempl2)
   val allComps: Map[SiteType, SiteEntities[_ <: SiteEntityTrait]] = Map(
     PLAYER -> SiteEntities(COMP, PLAYER, Seq(
       playerComp, playerComp2, playerComp3
@@ -92,7 +92,6 @@ object SiteCompRepo {
     ))
   )
   lazy val siteLevel = SiteLevel(COMP, allComps)
-
 }
 
 object SiteConfRepo {

@@ -94,7 +94,11 @@ case class UIMediumComp(siteEntity: MediumComp
     with UIMedium {
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
-
+  override def createPreview(): VNode = {
+    img(src := siteEntity.url
+    , width:=siteEntity.size.width.scaled
+    , height:=siteEntity.size.height.scaled)
+  }
 }
 
 

@@ -12,8 +12,14 @@ ul {
     list-style: none;
 }
 
+#app {
+    padding: 0;
+}
+
 .tab-contents {
-    height: calc(100% - 60px);
+    height: calc(100% - 48px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .full-height {
@@ -42,6 +48,7 @@ ul {
 
 .main-menu {
     width: 100%;
+    overflow: hidden;
 }
 
 .filter-checkbox {

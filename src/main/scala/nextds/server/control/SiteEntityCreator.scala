@@ -102,7 +102,7 @@ object SiteCompCreator {
       .map(PlaylistComp(_))
     ), MEDIUM -> SiteEntities(COMP, MEDIUM, siteComp(templ(MEDIUM))
       .map(_.asInstanceOf[SiteComp[MediumTempl]])
-      .map(MediumComp(_))
+      .map(MediumComp(_, s"image_${Random.nextInt(1000)}.png"))
     ))
 
   def comp(siteType: SiteType): SiteCompTrait = oneOfSeq(allComps(siteType).entities)

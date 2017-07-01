@@ -18,7 +18,7 @@ package object entity {
 
   @inline def css = GlobalStyles
 
-  val scale = 0.25f
+  val scale = 0.5f
 
   val defaultMaxEntries = 7
 

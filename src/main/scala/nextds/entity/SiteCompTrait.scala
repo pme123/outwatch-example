@@ -137,11 +137,23 @@ object PlaylistComp {
 
 }
 
-case class MediumComp(siteInfo: SiteComp[MediumTempl])
+case class MediumSize(width: Int = 1920, height: Int = 1080)
+
+case class MediumComp(siteInfo: SiteComp[MediumTempl]
+                      , url: MediumURL
+                      , thumbnail: Option[MediumURL] = None
+                      , size: MediumSize = MediumSize())
   extends SiteCompTrait
     with MediumTrait
 
 object MediumComp {
-  def apply(siteIdent: String, templ: MediumTempl): MediumComp =
-    MediumComp(SiteComp(siteIdent, Site.nextIdent(siteIdent), templ))
+  def apply(siteIdent: SiteIdent, title: String, templ: MediumTempl): MediumComp = {
+    val ident = Site.nextIdent(siteIdent)
+    MediumComp(SiteComp(siteIdent, ident, templ, Some(title)), image(ident), Some(thumbnail(ident)))
+  }
+
+  def image(name: String) = s"https://placeholdit.imgix.net/~text?txt=$name&w=1920&h=1080&FLEU"
+
+  def thumbnail(name: String) = s"https://placeholdit.imgix.net/~text?txt=$name&w=40&h=40&FLEU"
+
 }

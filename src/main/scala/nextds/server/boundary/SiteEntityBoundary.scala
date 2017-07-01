@@ -23,7 +23,7 @@ object SiteEntityBoundary {
         case PLAYER => PlayerComp(siteIdent, siteEntityTrait.asInstanceOf[PlayerTempl])
         case LAYOUT => LayoutComp(siteIdent, siteEntityTrait.asInstanceOf[LayoutTempl])
         case PLAYLIST => PlaylistComp(siteIdent, siteEntityTrait.asInstanceOf[PlaylistTempl])
-        case MEDIUM => MediumComp(siteIdent, siteEntityTrait.asInstanceOf[MediumTempl])
+      //  case MEDIUM => MediumComp(siteIdent, siteEntityTrait.asInstanceOf[MediumTempl])
         case other => throw new IllegalArgumentException(s"Not supported: $other!")
 
       }
