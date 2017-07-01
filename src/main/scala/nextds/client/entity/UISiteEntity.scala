@@ -1,8 +1,7 @@
 package nextds.client.entity
 
 import nextds.entity._
-import org.scalajs.dom.CanvasRenderingContext2D
-import outwatch.dom.{style, _}
+import outwatch.dom._
 
 
 case class UISiteEntities(
@@ -36,6 +35,7 @@ object UISiteEntities {
   */
 trait UISiteEntity
   extends UIElements {
+
 
   def isFiltered: Boolean
 
@@ -140,10 +140,9 @@ trait UISiteEntity
     "no preview yet"
   }
 
-  def drawPrieview(renderer: CanvasRenderingContext2D) {
-    // nothing by default
+  def createPreview(screenRegion: ScreenRegion): VNode = {
+    ""
   }
-
 
 }
 
@@ -174,44 +173,51 @@ trait UILayout extends UISiteEntity {
   }
 
   override def createPreview(): VNode = {
+    UILayout.createPreview(siteEntity)
+  }
+}
+
+object UILayout {
+  def createPreview(siteEntity: HasScreenRegion, regions: Seq[UIRegion] = Nil): VNode = {
+    println(s"createPreview: ${siteEntity.ident}")
+
     val screenRegion = siteEntity.screenRegion
+    val verticalOffset = css.verticalOffset(siteEntity.siteType)
     val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
-    div(className := "preview-div " + css.siteTypeStyle(siteType)
-      , Attribute("style",
+    div(className := css.siteTypeStyle(siteEntity.siteType) + " preview-div"
+      , css.customStyle(
         s"""
           left: ${scaledRegion._1}px;
           top: ${scaledRegion._2}px;
           width: ${scaledRegion._3}px;
           height: ${scaledRegion._4}px;
            """)
-      , bss.tooltip.divWithSimple(title, "preview-div-title")
-        , bss.tooltip.divWithSimple(screenRegion.print(), "preview-div-subtitle")
-    )
+      , bss.tooltip.toggle
+      , bss.tooltip.html
+      , bss.tooltip.title(
+        s"""
+          <p>${siteEntity.ident}</p>
+          <p>${siteEntity.title}</p>
+          <p>${screenRegion.print()}</p>
+        """)
+      , bss.tooltip.placement.auto
+      , insert --> initTooltipSink
+
+      , div(regions.map{r =>
+        println(s"region: ${r.ident}")
+        createPreview(r.siteEntity)}: _*
+    ))
   }
-
-  override def drawPrieview(renderer: CanvasRenderingContext2D): Unit = {
-    val screenRegion = siteEntity.screenRegion
-    renderer.fillStyle = "gray"
-    renderer.font = "12px sans-serif"
-    renderer.textAlign = "center"
-    renderer.textBaseline = "middle"
-
-    val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
-    val center = (scaledRegion._3 / 2 + scaledRegion._1, scaledRegion._4 / 2 + scaledRegion._2)
-    val titleWidth = Math.max(renderer.measureText(title).width, scaledRegion._3)
-    println(s"titleWidth $titleWidth")
-    renderer.fillText(title, center._1, center._2 - 10, scaledRegion._3)
-    renderer.font = "8px"
-    renderer.fillText(screenRegion.print(), center._1, center._2 + 10, scaledRegion._3)
-    renderer.rect(scaledRegion._1, scaledRegion._2, scaledRegion._3, scaledRegion._4)
-    renderer.stroke()
-  }
-
 }
 
 // only for config
 trait UIRegion extends UISiteEntity {
   def siteEntity: RegionTrait
+
+  override def createPreview(): VNode = {
+    UILayout.createPreview(siteEntity)
+  }
+
 }
 
 trait UIPlaylist extends UISiteEntity {

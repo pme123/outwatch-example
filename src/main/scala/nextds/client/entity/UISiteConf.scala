@@ -90,6 +90,9 @@ case class UILayoutConf(siteEntity: LayoutConf
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
+  override def createPreview(): VNode = {
+    UILayout.createPreview(siteEntity, siteEntity.siteConfRefs.map(uiEntity).map(_.asInstanceOf[UIRegion]))
+  }
 }
 
 case class UIRegionConf(siteEntity: RegionConf

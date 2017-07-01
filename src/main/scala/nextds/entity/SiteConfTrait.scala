@@ -235,11 +235,12 @@ object LayoutConf {
 }
 
 case class RegionConf(siteInfo: SiteConfInfo[LayoutComp]
-                      , screenRegionOpt: Option[ScreenRegion] = None
+                      , maybeScreenRegion: Option[ScreenRegion] = None
                       , siteConfRefs: Seq[PlaylistConf] = Nil)
   extends SiteConfTrait
     with RegionTrait {
-  lazy val screenRegion: ScreenRegion = screenRegionOpt.getOrElse(siteInfo.comp.screenRegion)
+
+  lazy val screenRegion: ScreenRegion = maybeScreenRegion.getOrElse(siteInfo.comp.screenRegion)
 
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[PlaylistConf])

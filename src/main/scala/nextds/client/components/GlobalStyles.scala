@@ -2,9 +2,11 @@ package nextds.client.components
 
 import nextds.client.components.Icon.Icon
 import nextds.entity._
+import outwatch.dom.{Attribute, s}
 
 
 object GlobalStyles {
+
 
   def siteTypeIcon(siteType: SiteType): Icon =
     Icon(siteType.logo)
@@ -64,15 +66,15 @@ object GlobalStyles {
   val mainCell = "main-cell"
   val panelInnerDiv = "panel-inner-div"
 
-  def siteEntitiesDiv(levelType:LevelType, siteType:SiteType): String =
+  def siteEntitiesDiv(levelType: LevelType, siteType: SiteType): String =
     (levelType, siteType) match {
       case (CONF | TIME, REGION | PLAYLIST | LAYOUT | TIMING) => bss.grid.col2
       case (_, PLAYLIST) => bss.grid.col2
-      case (_,LAYOUT) => bss.grid.col4
+      case (_, LAYOUT) => bss.grid.col4
       case (_, _) => bss.grid.col3
     }
 
-  val siteEntitiesUL: String =  Seq(
+  val siteEntitiesUL: String = Seq(
     "site-entity-ul"
     , bss.listGroup.listGroup
   ) mkString " "
@@ -121,4 +123,22 @@ object GlobalStyles {
     case PlayerStatus.NOT_CONNECTED => "#B92F2A"
     case PlayerStatus.STOPPED => "#E59C2A"
   }
+
+  def customStyle(style: String) =
+    Attribute("style", style)
+
+  def verticalOffset(siteType: SiteType): Int = {
+    val max = 300
+    val step = 50
+    siteType match {
+      case PLAYER => max
+      case LAYOUT => max - step
+      case REGION => max - 2*step
+      case PLAYLIST => max - 3*step
+      case MEDIUM => max - 4*step
+      case TIMING => max - 5*step
+      case FILTER_TAG => max - 6*step
+    }
+  }
+
 }

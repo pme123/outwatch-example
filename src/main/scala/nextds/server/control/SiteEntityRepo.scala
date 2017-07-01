@@ -37,7 +37,8 @@ object SiteTemplRepo {
   import nextds.entity.ScreenRegion._
 
   val playerTempl = PlayerTempl(publicSite, "Web Player 2.0")
-  val layoutTempl: LayoutTempl = LayoutTempl.singleLayout(publicSite, "Wide-Screen: Single Layout", fullHD)
+  val layoutWidescreenTempl: LayoutTempl = LayoutTempl.singleLayout(publicSite, "Wide-Screen: Single Layout", fullHD)
+  val layoutUltraTempl: LayoutTempl = LayoutTempl.singleLayout(publicSite, "Basic Wide-Screen", ultraHD4K)
   val playlistTempl = PlaylistTempl(SiteEntityInfo(publicSite, "Basic Playlist"))
   val mediumTempl = MediumTempl(SiteEntityInfo(publicSite, "Video"))
   val mediumTempl2 = MediumTempl(SiteEntityInfo(publicSite, "Image"))
@@ -45,8 +46,8 @@ object SiteTemplRepo {
   val allTempls: Map[SiteType, SiteEntities[_ <: SiteEntityTrait]] = Map(
     PLAYER -> SiteEntities(TEMPL, PLAYER, Seq(playerTempl
       , PlayerTempl(SiteEntityInfo(publicSite, Site.nextIdent(publicSite), "Windows Player 2.3", "Special Configs for this Player type"))
-    )), LAYOUT -> SiteEntities(TEMPL, LAYOUT, Seq(layoutTempl
-      , LayoutTempl.singleLayout(publicSite, "Basic Wide-Screen", ultraHD4K)
+    )), LAYOUT -> SiteEntities(TEMPL, LAYOUT, Seq(layoutWidescreenTempl
+      , layoutUltraTempl
     )), REGION -> SiteEntities(TEMPL, REGION, Seq(
     )), PLAYLIST -> SiteEntities(TEMPL, PLAYLIST, Seq(
       playlistTempl
@@ -69,9 +70,9 @@ object SiteCompRepo {
   val playerComp = PlayerComp(mgaaSite, playerTempl, "Shop-Ville 12f", PlayerStatus.NOT_CONNECTED, PlayerLocation(47.056856, 8.539656700000023))
   val playerComp2 = PlayerComp(filtSite, playerTempl, "Züri-Center", PlayerStatus.RUNNING, PlayerLocation(47.3717306, 8.538627899999938))
   val playerComp3 = PlayerComp(timerSite, playerTempl, "Luzern am Bahnhof", PlayerStatus.STOPPED, PlayerLocation(47.0508225, 8.306212100000039))
-  val layoutComp = LayoutComp(mgaaSite, layoutTempl)
-  val layoutComp2 = LayoutComp(SiteComp(filtSite, layoutTempl, "Special configuration Layout."), Some(ScreenRegion(100, 100, 200, 200)))
-  val layoutComp3 = LayoutComp(timerSite, layoutTempl)
+  val layoutComp = LayoutComp(mgaaSite, layoutWidescreenTempl)
+  val layoutComp2 = LayoutComp(SiteComp(filtSite, layoutWidescreenTempl, "Special configuration Layout."), Some(ScreenRegion(100, 100, 200, 200)))
+  val layoutComp3 = LayoutComp(timerSite, layoutUltraTempl)
   val playlistComp = PlaylistComp(SiteComp(mgaaSite, playlistTempl))
   val playlistComp2 = PlaylistComp(SiteComp(filtSite, playlistTempl))
   val playlistComp3 = PlaylistComp(SiteComp(timerSite, playlistTempl))
@@ -128,7 +129,7 @@ object SiteConfRepo {
     , PlaylistConf(SiteConfInfo(playlistComp3, "Playlist for Christmas Week", timingConf("Christmas Week")), siteConfRefs = mediumConfs.entities.drop(6))
   ))
   private val regionConfs = SiteEntities[RegionConf](CONF, REGION, Seq(
-    RegionConf(SiteConfInfo(layoutComp), siteConfRefs = playlistConfs.entities.take(4))
+    RegionConf(SiteConfInfo(layoutComp), siteConfRefs = playlistConfs.entities.take(1))
     , RegionConf(SiteConfInfo(layoutComp2, "Region for EN", filterTagConf("EN")), siteConfRefs = playlistConfs.entities.take(4))
     , RegionConf(SiteConfInfo(layoutComp2, "Region for DE", filterTagConf("DE")), siteConfRefs = playlistConfs.entities.take(4))
     , RegionConf(SiteConfInfo(layoutComp2, "Region for EN OR DE", filterTagConf("EN OR DE")), siteConfRefs = playlistConfs.entities.take(4))
@@ -138,7 +139,7 @@ object SiteConfRepo {
     , RegionConf(SiteConfInfo(layoutComp3, "Region for Christmas Week", timingConf("Christmas Week")), siteConfRefs = playlistConfs.entities.drop(4))
   ))
   private val layoutConfs = SiteEntities[LayoutConf](CONF, LAYOUT, Seq(
-    LayoutConf(mgaaSite, layoutComp, regionConfs = regionConfs.entities)
+    LayoutConf(mgaaSite, layoutComp, regionConfs = regionConfs.entities.take(2))
     , LayoutConf(SiteConfInfo(layoutComp, "Extrem special configuration Layout."), siteConfRefs = regionConfs.entities.take(4))
     , LayoutConf(SiteConfInfo(layoutComp2, "Layout for EN", filterTagConf("EN")), siteConfRefs = regionConfs.entities.take(4))
     , LayoutConf(SiteConfInfo(layoutComp2, "Layout for DE", filterTagConf("DE")), siteConfRefs = regionConfs.entities.take(4))

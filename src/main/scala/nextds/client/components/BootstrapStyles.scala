@@ -90,15 +90,6 @@ object BootstrapStyles {
 
     val html = Attribute("data-html", "true")
 
-    def divWithSimple(title: String, styleClass: String): VNode =
-      div(className := styleClass
-        , title
-        , tooltip.toggle
-        , tooltip.title(title)
-        , tooltip.placement.bottom
-        , insert --> initTooltipSink
-      )
-
     object placement {
       val top = Attribute("data-placement", "top")
       val bottom = Attribute("data-placement", "bottom")

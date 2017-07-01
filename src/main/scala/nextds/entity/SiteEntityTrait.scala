@@ -98,18 +98,24 @@ trait PlayerTrait extends SiteEntityTrait {
   val siteType = PLAYER
 }
 
-trait LayoutTrait extends SiteEntityTrait {
-  val siteType = LAYOUT
-
+trait HasScreenRegion extends SiteEntityTrait {
   def screenRegion: ScreenRegion
 
   def maybeScreenRegion: Option[ScreenRegion]
 
 }
 
+trait LayoutTrait
+  extends HasScreenRegion {
+  val siteType = LAYOUT
+
+}
+
 // only for config
-trait RegionTrait extends SiteEntityTrait {
+trait RegionTrait
+  extends HasScreenRegion {
   val siteType = REGION
+
 }
 
 trait PlaylistTrait extends SiteEntityTrait {
