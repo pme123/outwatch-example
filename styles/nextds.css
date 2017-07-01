@@ -51,38 +51,38 @@ ul {
 }
 
 .player-style {
-    background-color: rgba(139, 0, 0, .1);
-    border-color: rgba(139, 0, 0, .2);
+    background-color: #e5dee1;
+    border-color: #d3b2b4;
 }
 
 .layout-style {
-    background-color: rgba(0, 0, 139, .1);
-    border-color: rgba(0, 0, 139, .2);
+    background-color: #d7deef;
+    border-color: #acb2db;
 }
 
 .region-style {
-    background-color: rgba(0, 0, 39, .1);
-    border-color: rgba(0, 0, 39, .2);
+    background-color: #e7eeff;
+    border-color: #bcc2eb;
 }
 
 .playlist-style {
-    background-color: rgba(0, 100, 0, .1);
-    border-color: rgba(0, 100, 0, .2);
+    background-color: #e5e3db;
+    border-color: #b7caaf;
 }
 
 .medium-style {
-    background-color: rgba(47, 79, 79, .1);
-    border-color: rgba(47, 79, 79, .2);
+    background-color: #dce7ea;
+    border-color: #b8c8ca;
 }
 
 .timing-style {
-    background-color: rgba(216, 216, 33, .1);
-    border-color: rgba(216, 216, 33, .2);
+    background-color: #f4f4e1;
+    border-color: #efefba;
 }
 
 .tag-filter-style {
-    background-color: rgba(33, 216, 216, .1);
-    border-color: rgba(33, 216, 216, .2);
+    background-color: #e1f4f4;
+    border-color: #c1d4d4;
 }
 
 .level-style {
@@ -90,28 +90,28 @@ ul {
 }
 
 .templ-style {
-    background-color: rgba(173, 216, 230, .1);
-    border-color: rgba(173, 216, 230, .4);
+    background-color: #f0f8fb;
+    border-color: #d2e3e9;
 }
 
 .comp-style {
-    background-color: rgba(144, 238, 144, .1);
-    border-color: rgba(144, 238, 144, .4);
+    background-color: #eafdea;
+    border-color: #c8f3c8;
 }
 
 .conf-style {
-    background-color: rgba(255, 182, 193, .1);
-    border-color: rgba(255, 182, 193, .4);
+    background-color: #fff2f4;
+    border-color: #fbd9de;
 }
 
 .filter-style {
-    background-color: rgba(216, 216, 216, .1);
-    border-color: rgba(216, 216, 216, .4);
+    background-color: #f8f8f8;
+    border-color: #e8e8e8;
 }
 
 .time-style {
-    background-color: rgba(216, 216, 216, .1);
-    border-color: rgba(216, 216, 216, .4);
+    background-color: #f8f8f8;
+    border-color: #e8e8e8;
 }
 
 .logo {
@@ -229,6 +229,32 @@ width(40 . % %)
 
 .detail-view {
     margin: 5px;
+}
+
+.detail-preview {
+    background-color: #fcfcfc;
+    overflow: auto;
+}
+
+.preview-div {
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    opacity: 1;
+    white-space: nowrap;
+}
+
+.preview-div-title {
+    font-size: small;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+.preview-div-subtitle {
+    font-size: x-small;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* detail-vewer */

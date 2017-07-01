@@ -89,6 +89,7 @@ case class UIFilterTagConf(siteEntity: FilterTagConf
           , insert --> initTooltipSink
           , bss.tooltip.toggle
           , bss.tooltip.html
+          , bss.tooltip.placement.auto
           , Attribute("title",
             """<div class="tooltip-style"><p>Use a logical condition of your Filter Tags with AND OR. Use brackets for ordering.</p>
             <p>Examples: '<b>DE AND (FR OR EN)</b>' or short '<b>DE & (FR | EN)</b>'</>

@@ -13,7 +13,7 @@ object GlobalStyles {
     siteType match {
       case PLAYER => playerStyle
       case LAYOUT => layoutStyle
-      case REGION => layoutStyle
+      case REGION => regionStyle
       case PLAYLIST => playlistStyle
       case MEDIUM => mediumStyle
       case TIMING => timingStyle

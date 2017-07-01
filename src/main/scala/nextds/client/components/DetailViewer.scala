@@ -35,8 +35,6 @@ object DetailViewer {
 
       selectedEntity.foreach{ set =>
         set.drawPrieview(renderer)
-
-
       }
     }
 
@@ -44,10 +42,11 @@ object DetailViewer {
       , EntityDetailView(bss.grid.col5)
       , child <-- store.map { st =>
         selectedEntity = st.selectedSET
-        div(className := bss.grid.col7 + " full-height full-width"
-          , canvas(id := "detailCanvas"
-          , update --> updateCanvas
-        ))
+        div(className := bss.grid.col7 + " detail-preview full-height full-width"
+          , selectedEntity.map(_.createPreview()).getOrElse("")
+          //, canvas(id := "detailCanvas"
+          //, update --> updateCanvas
+        )
       }
     )
 

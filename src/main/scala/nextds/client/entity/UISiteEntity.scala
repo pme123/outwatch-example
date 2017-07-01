@@ -2,7 +2,7 @@ package nextds.client.entity
 
 import nextds.entity._
 import org.scalajs.dom.CanvasRenderingContext2D
-import outwatch.dom._
+import outwatch.dom.{style, _}
 
 
 case class UISiteEntities(
@@ -136,6 +136,10 @@ trait UISiteEntity
 
   protected def filter(isFiltered: Boolean): UISiteEntity
 
+  def createPreview(): VNode = {
+    "no preview yet"
+  }
+
   def drawPrieview(renderer: CanvasRenderingContext2D) {
     // nothing by default
   }
@@ -169,6 +173,22 @@ trait UILayout extends UISiteEntity {
       )
   }
 
+  override def createPreview(): VNode = {
+    val screenRegion = siteEntity.screenRegion
+    val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
+    div(className := "preview-div " + css.siteTypeStyle(siteType)
+      , Attribute("style",
+        s"""
+          left: ${scaledRegion._1}px;
+          top: ${scaledRegion._2}px;
+          width: ${scaledRegion._3}px;
+          height: ${scaledRegion._4}px;
+           """)
+      , bss.tooltip.divWithSimple(title, "preview-div-title")
+        , bss.tooltip.divWithSimple(screenRegion.print(), "preview-div-subtitle")
+    )
+  }
+
   override def drawPrieview(renderer: CanvasRenderingContext2D): Unit = {
     val screenRegion = siteEntity.screenRegion
     renderer.fillStyle = "gray"
@@ -177,7 +197,7 @@ trait UILayout extends UISiteEntity {
     renderer.textBaseline = "middle"
 
     val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
-    val center = (scaledRegion._3/2 + scaledRegion._1, scaledRegion._4/2 + scaledRegion._2)
+    val center = (scaledRegion._3 / 2 + scaledRegion._1, scaledRegion._4 / 2 + scaledRegion._2)
     val titleWidth = Math.max(renderer.measureText(title).width, scaledRegion._3)
     println(s"titleWidth $titleWidth")
     renderer.fillText(title, center._1, center._2 - 10, scaledRegion._3)

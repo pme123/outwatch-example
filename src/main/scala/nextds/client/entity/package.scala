@@ -1,7 +1,8 @@
 package nextds.client
 
-import nextds.client.components.{BootstrapStyles, GlobalStyles}
+import nextds.client.components.{Bootstrap, BootstrapStyles, GlobalStyles, jQuery}
 import nextds.entity._
+import org.scalajs.dom.Element
 import outwatch.Sink
 import outwatch.dom._
 import rxscalajs.Observable
@@ -71,6 +72,11 @@ package object entity {
       int * scale
     }
 
+  }
+
+  val initTooltipSink: Sink[Element] = Sink.create[Element] { e =>
+    import Bootstrap._
+    jQuery(e).tooltip()
   }
 
   val loadingSpinnerEvents: Observable[Boolean] with Sink[Boolean] = createBoolHandler()

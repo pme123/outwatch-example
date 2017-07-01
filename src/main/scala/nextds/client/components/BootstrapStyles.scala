@@ -3,7 +3,8 @@ package nextds.client.components
 import nextds.client.components.Bootstrap.CommonStyle
 import nextds.client.components.Bootstrap.CommonStyle._
 import nextds.client.components.Icon.Icon
-import outwatch.dom.Attribute
+import nextds.client.entity._
+import outwatch.dom.{default => _, _}
 
 object BootstrapStyles {
 
@@ -89,12 +90,23 @@ object BootstrapStyles {
 
     val html = Attribute("data-html", "true")
 
+    def divWithSimple(title: String, styleClass: String): VNode =
+      div(className := styleClass
+        , title
+        , tooltip.toggle
+        , tooltip.title(title)
+        , tooltip.placement.bottom
+        , insert --> initTooltipSink
+      )
+
     object placement {
       val top = Attribute("data-placement", "top")
       val bottom = Attribute("data-placement", "bottom")
       val left = Attribute("data-placement", "left")
       val right = Attribute("data-placement", "right")
+      val auto = Attribute("data-placement", "auto")
     }
+
   }
 
 }

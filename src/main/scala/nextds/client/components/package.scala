@@ -25,11 +25,6 @@ package object components {
       .toList
   }
 
-  val initTooltipSink: Sink[Element] = Sink.create[Element] { e =>
-    import Bootstrap._
-    jQuery(e).tooltip()
-  }
-
   // as siteModel.withLinks should only be called if necessary (expensive)
   def checkLinks(state: State, uiEntity: UISiteEntity, doFilter: Boolean): Boolean = {
     if (state.activePage == Pages.LINKED_VIEWER) {
