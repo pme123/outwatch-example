@@ -130,9 +130,16 @@ case class UIMediumConf(siteEntity: MediumConf
   override val menuItemLink = "link Medium to Playlist"
   override val linkToType: Option[SiteType] = Some(PLAYLIST)
 
+  override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
+    parameterEdit(
+        siteConfRefs ++ filterTagConf.toSeq ++ timingConf.toSeq) :+
+      inputText("Duration", siteEntity.durationInSecStr, Some(siteEntity.durationInSecStr) )
+
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
-
+  override def createPreview(): VNode = {
+    UIMediumComp(siteEntity.siteComp).createPreview()
+  }
 }
 
 

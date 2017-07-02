@@ -12,7 +12,6 @@ trait UIElements {
   import UIElements.Style
 
   protected def siteEntityRef(uiSiteEntity: UISiteEntity)(implicit store: ReduxStore[State, Action]): VNode = {
-    println("uiSiteEntity.siteType: " + uiSiteEntity.siteType)
     editValue(uiSiteEntity.label
       , div(className := css.siteTypeStyle(uiSiteEntity.siteType)
         , div(className := Style.entityInputCol

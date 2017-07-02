@@ -313,11 +313,15 @@ object PlaylistConf {
 
 }
 
-case class MediumConf(siteInfo: SiteConfInfo[MediumComp])
+case class MediumConf(siteInfo: SiteConfInfo[MediumComp], durationInMs: Long = 10 * 1000)
   extends SiteConfTrait
     with MediumTrait {
+
+  lazy val durationInSec: Double = durationInMs / 1000
+  lazy val durationInSecStr: String = f"$durationInSec%1.2f"
   // a MediumConf has no refs to other Confs
   val siteConfRefs = Nil
+  lazy val siteComp: MediumComp = siteInfo.comp
 
   // all links to the left - PLAYLIST > REGION > LAYOUT > PLAYER
   def filterLinksLeft(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =

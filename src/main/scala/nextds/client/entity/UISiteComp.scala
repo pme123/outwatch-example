@@ -102,7 +102,6 @@ case class UIMediumComp(siteEntity: MediumComp
         , width:=siteEntity.size.width.scaled(input)
         , height:=siteEntity.size.height.scaled(input))
     })
-
   }
 }
 
