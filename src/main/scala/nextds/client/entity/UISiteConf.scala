@@ -1,7 +1,11 @@
 package nextds.client.entity
 
 import nextds.entity._
-import outwatch.dom._
+import org.scalajs.dom.html.Canvas
+import org.scalajs.dom.raw.Element
+import org.scalajs.dom.{CanvasRenderingContext2D, window}
+import outwatch.Sink
+import outwatch.dom.{update, _}
 
 /**
   * Created by pascal.mengelt on 15.03.2017.
@@ -119,6 +123,44 @@ case class UIPlaylistConf(siteEntity: PlaylistConf
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
 
+  val insertCanvas = Sink.create[Element] { current =>
+    var htmlCanvas = current.asInstanceOf[Canvas]
+
+    val totalDuration = siteEntity.calcDurationInMS()
+    val ratio = 1600 / totalDuration
+
+    println(s"insertCanvas: ${siteEntity.ident} ${window.innerHeight}")
+    //  val htmlCanvas = current.asInstanceOf[html.Canvas]
+    val renderer = htmlCanvas.getContext("2d")
+      .asInstanceOf[CanvasRenderingContext2D]
+
+    println(s"update canvas: ${current.id}: ${current.clientWidth} - ${current.clientHeight}")
+
+    htmlCanvas.width = 1000
+    htmlCanvas.height = 800
+    println(s"update canvas2: ${htmlCanvas.width} - ${htmlCanvas.height}")
+
+    renderer.fillStyle = "white"
+    renderer.fillRect(0, 0, 1600, 1000)
+    renderer.fillStyle = "blue"
+    renderer.strokeStyle = "1px grey"
+    renderer.rect(0, 200, totalDuration * ratio, 10)
+    renderer.stroke()
+    siteEntity.siteConfRefs.foldLeft(0L) { (duration, mc) =>
+      println(s"duration: $duration")
+      renderer.rect(duration * ratio, 250, mc.durationInMs * ratio, 100)
+      renderer.stroke()
+      duration + mc.durationInMs
+    }
+
+  }
+
+  override def createPreview(): VNode = {
+    div(className := "canvas-div"
+      , canvas(
+        insert --> insertCanvas
+      ))
+  }
 }
 
 
@@ -132,8 +174,8 @@ case class UIMediumConf(siteEntity: MediumConf
 
   override def parameterEdit()(implicit store: ReduxStore[State, Action]): Seq[VNode] =
     parameterEdit(
-        siteConfRefs ++ filterTagConf.toSeq ++ timingConf.toSeq) :+
-      inputText("Duration", siteEntity.durationInSecStr, Some(siteEntity.durationInSecStr) )
+      siteConfRefs ++ filterTagConf.toSeq ++ timingConf.toSeq) :+
+      inputText("Duration", siteEntity.durationInSecStr, Some(siteEntity.durationInSecStr))
 
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 

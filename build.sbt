@@ -7,7 +7,7 @@ version := "0.1.0"
 
 organization := "pme"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 jsEnv := PhantomJSEnv().value
 
@@ -29,3 +29,6 @@ jsDependencies ++= Seq(
   //, "org.webjars.bower" % "github-com-RubaXa-Sortable" % "1.4.2"  % Provided / "1.4.2/Sortable.js" minified "Sortable.min.js"
 
 )
+
+resolvers += Resolver.bintrayRepo("underscoreio", "training")
+

@@ -288,6 +288,7 @@ case class PlaylistConf(siteInfo: SiteConfInfo[PlaylistComp]
                         , siteConfRefs: Seq[MediumConf])
   extends SiteConfTrait
     with PlaylistTrait {
+
   override def addLink(siteEntity: SiteEntityTrait): SiteEntityTrait =
     copy(siteConfRefs = siteConfRefs :+ siteEntity.asInstanceOf[MediumConf])
 
@@ -298,6 +299,10 @@ case class PlaylistConf(siteInfo: SiteConfInfo[PlaylistComp]
   // all links to the right - MEDIUM
   def filterLinksRight(siteConfs: Set[SiteConfTrait], filtersToAdhere: Seq[FilterCond]): Set[SiteEntityTrait] =
     filterLinksRight(siteConfs, filtersToAdhere, MEDIUM)
+
+  // calc the duration of all Mediums (add them)
+  def calcDurationInMS(): Double = siteConfRefs.map(_.durationInMs).sum
+
 
 }
 
