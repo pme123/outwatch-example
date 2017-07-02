@@ -26,7 +26,7 @@ object Composer {
           }
       }
 
-    div(className := bss.grid.row + " full-height"
+    div(className := s"table-row ${bss.grid.row} full-height"
       , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
           // , div(className := "col-sm-10"

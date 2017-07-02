@@ -1,10 +1,9 @@
 package nextds.client
 
 import nextds.client.entity.{State, UISiteEntity}
-import org.scalajs.dom.Element
 import org.scalajs.dom.raw.HTMLSelectElement
-import outwatch.Sink
-import outwatch.dom.createBoolHandler
+import outwatch.{Sink, dom}
+import outwatch.dom.{createBoolHandler, createInputHandler, createStringHandler}
 import outwatch.dom.helpers.InputEvent
 import rxscalajs.Observable
 
@@ -38,5 +37,7 @@ package object components {
   }
 
   val filterLinksHandler: Observable[Boolean] with Sink[Boolean] = createBoolHandler(false)
+  val defaultScale = "50%"
+  val scaleHandler: Observable[String] with Sink[String] = createStringHandler(defaultScale)
 
 }

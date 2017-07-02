@@ -1,5 +1,7 @@
 package nextds.client.entity
 
+import nextds.client.components._
+import nextds.client._
 import nextds.entity._
 import outwatch.dom._
 
@@ -95,9 +97,12 @@ case class UIMediumComp(siteEntity: MediumComp
   def filter(isFiltered: Boolean): UISiteEntity = copy(isFiltered = isFiltered)
 
   override def createPreview(): VNode = {
-    img(src := siteEntity.url
-    , width:=siteEntity.size.width.scaled
-    , height:=siteEntity.size.height.scaled)
+    div(child <-- scaleHandler.map{ input=>
+      img(src := siteEntity.url
+        , width:=siteEntity.size.width.scaled(input)
+        , height:=siteEntity.size.height.scaled(input))
+    })
+
   }
 }
 

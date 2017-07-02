@@ -18,8 +18,6 @@ package object entity {
 
   @inline def css = GlobalStyles
 
-  val scale = 0.5f
-
   val defaultMaxEntries = 7
 
   def uiEntity(siteEntity: SiteEntityTrait): UISiteEntity = siteEntity match {
@@ -68,7 +66,9 @@ package object entity {
 
   class MyInt(val int: Int) {
 
-    lazy val scaled: Float = {
+    // scaleStr: e.g. 75%
+    def scaled(scaleStr:String): Float = {
+      val scale =scaleStr.dropRight(1).toFloat / 100
       int * scale
     }
 

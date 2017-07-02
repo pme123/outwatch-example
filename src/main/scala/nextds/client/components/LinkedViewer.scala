@@ -15,7 +15,7 @@ object LinkedViewer {
   @inline private def css = GlobalStyles
 
   def apply()(implicit store: ReduxStore[State, Action]): VNode = {
-    div(className := bss.grid.row + " full-height"
+    div(className := s"table-row ${bss.grid.row} full-height"
       , div(className := bss.grid.col9 + " full-height"
         , div(className := bss.grid.row
           , LevelComponent(TEMPL)

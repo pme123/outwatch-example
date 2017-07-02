@@ -1,5 +1,6 @@
 package nextds.client.entity
 
+import nextds.client.components.scaleHandler
 import nextds.entity._
 import outwatch.dom._
 
@@ -179,34 +180,35 @@ trait UILayout extends UISiteEntity {
 
 object UILayout {
   def createPreview(siteEntity: HasScreenRegion, regions: Seq[UIRegion] = Nil): VNode = {
-    println(s"createPreview: ${siteEntity.ident}")
-
     val screenRegion = siteEntity.screenRegion
     val verticalOffset = css.verticalOffset(siteEntity.siteType)
-    val scaledRegion = (screenRegion.fromLeft.scaled, screenRegion.fromTop.scaled, screenRegion.width.scaled, screenRegion.height.scaled)
-    div(className := css.siteTypeStyle(siteEntity.siteType) + " preview-div"
-      , css.customStyle(
-        s"""
-          left: ${scaledRegion._1}px;
-          top: ${scaledRegion._2}px;
-          width: ${scaledRegion._3}px;
-          height: ${scaledRegion._4}px;
+    div(child <--
+      scaleHandler.map { scale =>
+        div(className := css.siteTypeStyle(siteEntity.siteType) + " preview-div"
+          , css.customStyle(
+            s"""
+          left: ${screenRegion.fromLeft.scaled(scale)}px;
+          top: ${screenRegion.fromTop.scaled(scale)}px;
+          width: ${screenRegion.width.scaled(scale)}px;
+          height: ${screenRegion.height.scaled(scale)}px;
            """)
-      , bss.tooltip.toggle
-      , bss.tooltip.html
-      , bss.tooltip.title(
-        s"""
+          , bss.tooltip.toggle
+          , bss.tooltip.html
+          , bss.tooltip.title(
+            s"""
           <p>${siteEntity.ident}</p>
           <p>${siteEntity.title}</p>
           <p>${screenRegion.print()}</p>
         """)
-      , bss.tooltip.placement.auto
-      , insert --> initTooltipSink
+          , bss.tooltip.placement.auto
+          , insert --> initTooltipSink
 
-      , div(regions.map{r =>
-        println(s"region: ${r.ident}")
-        createPreview(r.siteEntity)}: _*
-    ))
+          , div(regions.map { r =>
+            println(s"region: ${r.ident}")
+            createPreview(r.siteEntity)
+          }: _*
+          ))
+      })
   }
 }
 

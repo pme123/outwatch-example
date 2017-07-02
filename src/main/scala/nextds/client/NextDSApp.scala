@@ -47,8 +47,15 @@ case class NextDS() {
           , className := "checkbox"
           , inputChecked --> filterLinksHandler
         ), "Filter Links"
-      )
-    )
+      )), div(hidden <-- store.map(st => st.activePage != Pages.DETAIL_VIEWER)
+      , select(className := "checkbox-inline"
+        , inputString --> scaleHandler
+        , option("100%")
+        , option("75%")
+        , option("50%", selected := true)
+        , option("25%")
+        , option("10%")
+      ))
   )
 
   private val menu: VNode =
