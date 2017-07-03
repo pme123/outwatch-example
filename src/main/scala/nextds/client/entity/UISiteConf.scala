@@ -1,5 +1,6 @@
 package nextds.client.entity
 
+import nextds.client.components.scaleHandler
 import nextds.entity._
 import org.scalajs.dom.html.Canvas
 import org.scalajs.dom.raw.Element
@@ -156,10 +157,33 @@ case class UIPlaylistConf(siteEntity: PlaylistConf
   }
 
   override def createPreview(): VNode = {
-    div(className := "canvas-div"
-      , canvas(
-        insert --> insertCanvas
-      ))
+    val totalDuration = siteEntity.calcDurationInMS()
+    val ratio = 1600 / totalDuration
+    val divHeight = 200
+
+    div(children <-- scaleHandler.map { scale =>
+      siteEntity.siteConfRefs.map { mc =>
+        println(s"mc: ${mc.ident}")
+        val divWidth: Int = (ratio * mc.durationInMs.scaled(scale)).toInt
+        div(className := "playlist-medium-preview"
+          , css.customStyle(
+            s"""
+          width: ${divWidth}px;
+          height: ${divHeight}px;
+           """)
+          , img(src := mc.siteComp.url
+            , css.customStyle(
+              s"""
+           max-width: ${divWidth - 4}px;
+           max-height: ${divHeight - 24}px;
+           """)
+          ), div(className := "medium-duration"
+            , s"${mc.durationInSecStr}s"
+          )
+        )
+      }
+
+    })
   }
 }
 

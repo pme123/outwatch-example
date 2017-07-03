@@ -318,7 +318,7 @@ object PlaylistConf {
 
 }
 
-case class MediumConf(siteInfo: SiteConfInfo[MediumComp], durationInMs: Long = 10 * 1000)
+case class MediumConf(siteInfo: SiteConfInfo[MediumComp], durationInMs: Int = 10 * 1000)
   extends SiteConfTrait
     with MediumTrait {
 

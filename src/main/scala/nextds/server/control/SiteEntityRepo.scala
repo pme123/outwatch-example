@@ -102,8 +102,8 @@ object SiteConfRepo {
   import TimingCreator.timingConf
 
   private val mediumConfs = SiteEntities[MediumConf](CONF, MEDIUM, Seq(
-    MediumConf(SiteConfInfo(mediumComp))
-    , MediumConf(SiteConfInfo(mediumComp2))
+    MediumConf(SiteConfInfo(mediumComp), 5 * 1000)
+    , MediumConf(SiteConfInfo(mediumComp2), 20 * 1000)
     , MediumConf(SiteConfInfo(mediumComp3))
     , MediumConf(SiteConfInfo(mediumComp2, "Medium for DE", filterTagConf("DE")))
     , MediumConf(SiteConfInfo(mediumComp2, "Medium for EN", filterTagConf("EN")))
