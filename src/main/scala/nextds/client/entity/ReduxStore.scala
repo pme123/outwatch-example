@@ -40,7 +40,6 @@ object ReduxStore {
 
   def reducer(previousState: State, action: Action): State = {
     println(s"reducer: ${action.getClass}")
-    loadingSpinnerEvents <-- Observable.create(obs => obs.next(false))
 
     val selectedSET = selectedSETReducer(previousState, action)
     val st = State(
@@ -50,7 +49,6 @@ object ReduxStore {
       , linkToReducer(previousState.linkTo, action)
       , activePageReducer(previousState.activePage, action)
     )
-    loadingSpinnerEvents <-- Observable.create(obs => obs.next(true))
     st
   }
 

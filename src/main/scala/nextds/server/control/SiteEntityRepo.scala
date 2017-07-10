@@ -86,7 +86,7 @@ object SiteCompRepo {
       layoutComp, layoutComp2, layoutComp3
     )), REGION -> SiteEntities(COMP, REGION, Seq(
     )), PLAYLIST -> SiteEntities(COMP, PLAYLIST, Seq(
-      playlistComp
+      playlistComp, playlistComp2, playlistComp3
     )), MEDIUM -> SiteEntities(COMP, MEDIUM, Seq(
       mediumComp, mediumComp2, mediumComp3
     ))
