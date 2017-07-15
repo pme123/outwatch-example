@@ -1,0 +1,14 @@
+[
+  {
+    "key": "productText",
+    "valueType": "string",
+    "valueDefault": "Prodct XY",
+    "labels": [
+      {
+        "language": "en",
+        "title": "Product title",
+        "descr": "The name of the product."
+      }
+    ]
+  }
+]

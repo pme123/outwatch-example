@@ -1,5 +1,7 @@
 package nextds.entity
 
+import scala.scalajs.js.JSON
+
 /**
   * Created by pascal.mengelt on 15.03.2017.
   */
@@ -73,7 +75,7 @@ case class PlaylistTempl(siteInfo: SiteEntityInfo)
 object PlaylistTempl {
 }
 
-case class MediumTempl(siteInfo: SiteEntityInfo)
+case class MediumTempl(siteInfo: SiteEntityInfo, templConfig: Option[MediumTemplConfig] = None)
   extends SiteTemplTrait
     with MediumTrait {
 }
@@ -81,8 +83,47 @@ case class MediumTempl(siteInfo: SiteEntityInfo)
 object MediumTempl {
 }
 
+case class MediumTemplConfig(configValues: Seq[MediumTemplValue[_]])
 
+object MediumTemplConfig {
+}
 
+case class ValueLabel(language: String, title: String, descr: Option[String])
+
+case class MediumTemplValue[T](key: String
+                               , valueType: ValueType[T]
+                               , defaultValue: Option[T] = None
+                               , labels: Seq[ValueLabel] = Nil)
+
+trait ValueType[T] {
+  def valueClass: Class[T]
+
+  def outputValue(value: T): String
+
+}
+
+case object StringValueConfig
+  extends ValueType[String] {
+  val valueClass: Class[String] = classOf[String]
+
+  def outputValue(value: String): String = value
+}
+
+case object BooleanValueConfig
+  extends ValueType[Boolean] {
+  val valueClass: Class[Boolean] = classOf[Boolean]
+
+  def outputValue(value: Boolean): String = value.toString
+}
+
+case object MediumValueConfig
+  extends ValueType[MediumRef] {
+  val valueClass: Class[MediumRef] = classOf[MediumRef]
+
+  def outputValue(value: MediumRef): String = value.url
+}
+
+case class MediumRef(ident: String, url: String)
 
 
 

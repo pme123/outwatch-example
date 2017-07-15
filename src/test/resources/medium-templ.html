@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: green;
+      font-family: sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    div {
+      width: 100%;
+      height: 100%;
+      float: left;
+      display: block;
+
+    }
+
+    #container {
+      margin: 0 auto;
+    }
+
+    #productImage {
+      animation-name: imageAnim;
+      animation-duration: 10s;
+      animation-delay: 0.5s;
+      opacity: 0;
+    }
+
+    @keyframes imageAnim {
+      0% { opacity: 0; }
+      20%   { opacity: 1; }
+      80%   { opacity: 1; }
+      100%   { opacity: 0; }
+    }
+
+    #newsletter {
+      animation-name: newsletterAnim;
+      animation-duration: 8s;
+      animation-delay: 2s;
+      animation-iteration-count: 1;
+      position: absolute;
+      top: 300px;
+      left: 100%;
+      font-size: xx-large;
+      text-align: left;
+    }
+
+    @keyframes newsletterAnim {
+      0% {
+        left: -400px;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    #productText {
+      font-size: xx-large;
+      padding-top: 50px;
+      height: 90px;
+    }
+
+    #productFooter {
+      font-size: medium;
+      padding-top: 50px;
+      height: 50px;
+    }
+  </style>
+  <script>
+    const productText = "Product XY is great!";
+    const productImage = "https://placeholdit.imgix.net/~text?txt=ProductXY&w=820&h=680&FLEU";
+    const productFooter =  "please call our sales team for more infos.";
+    const newsletter =  "20% off only today."
+  </script>
+
+</head>
+<body>
+<div id="container">
+  <div id="productText"></div>
+  <div id="productImage"></div>
+  <div id="productFooter"></div>
+
+</div>
+<div id="newsletter"></div>
+
+<script>
+  document.getElementById("productText").innerHTML = productText;
+  document.getElementById("productImage").innerHTML = "<img src='"+productImage+"'/>";
+  document.getElementById("productFooter").innerHTML = productFooter;
+  document.getElementById("newsletter").innerHTML = newsletter;
+</script>
+</body>
+</html>
